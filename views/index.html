@@ -75,6 +75,16 @@
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
+
+  <script src = "/js/Cylinder.js"></script>
+  <script src = "/js/Detector.js"></script>
+  <script src = "/js/Library.js"></script>
+<!--   <script src = "/js/Three.js"></script> -->
+  <script src = "/js/Tween.js"></script>
+  <script src = "/js/jquery-1.7.1.min.js"></script>
+  <script src = "/js/signals.js"></script>
+  <script src = "/js/sounds.js"></script>
+  
 <script>
 
 var vrDisplay;
@@ -87,6 +97,7 @@ var camera;
 var scene;
 var renderer;
 var cube;
+var cylinder;
 
 var colors = [
   new THREE.Color( 0xffffff ),
@@ -166,6 +177,24 @@ function init() {
   }
   var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
   cube = new THREE.Mesh(geometry, material);
+  
+  
+  //experimental lathe things 
+  
+  var cylinderMaterial = new THREE.MeshNormalMaterial();//MaterialLibrary.stone;
+	cylinder = new Cylinder( cylinderMaterial, 200);
+  //cylinder.position.x = -100;
+  cylinder.rotation.y = 90 * TO_RADIANS;
+
+  cylinder.build();
+  
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = false;
+  cylinder.geometry.dynamic = true;
+  cylinder.geometry.computeFaceNormals();
+  cylinder.geometry.computeVertexNormals();
+
+  
 
   // Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
@@ -251,10 +280,14 @@ function onClick () {
 
   // Clone our cube object and place it at the camera's
   // current position
-  var clone = cube.clone();
-  scene.add(clone);
-  clone.position.copy(pos);
-  clone.quaternion.copy(ori);
+  var cube_clone = cube.clone();
+  var cylinder_clone = cylinder.clone();
+  //scene.add(cube_clone);
+  scene.add(cylinder_clone);
+  //cube_clone.position.copy(pos);
+  //cube_clone.quaternion.copy(ori);
+  cylinder_clone.position.copy(pos);
+  cylinder_clone.quaternion.copy(ori);
 }
 </script>
 </body>
