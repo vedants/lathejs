@@ -13,12 +13,12 @@ Cylinder = function ( materials, radius ) {
 
 	var numCurrentPos = 0;
 	
-	this.doubleSided = false;
+	this.doubleSided = true;
 	
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
-	this.radius = radius;
+	this.radius = 200;
 
 	var R;
 	var S;

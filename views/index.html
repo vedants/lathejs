@@ -182,7 +182,7 @@ function init() {
   //experimental lathe things 
   
   var cylinderMaterial = new THREE.MeshNormalMaterial();//MaterialLibrary.stone;
-	cylinder = new Cylinder( cylinderMaterial, 200);
+	cylinder = new Cylinder( cylinderMaterial, 1000);
   //cylinder.position.x = -100;
   cylinder.rotation.y = 90 * TO_RADIANS;
 
@@ -194,7 +194,6 @@ function init() {
   cylinder.geometry.computeFaceNormals();
   cylinder.geometry.computeVertexNormals();
 
-  
 
   // Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
@@ -282,6 +281,7 @@ function onClick () {
   // current position
   var cube_clone = cube.clone();
   var cylinder_clone = cylinder.clone();
+  cylinder_clone.build();
   //scene.add(cube_clone);
   scene.add(cylinder_clone);
   //cube_clone.position.copy(pos);
