@@ -68,8 +68,9 @@
 <div id="info">
   <span class="title">latheJS</span><br/>
   <span class="links">
-    <a href="https://github.com/google-ar/three.ar.js">three.ar.js</a> -
-    <a href="https://developers.google.com/ar/develop/web/getting-started#examples">examples</a>
+    <a href="">wood</a> -
+    <a href="">metal</a>
+    <a href="">steel</a>
   </span>
 </div>
   
@@ -442,6 +443,9 @@ function setRing (changedSegment, pressure) {
     //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
     //is there someway to make sure it always is? 
     segmentFactors[changedSegment] = newFactor;
+    
+    lathe.geometry.verticesNeedUpdate = true;//TODO: put this somewhere more computationally efficient.
+
   }
 }
 
@@ -449,14 +453,20 @@ function setRing (changedSegment, pressure) {
  * The render loop, called once per frame. Handles updating
  * our scene and rendering.
  */
+var _i = 0; 
+function test_cut() {
+  var segmentToChange = _i++ % lathe.totalLinks;
+  console.log("cutting at " + segmentToChange);
+  setRing (segmentToChange, 0.1);
+}
 function update() {
   //rotate the lathe block. 
   lathe.rotation.x += _ROTATE_SPEED; 
   
+  
   //randomly cut the cylinder 
-  segmentToChange = Math.floor(Math.random() * lathe.totalLinks);
-  console.log("cutting at " + segmentToChange);
-  setRing (segmentToChange, 0.1);
+  test_cut();
+  
   
   // Clears color from the frame before rendering the camera (arView) or scene.
   renderer.clearColor();
