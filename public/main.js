@@ -348,27 +348,32 @@ function setRing (changedSegment, pressure) {
  * The render loop, called once per frame. Handles updating
  * our scene and rendering.
  */
-var _i = 0; 
-function test_cut() {
+
+function check_and_cut() {
   $.get("lathejs.glitch.me/is_cut", function (response) {
     if (response == true) {
       $.get("lathejs.glitch.me/get_cut", function (response) {
-        var segmentToChange = response.body.
-      
+        var newSegmentFactors = response.body;
+        for (var i = 0; i < newSegmentFactors.length; i++) {
+          if (newSegmentFactors[i] != segmentFactors[i]) {
+            setRing(i, newSegmentFactors[i]);
+          }
+        }
+      });
     }
-    
   });
-  var segmentToChange = _i++ % lathe.totalLinks;
-  console.log("cutting at " + segmentToChange);
-  setRing (segmentToChange, 0.1);
+  // var segmentToChange = _i++ % lathe.totalLinks;
+  // console.log("cutting at " + segmentToChange);
+  // setRing (segmentToChange, 0.1);
 }
 function update() {
   //rotate the lathe block. 
   lathe.rotation.x += _ROTATE_SPEED; 
   
   
-  //randomly cut the cylinder 
-  //test_cut();
+  //check if the lathe has been cut. 
+  //if yes, update it. 
+  check_and_cut();
   
   
   // Clears color from the frame before rendering the camera (arView) or scene.
@@ -449,8 +454,4 @@ function onClick () {
   lathe.position.y = pos.y;
   //lathe.quaternion.copy(ori);
   //TODO: update cylinder.ringOrigins by the new offset. 
-}
-
-module.exports.cut = function (data ) {
-  test_cut();
 }

@@ -31,7 +31,7 @@ app.post('/cut', function(request, response) {
 });
 
 app.get('/is_cut', function (request, response) {
-  return is_changed; 
+  response.status(500).send( is_changed ); 
 });
         
 app.get('/get_cut', function (request, response) {
