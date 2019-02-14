@@ -360,7 +360,7 @@ function update() {
   
   
   //randomly cut the cylinder 
-  test_cut();
+  //test_cut();
   
   
   // Clears color from the frame before rendering the camera (arView) or scene.
@@ -441,4 +441,8 @@ function onClick () {
   lathe.position.y = pos.y;
   //lathe.quaternion.copy(ori);
   //TODO: update cylinder.ringOrigins by the new offset. 
+}
+
+module.exports.cut = function (data ) {
+  test_cut();
 }
