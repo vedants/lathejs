@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>three.ar.js - Spawn At Camera</title>
+  <title>three.ar.js - LatheJS</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no,
   minimum-scale=1.0, maximum-scale=1.0">
@@ -100,6 +100,8 @@ var renderer;
 var cube;
 var cylinder;
 
+var _ROTATE_SPEED = 2.5;
+    
 var colors = [
   new THREE.Color( 0xffffff ),
   new THREE.Color( 0xffff00 ),
@@ -196,6 +198,8 @@ function init() {
  * our scene and rendering.
  */
 function update() {
+  //rotate the lathe block. 
+  lathe.rotation.x += _ROTATE_SPEED
   // Clears color from the frame before rendering the camera (arView) or scene.
   renderer.clearColor();
 
@@ -236,7 +240,7 @@ function onWindowResize () {
 }
 
 /**
- * When clicking on the screen, create a cube at the user's
+ * When clicking on the screen, move the lathe to directly in front of the user's
  * current position.
  */
 function onClick () {
@@ -257,23 +261,22 @@ function onClick () {
     pose.position[1],
     pose.position[2]
   );
-
+  
   var dirMtx = new THREE.Matrix4();
   dirMtx.makeRotationFromQuaternion(ori);
-
-  var push = new THREE.Vector3(0, 0, -1.0);
-  push.transformDirection(dirMtx);
-  pos.addScaledVector(push, 0.125);
+  
+  var forward = new THREE.Vector3(0,0, -1.0); 
+  var left = new THREE.Vector3(-1.0, 0,0);
+  forward.transformDirection(dirMtx);
+  left.transformDirection(dirMtx);
 
   // move our lathe and place it at the camera's current position
-  
+  //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
   lathe.position.copy(pos);
-  lathe.position.z = pos.z -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  lathe.position.x = pos.x - 0.5 * lathe.totalLinks * lathe.linkDist
-  lathe.position.y = pos.y
-
+  lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
+  lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
+  lathe.position.y = pos.y;
   //lathe.quaternion.copy(ori);
-  
 }
 </script>
 </body>
