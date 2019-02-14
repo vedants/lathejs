@@ -179,22 +179,25 @@ function init() {
   var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
   //cube = new THREE.Mesh(geometry, material);
   cube = make_lathe();
+  scene.add(cube);
+  cube.position.z = -0.5;
   
   
   //experimental lathe things 
   
-  var cylinderMaterial = new THREE.MeshNormalMaterial();//MaterialLibrary.stone;
-	cylinder = new Cylinder( cylinderMaterial, 1000);
+  var cylinderMaterial = material;//new THREE.MeshNormalMaterial();//MaterialLibrary.stone;
+	cylinder = new Cylinder( cylinderMaterial, 0.01);
   //cylinder.position.x = -100;
-  cylinder.rotation.y = 90 * TO_RADIANS;
+  //cylinder.rotation.y = 90 * TO_RADIANS;
 
   cylinder.build();
   
-  //cylinder.receiveShadow = true;
-  //cylinder.castShadow = false;
-  //cylinder.geometry.dynamic = true;
-  //cylinder.geometry.computeFaceNormals();
-  //cylinder.geometry.computeVertexNormals();
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = false;
+  cylinder.geometry.dynamic = true;
+  cylinder.geometry.computeFaceNormals();
+  cylinder.geometry.computeVertexNormals();
+  cylinder.position.z = -0.5;
   scene.add(cylinder);
 
 

@@ -18,7 +18,7 @@ Cylinder = function ( materials, radius ) {
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
-	this.radius = 0.25;
+	this.radius = 0.05;
 
 	var R;
 	var S;
