@@ -4,7 +4,7 @@
 // init project
 var express = require('express');
 var app = express();
-var lathejs = require('public/main.js');
+//var lathejs = require('./public/main.js');
 
 app.use(express.static('public'));
 
