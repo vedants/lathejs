@@ -313,6 +313,11 @@ function metalLoaded(obj) {
   obj.position.z = -0.5;
   scene.add(obj);
   
+  //set up all the long-poll listeners 
+  
+  poll_for_cut();
+  //poll_for_toolPos();
+  //poll_for_zoom();
   // (Finally) Kick off the render loop!
   update();
   
@@ -346,7 +351,7 @@ var poll_for_cut = function () {
        url: "http://lathejs.glitch.me/is_cut_poll",
        success: function(data){
            console.log(data); // { text: "Some data" } -> will be printed in your browser console every 5 seconds
-           check_and_cut(data);
+           check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
        error: function() {

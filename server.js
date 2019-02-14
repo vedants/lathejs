@@ -5,7 +5,8 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var longpoll = require('express-longpoll')(app);
+//var longpoll = require('express-longpoll')(app);
+var longpoll = require("express-longpoll")(app, { DEBUG: true });
 
 app.use(bodyParser.json());
 
@@ -31,8 +32,8 @@ app.post('/cut', function(request, response) {
     console.log("changing_is_changed");
     is_changed = true;
     segmentFactors[segmentNumber] = segmentPressure;  
-    longpoll.publish("/is_cut_poll", function () {
-      segmentFactors;
+    longpoll.publish("/is_cut_poll", {
+      segmentFactors
     });
     
   }
