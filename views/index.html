@@ -128,6 +128,11 @@ var colors = [
 
   var MaterialLibrary = {};
 
+  var cuttingList = [];
+	var cuttingPool = new ObjectPool();
+  var chipsGeometry;
+	var metalGeometry;
+  var activeMaterialType = "metal"; //initial material is metal 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
@@ -189,12 +194,12 @@ function init() {
 }
   
 function onShadersLoaded() {
+  
   //chipsPool.createObject = createChips
-  //cuttingPool.createObject = createCutting
+  cuttingPool.createObject = createCutting
   //dustPool.createObject = createDust
 
   //initSounds();
-  //initEngine();
   initLights();
   initObjects();
   //initMenu();
@@ -206,6 +211,77 @@ function onShadersLoaded() {
   // Kick off the render loop!
   update();
 }
+  
+function createCutting() {
+  var cutting = new THREE.Mesh( metalGeometry, MaterialLibrary.metal );
+  cutting.receiveShadow = false;
+  cutting.doubleSided = false;
+  cutting.castShadow = true;
+
+  cutting.geometry.computeFaceNormals();
+
+  return cutting;
+}
+  
+var spawnDelay = 0;
+function spawnCutting(spawnX) {
+
+    spawnDelay++;
+
+    if( spawnDelay < 15 ) {
+        return;
+    }
+
+    spawnDelay = 0;
+
+    var cuttingMesh = cuttingPool.getObject();
+    cuttingList.push(cuttingMesh);
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
+    
+    //TODO: initialize scales to zero, and grow cuttings over time. 
+    cuttingMesh.scale.x = 0.4//+ Math.random()*1;
+    cuttingMesh.scale.y = 0.4//+ Math.random()*1;
+    cuttingMesh.scale.z = 0.4
+
+    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.5,Math.random()*0.0,Math.random()*0.0);
+    cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
+
+
+    scene.add(cuttingMesh);
+}
+  
+function updateCuttings() {
+
+  var i = 0; 
+  var max = cuttingList.length; //number of cuttings 
+  var cutting;
+
+  for( i = max-1; i>= 0; i--) {
+      cutting = cuttingList[i];
+
+      cutting.rotation.addSelf(cutting.rotationVelocity);
+
+      // if(cutting.scale.z < 3 && intersectionPoint) {
+      //     cutting.scale.x = cutting.scale.y = cutting.scale.z += .2
+      //     cutting.position = intersectionPoint.clone()
+      //     cutting.position.z += 20
+      // }
+      // else {
+          cutting.velocity.y -= 1;
+          cutting.position.addSelf(cutting.velocity);
+      //}
+
+
+      if( cutting.position.y < -4 ) { // 4 meters below initialization point
+          scene.remove(cutting);
+          cuttingPool.returnObject(cutting.poolId);
+          cuttingList.splice(i,1);
+      }
+  }
+}
+
+  
+
   
 function initLights() {
   var dirLight = new THREE.DirectionalLight();
@@ -306,7 +382,7 @@ function initObjects() {
   lathe = new Lathe();  
   lathe.build();
 
-  //lathe.material = MaterialLibrary.metal;
+  //lathe.material = MaterialLibrary[activeMaterialType];
   lathe.material = new THREE.MeshNormalMaterial ();
   lathe.material.side = THREE.DoubleSide; //double sided.
   lathe.receiveShadow = true;
