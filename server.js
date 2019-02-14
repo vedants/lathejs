@@ -28,17 +28,16 @@ app.post('/cut', function(request, response) {
   var segmentPressure = request.body['segmentPressure'];
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
     console.log("changing_is_changed");
-     is_changed = true;
-    longpoll.publish("/is_cut_poll", function () {
-      segmentFactors;
-    });
-      segmentFactors[segmentNumber] = segmentPressure;  
+    is_changed = true;
+    segmentFactors[segmentNumber] = segmentPressure;  
+    longpoll.publish("/is_cut_poll", function () {segmentFactors;});
+    
   }
   response.send("okay");
    
 });
 
-longpoll.creat("/is_cut_poll");
+longpoll.create("/is_cut_poll");
 
 // app.get('/is_cut', function (request, response) {
 //   response.status(200).send(is_changed ); 
