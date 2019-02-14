@@ -188,11 +188,12 @@ function init() {
 
   cylinder.build();
   
-  cylinder.receiveShadow = true;
-  cylinder.castShadow = false;
-  cylinder.geometry.dynamic = true;
-  cylinder.geometry.computeFaceNormals();
-  cylinder.geometry.computeVertexNormals();
+  //cylinder.receiveShadow = true;
+  //cylinder.castShadow = false;
+  //cylinder.geometry.dynamic = true;
+  //cylinder.geometry.computeFaceNormals();
+  //cylinder.geometry.computeVertexNormals();
+  scene.add(cylinder);
 
 
   // Bind our event handlers
@@ -280,14 +281,14 @@ function onClick () {
   // Clone our cube object and place it at the camera's
   // current position
   var cube_clone = cube.clone();
-  var cylinder_clone = cylinder;//.clone();
-  cylinder_clone.build();
-  //scene.add(cube_clone);
-  scene.add(cylinder_clone);
-  //cube_clone.position.copy(pos);
-  //cube_clone.quaternion.copy(ori);
-  cylinder_clone.position.copy(pos);
-  cylinder_clone.quaternion.copy(ori);
+  //var cylinder_clone = cylinder;//.clone();
+  //cylinder_clone.build();
+  scene.add(cube_clone);
+  //scene.add(cylinder_clone);
+  cube_clone.position.copy(pos);
+  cube_clone.quaternion.copy(ori);
+  //cylinder_clone.position.copy(pos);
+  //cylinder_clone.quaternion.copy(ori);
 }
 </script>
 </body>

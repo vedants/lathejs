@@ -94,8 +94,7 @@ Cylinder = function ( materials, radius ) {
 		this.geometry.computeVertexNormals(); 
 		this.geometry.computeBoundingSphere();
 		this.geometry.computeBoundingBox();
-		console.log("boundingBox");
-		console.log(this.geometry);
+		
 
 	}
 	
@@ -130,7 +129,7 @@ Cylinder = function ( materials, radius ) {
 			pY = basePoint.y + transformedRadius * Math.cos(intSegmentStep * this.segmentAngle) * R.y + transformedRadius * Math.sin(intSegmentStep * this.segmentAngle) * S.y;
 			pZ = basePoint.z + transformedRadius * Math.cos(intSegmentStep * this.segmentAngle) * R.z + transformedRadius * Math.sin(intSegmentStep * this.segmentAngle) * S.z;
 
-            newVertex3D = new THREE.Vector3(pX, pY, pZ);
+      newVertex3D = new THREE.Vector3(pX, pY, pZ);
 
 			vertices.push(newVertex3D);
 
