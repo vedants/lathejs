@@ -350,6 +350,14 @@ function setRing (changedSegment, pressure) {
  */
 var _i = 0; 
 function test_cut() {
+  $.get("lathejs.glitch.me/is_cut", function (response) {
+    if (response == true) {
+      $.get("lathejs.glitch.me/get_cut", function (response) {
+        var segmentToChange = response.body.
+      
+    }
+    
+  });
   var segmentToChange = _i++ % lathe.totalLinks;
   console.log("cutting at " + segmentToChange);
   setRing (segmentToChange, 0.1);

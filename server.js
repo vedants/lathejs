@@ -28,7 +28,6 @@ app.post('/cut', function(request, response) {
      is_changed = true;
   }
    
-  
 });
 
 app.get('/is_cut', function (request, response) {
