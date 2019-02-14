@@ -26,12 +26,13 @@ app.post('/cut', function(request, response) {
   var segmentPressure = request.body['segmentPressure'];
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
      is_changed = true;
+    response.send("okay");
   }
    
 });
 
 app.get('/is_cut', function (request, response) {
-  response.status(500).send( is_changed ); 
+  response.status(200).send(is_changed ); 
 });
         
 app.get('/get_cut', function (request, response) {

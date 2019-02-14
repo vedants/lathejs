@@ -350,9 +350,12 @@ function setRing (changedSegment, pressure) {
  */
 
 function check_and_cut() {
-  $.get("lathejs.glitch.me/is_cut", function (response) {
+  console.log("called");
+  $.get("http://lathejs.glitch.me/is_cut", function (response) {
+    console.log("Response:"); 
+    console.log(response);
     if (response == true) {
-      $.get("lathejs.glitch.me/get_cut", function (response) {
+      $.get("http://lathejs.glitch.me/get_cut", function (response) {
         var newSegmentFactors = response.body;
         for (var i = 0; i < newSegmentFactors.length; i++) {
           if (newSegmentFactors[i] != segmentFactors[i]) {
