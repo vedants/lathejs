@@ -1,4 +1,4 @@
-#define MAX_DIR_LIGHTS 3
+#define MAX_DIR_LIGHTS 0
 
 vec4 permute( vec4 x ) {
 

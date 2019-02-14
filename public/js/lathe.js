@@ -5,7 +5,7 @@
 
 var PI2 = Math.PI * 2
 var TO_RADIANS = Math.PI / 180;
-var _branchSegments = 24; //number of sides on perimeter of each "ring" (approximation factor)
+var _branchSegments = 12; //number of sides on perimeter of each "ring" (approximation factor)
 
 Lathe = function ( materials, radius ) {
 	
@@ -13,7 +13,7 @@ Lathe = function ( materials, radius ) {
 
 	var numCurrentPos = 0;
 	
-	//this.doubleSided = true;
+	this.doubleSided = true;
 	
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();

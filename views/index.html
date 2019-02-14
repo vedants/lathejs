@@ -210,33 +210,33 @@ function onShadersLoaded() {
 function initLights() {
   var dirLight = new THREE.DirectionalLight();
   dirLight.intensity = 0.8
-  dirLight.position.x = camera.position.x+400;
-  dirLight.position.y = camera.position.y+200;
-  dirLight.position.z = camera.position.z-400
+  dirLight.position.x = camera.position.x+4;
+  dirLight.position.y = camera.position.y+2;
+  dirLight.position.z = camera.position.z-4
 
   dirLight.lookAt(scene.position)
 
-  dirLight.shadow.camera.left = -900;
-  dirLight.shadow.camera.right = 700;
-  dirLight.shadow.camera.top = 450;
-  dirLight.shadowCameraBottom = -480;
+  dirLight.shadow.camera.left = -9;
+  dirLight.shadow.camera.right = 7;
+  dirLight.shadow.camera.top = 4.50;
+  dirLight.shadow.camera.bottom = -4.80;
   dirLight.castShadow = true;
   scene.add( dirLight)
 
 
   var dirLight = new THREE.DirectionalLight();
   dirLight.intensity = 0.3
-  dirLight.position.x = camera.position.x-400;
-  dirLight.position.y = camera.position.y+2400;
-  dirLight.position.z = camera.position.z-1200
+  dirLight.position.x = camera.position.x-4;
+  dirLight.position.y = camera.position.y+24;
+  dirLight.position.z = camera.position.z-12
   dirLight.lookAt(scene.position)
   scene.add( dirLight)
 
   var dirLight = new THREE.DirectionalLight();
   dirLight.intensity = 0.3
-  dirLight.position.x = camera.position.x-400;
-  dirLight.position.y = camera.position.y-2400;
-  dirLight.position.z = camera.position.z-200
+  dirLight.position.x = camera.position.x-4;
+  dirLight.position.y = camera.position.y-24;
+  dirLight.position.z = camera.position.z-2;
   dirLight.lookAt(scene.position)
   scene.add( dirLight)
 }
@@ -269,7 +269,6 @@ function initObjects() {
   }
 
   MaterialLibrary.wood = new THREE.ShaderMaterial(params);
-  MaterialLibrary.woodMenu = new THREE.ShaderMaterial(params);
 
   var metalUniforms = {
       DiffuseColour1: { type: "c", value: new THREE.Color(0xeeeeee) },
@@ -285,7 +284,6 @@ function initObjects() {
   }
 
   MaterialLibrary.metal = new THREE.ShaderMaterial(params);
-  MaterialLibrary.metalMenu = new THREE.ShaderMaterial(params);
 
   var stoneUniforms = {
       DiffuseColour1: { type: "c", value: new THREE.Color(0x999999) },
@@ -302,15 +300,14 @@ function initObjects() {
   }
 
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
-  MaterialLibrary.stoneMenu = new THREE.ShaderMaterial(params);
-
 
 
   //set up lathe 
   lathe = new Lathe();  
   lathe.build();
 
-  lathe.material = MaterialLibrary.wood;//new THREE.MeshNormalMaterial ();
+  //lathe.material = MaterialLibrary.stone;
+  lathe.material = new THREE.MeshNormalMaterial ();
   lathe.receiveShadow = true;
   lathe.castShadow = false;
   lathe.geometry.dynamic = true;
