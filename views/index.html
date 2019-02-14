@@ -78,16 +78,8 @@
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
   
-<!--  Load Lathe Scripts -->
-  <script src = "/js/jquery-1.7.1.min.js"></script>
-  <script src = "/js/signals.js"></script>
-  <script src = "/js/Cylinder.js"></script>
-  <script src = "/js/Detector.js"></script>
-  <script src = "/js/sounds.js"></script>
-  <script src = "/js/lathe.js"></script>
-  <script src = "/js/Library.js"></script>
-
-  <!-- Load Lathe Shaders   -->  
+  
+<!-- Load Lathe Shaders   -->  
   <script data-src="/shaders/wood_vertex.js?cache=2" data-name="Wood" type="x-shader/x-vertex"></script>
   <script data-src="/shaders/wood_fragment.js?cache=2" data-name="Wood" type="x-shader/x-fragment"></script>
 
@@ -96,6 +88,15 @@
 
   <script data-src="/shaders/stone_vertex.js?cache=2" data-name="Stone" type="x-shader/x-vertex"></script>
   <script data-src="/shaders/stone_fragment.js?cache=2" data-name="Stone" type="x-shader/x-fragment"></script>
+  
+<!--  Load Lathe Scripts -->
+  <script src = "/js/jquery-1.7.1.min.js"></script>
+  <script src = "/js/signals.js"></script>
+  <script src = "/js/Cylinder.js"></script>
+  <script src = "/js/Detector.js"></script>
+  <script src = "/js/sounds.js"></script>
+  <script src = "/js/lathe.js"></script>
+  <script src = "/js/Library.js"></script>
   
   
 <script>
@@ -124,6 +125,8 @@ var colors = [
   new THREE.Color( 0x0000ff ),
   new THREE.Color( 0x000000 )
 ];
+
+  var MaterialLibrary = {};
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
