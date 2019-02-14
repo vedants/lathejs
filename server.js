@@ -4,16 +4,21 @@
 // init project
 var express = require('express');
 var app = express();
-//var lathejs = require('./public/main.js');
+
+var is_changed = false;
+var segmentFactors = [];
+var _totalLinks = 100;
+for (var i = 0; i < _totalLinks; i++) {
+    segmentFactors.push(1); 
+}
 
 app.use(express.static('public'));
 
-// http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function(request, response) {
-  response.sendFile(__dirname + '/views/index.html');
+  response.sendFile(__dirname + '/views/index.html'); //TODO: pass _totalLinks in here somehow...
 });
 
-app.get('/cut', function(request, response) {
+app.post('/cut', function(request, response) {
   lathejs.cut();
 });
 
