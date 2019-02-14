@@ -22,7 +22,27 @@ app.get('/', function(request, response) {
 
 app.post('/cut', function(request, response) {
   console.log(request.body);
+  var segmentNumber = request.body['segmentNumber'];
+  var segmentPressure = request.body['segmentPressure'];
+  if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
+     is_changed = true;
+  }
+   
+  
 });
+
+app.get('/is_cut', function (request, response) {
+  return is_changed; 
+});
+        
+app.get('/get_cut', function (request, response) {
+  if (!is_changed) {
+    return null;
+  }
+  is_changed = false;
+  response.send(segmentFactors);
+});
+  
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
