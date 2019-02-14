@@ -134,6 +134,9 @@ var colors = [
   var chipsGeometry;
 	var metalGeometry;
   var activeMaterialType = "metal"; //initial material is metal 
+  
+  var segmentFactors; //stores how much all the segments in the lathe have been "cut" by. 
+  var lastChangedSegments; //stores which segment in the cylinder was changed last. 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
@@ -395,6 +398,13 @@ function initObjects() {
   
   scene.add(lathe);
   
+  //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
+  for (var i = 0; i > lathe.totalLinks; i++) {
+    segmentFactors.push(1); 
+  }
+  
+  
+  
   loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
@@ -409,6 +419,25 @@ function metalLoaded(obj) {
   
   // (Finally) Kick off the render loop!
   update();
+  
+}
+  
+  /**
+  Removes pressure % of the material from the segment of the lathe at position changedSegment.
+  */ 
+function setRing (changedSegment, pressure) {
+  var currFactor = segmentFactors[changedSegment];
+  if (currFactor < pressure) return; //cutting it would set it to negative scaling! 
+  
+  pressure *= currFactor; 
+  
+  var newFactor = currFactor - pressure;
+  
+  if (newValue < 0.2) newValue = 0.2; //never let the cylinder be less than 20% of the original thickness. 
+  
+  for (j = 0; j < _branchSegments; j++) {
+    lathe.ring[changedSegments][j].position.x = cylinder.ringOrigin
+  }
   
 }
 
@@ -496,6 +525,7 @@ function onClick () {
   lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
   lathe.position.y = pos.y;
   //lathe.quaternion.copy(ori);
+  //TODO: update cylinder.ringOrigins by the new offset. 
 }
 </script>
 </body>
