@@ -4,7 +4,9 @@
 // init project
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 
+app.use(bodyParser.json());
 var is_changed = false;
 var segmentFactors = [];
 var _totalLinks = 100;
@@ -19,7 +21,7 @@ app.get('/', function(request, response) {
 });
 
 app.post('/cut', function(request, response) {
-  lathejs.cut();
+  console.log(request.body);
 });
 
 // listen for requests :)
