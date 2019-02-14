@@ -400,9 +400,11 @@ function initObjects() {
 }
 
 function metalLoaded(obj) {
+  //TODO: This function doesn't seem to be working! Double check that the obj is being generated/loaded correctly. 
   metalGeometry = obj.geometry; 
-  metalGeometry.boundingSphere = true //TODO: ????
+  metalGeometry.computeBoundingSphere();
   console.log(metalGeometry);
+  obj.position.z = -0.5;
   scene.add(obj);
   
   // (Finally) Kick off the render loop!
