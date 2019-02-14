@@ -308,6 +308,7 @@ function initObjects() {
 
   //lathe.material = MaterialLibrary.stone;
   lathe.material = new THREE.MeshNormalMaterial ();
+  lathe.material.side = THREE.DoubleSide; //double sided.
   lathe.receiveShadow = true;
   lathe.castShadow = false;
   lathe.geometry.dynamic = true;
