@@ -179,13 +179,32 @@ function init() {
   // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
   
-  
-  
-  //init Shaders 
-  LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
-  initShaderLoading();
 
-  // Create the lathe
+  //init shaders
+  LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
+  initShaderLoading(); //function is in Library.js
+}
+  
+function onShadersLoaded() {
+  //chipsPool.createObject = createChips
+  //cuttingPool.createObject = createCutting
+  //dustPool.createObject = createDust
+
+  //initSounds();
+  //initEngine();
+  initObjects();
+  //initMenu();
+
+		// Bind our event handlers
+  window.addEventListener('resize', onWindowResize, false);
+  canvas.addEventListener('touchstart', onClick, false);
+
+  // Kick off the render loop!
+  update();
+}
+  
+function initObjects() {
+
   lathe = new Lathe();  
   lathe.build();
 
@@ -198,17 +217,9 @@ function init() {
   
   lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
   lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist
-  lathe.rotation.y = 90*TO_RADIANS; //
-
+  lathe.rotation.y = 90 * TO_RADIANS; 
+  
   scene.add(lathe);
-
-
-  // Bind our event handlers
-  window.addEventListener('resize', onWindowResize, false);
-  canvas.addEventListener('touchstart', onClick, false);
-
-  // Kick off the render loop!
-  update();
 }
 
 /**
