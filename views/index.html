@@ -165,42 +165,22 @@ function init() {
   // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
 
-  // Create the cube geometry that we'll copy and place in the
-  // scene when the user clicks the screen
-  var geometry = new THREE.BoxGeometry( 0.05, 0.05, 0.05 );
-  var faceIndices = ['a', 'b', 'c'];
-  for (var i = 0; i < geometry.faces.length; i++) {
-    var f  = geometry.faces[i];
-    for (var j = 0; j < 3; j++) {
-      var vertexIndex = f[faceIndices[ j ]];
-      f.vertexColors[j] = colors[vertexIndex];
-    }
-  }
-  var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
-  //cube = new THREE.Mesh(geometry, material);
-  cube = new Lathe();
-  cube.material = new THREE.MeshNormalMaterial ();
-  cube.build();
-  scene.add(cube);
-  cube.position.z = -0.5;
-  
-  
-  //experimental lathe things 
-  
-  var cylinderMaterial = material;//new THREE.MeshNormalMaterial();//MaterialLibrary.stone;
-	cylinder = new Cylinder( cylinderMaterial, 0.01);
-  //cylinder.position.x = -100;
-  //cylinder.rotation.y = 90 * TO_RADIANS;
+  // Create the lathe
+  lathe = new Lathe();  
+  lathe.build();
 
-  cylinder.build();
+  lathe.material = new THREE.MeshNormalMaterial ();
+  lathe.receiveShadow = true;
+  lathe.castShadow = false;
+  lathe.geometry.dynamic = true;
+  lathe.geometry.computeFaceNormals();
+  lathe.geometry.computeVertexNormals();
   
-  cylinder.receiveShadow = true;
-  cylinder.castShadow = false;
-  cylinder.geometry.dynamic = true;
-  cylinder.geometry.computeFaceNormals();
-  cylinder.geometry.computeVertexNormals();
-  cylinder.position.z = -0.5;
-  scene.add(cylinder);
+  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist
+  lathe.rotation.y = 90*TO_RADIANS; //
+
+  scene.add(lathe);
 
 
   // Bind our event handlers
@@ -285,17 +265,15 @@ function onClick () {
   push.transformDirection(dirMtx);
   pos.addScaledVector(push, 0.125);
 
-  // Clone our cube object and place it at the camera's
-  // current position
-  var cube_clone = cube.clone();
-  //var cylinder_clone = cylinder;//.clone();
-  //cylinder_clone.build();
-  scene.add(cube_clone);
-  //scene.add(cylinder_clone);
-  cube_clone.position.copy(pos);
-  cube_clone.quaternion.copy(ori);
-  //cylinder_clone.position.copy(pos);
-  //cylinder_clone.quaternion.copy(ori);
+  // move our lathe and place it at the camera's current position
+  
+  lathe.position.copy(pos);
+  lathe.position.z = pos.z -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+  lathe.position.x = pos.x - 0.5 * lathe.totalLinks * lathe.linkDist
+  lathe.position.y = pos.y
+
+  //lathe.quaternion.copy(ori);
+  
 }
 </script>
 </body>

@@ -33,7 +33,7 @@ Lathe = function ( materials, radius ) {
 	
   //total length = totalLinks * linkDist = 300 * 0.002 = 0.6m ~= 2ft long
 	this.totalLinks = 100; //number of ring segments along the length of the cylinder
-	this.linkDist = 0.02; //width of each ring segment
+	this.linkDist = 0.005; //width of each ring segment
 	this.segmentAngle = Math.PI * 2 / _branchSegments; //angle between lines on the perimeter of each ring.
 	this.ring = new Array(this.totalLinks);
 	this.ringOrigin = new Array(this.totalLinks);
