@@ -5,8 +5,10 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
+var longpoll = require('express-longpoll')(app);
 
 app.use(bodyParser.json());
+
 var is_changed = false;
 var segmentFactors = [];
 var _totalLinks = 100;
@@ -27,15 +29,20 @@ app.post('/cut', function(request, response) {
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
     console.log("changing_is_changed");
      is_changed = true;
+    longpoll.publish("/is_cut_poll", function () {
+      segmentFactors;
+    });
       segmentFactors[segmentNumber] = segmentPressure;  
   }
   response.send("okay");
    
 });
 
-app.get('/is_cut', function (request, response) {
-  response.status(200).send(is_changed ); 
-});
+longpoll.creat("/is_cut_poll");
+
+// app.get('/is_cut', function (request, response) {
+//   response.status(200).send(is_changed ); 
+// });
         
 app.get('/get_cut', function (request, response) {
   if (!is_changed) {

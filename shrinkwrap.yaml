@@ -1,6 +1,7 @@
 dependencies:
   body-parser: 1.18.3
   express: 4.16.3
+  express-longpoll: 0.0.4
 packages:
   /accepts/1.3.5:
     dependencies:
@@ -15,6 +16,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-ml9pkFGx5wczKPKgCJaLZOopVdI=
+  /bluebird/3.5.3:
+    dev: false
+    resolution:
+      integrity: sha512-/qKPUQlaW1OyR51WeCPBvRnAlnZFUJkCSG5HzGnuIqhgyJtF+T94lFnn33eiazjRm2LAHVy2guNnaq48X9SJuw==
   /body-parser/1.18.2:
     dependencies:
       bytes: 3.0.0
@@ -119,6 +124,18 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
+  /eventemitter2/3.0.0:
+    dev: false
+    resolution:
+      integrity: sha1-/saboLHN4nobsL1S31Sf1vZbD0U=
+  /express-longpoll/0.0.4:
+    dependencies:
+      bluebird: 3.5.3
+      eventemitter2: 3.0.0
+      lodash: 4.17.4
+    dev: false
+    resolution:
+      integrity: sha1-M95uPnvEPB2r1Tp0/yTE01PmOJs=
   /express/4.16.3:
     dependencies:
       accepts: 1.3.5
@@ -228,6 +245,10 @@ packages:
       node: '>= 0.10'
     resolution:
       integrity: sha1-4/o1e3c9phnybpXwSdBVxyeW+Gs=
+  /lodash/4.17.4:
+    dev: false
+    resolution:
+      integrity: sha1-eCA6TRwyiuHYbcpkYONptX9AVa4=
   /media-typer/0.3.0:
     dev: false
     engines:
@@ -446,3 +467,4 @@ shrinkwrapVersion: 3
 specifiers:
   body-parser: ^1.18.3
   express: ^4.16.3
+  express-longpoll: ^0.0.4
