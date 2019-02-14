@@ -16,6 +16,7 @@ var _totalLinks = 100;
 
 function reset() {
   is_changed = false;
+  segmentFactors = [];
   for (var i = 0; i < _totalLinks; i++) {
     segmentFactors.push(1); 
   }  

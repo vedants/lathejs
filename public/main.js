@@ -379,11 +379,6 @@ function update() {
   //rotate the lathe block. 
   lathe.rotation.x += _ROTATE_SPEED; 
   
-  //check if the lathe has been cut. 
-  //if yes, update it. 
-  //check_and_cut();
-  
-  
   // Clears color from the frame before rendering the camera (arView) or scene.
   renderer.clearColor();
 
