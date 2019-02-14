@@ -14,6 +14,7 @@ var segmentFactors = [];
 var _totalLinks = 100;
 for (var i = 0; i < _totalLinks; i++) {
     segmentFactors.push(1); 
+  
 }
 
 app.use(express.static('public'));
