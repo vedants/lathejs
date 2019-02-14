@@ -18,7 +18,7 @@ Lathe = function ( materials, radius ) {
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
-	this.radius = 0.05;
+	this.radius = 0.1; // ~= 4inches  
 
 	var R;
 	var S;
@@ -31,8 +31,9 @@ Lathe = function ( materials, radius ) {
 	//Each UV layer is an array of UVs matching the order and number of vertices in faces 
 	var faceVertexUvs = this.geometry.faceVertexUvs
 	
-	this.totalLinks = 300; //number of ring segments along the length of the cylinder
-	this.linkDist = 0.045; //width of each ring segment
+  //total length = totalLinks * linkDist = 300 * 0.002 = 0.6m ~= 2ft long
+	this.totalLinks = 100; //number of ring segments along the length of the cylinder
+	this.linkDist = 0.02; //width of each ring segment
 	this.segmentAngle = Math.PI * 2 / _branchSegments; //angle between lines on the perimeter of each ring.
 	this.ring = new Array(this.totalLinks);
 	this.ringOrigin = new Array(this.totalLinks);
@@ -40,7 +41,6 @@ Lathe = function ( materials, radius ) {
 	
 	
 	this.build = function() {
-	
 		//reset
 		var segmentsEachTime = 0;
 		//for each step
@@ -82,15 +82,14 @@ Lathe = function ( materials, radius ) {
 		}
 		
 		//computerCentroids was deprecated in the newer version of THREE.js 
-		//I believe the centroids aren't used for much beyond lighting. 
+		//I believe the centroids aren't used for much beyond lighting?
 		
 		//this.geometry.computeCentroids()
+    
 		this.geometry.computeFaceNormals();
 		this.geometry.computeVertexNormals(); 
 		this.geometry.computeBoundingSphere();
 		this.geometry.computeBoundingBox();
-		
-
 	}
 	
 	this.buildNode = function() {
@@ -118,7 +117,7 @@ Lathe = function ( materials, radius ) {
 			//root node
 			transformedRadius = this.radius;
 						
-			if( transformedRadius < 1) transformedRadius = 1 //never allow radius to be less than 1 
+			if( transformedRadius < 0.001) transformedRadius = 0.001 //never allow radius to be less than 0.03937 inches
 			
 			pX = basePoint.x + transformedRadius * Math.cos(intSegmentStep * this.segmentAngle) * R.x + transformedRadius * Math.sin(intSegmentStep * this.segmentAngle) * S.x;
 			pY = basePoint.y + transformedRadius * Math.cos(intSegmentStep * this.segmentAngle) * R.y + transformedRadius * Math.sin(intSegmentStep * this.segmentAngle) * S.y;

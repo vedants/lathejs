@@ -179,6 +179,7 @@ function init() {
   var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
   //cube = new THREE.Mesh(geometry, material);
   cube = new Lathe();
+  cube.build();
   scene.add(cube);
   cube.position.z = -0.5;
   
