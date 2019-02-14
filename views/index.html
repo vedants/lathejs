@@ -395,13 +395,15 @@ function initObjects() {
   
   scene.add(lathe);
   
-  loader = new THREE.JSONLoader( true ); //used to be a BinaryLoader, but that's deprecated now
-  loader.load("/models/metal.js", function(geo) { metalLoaded( geo ) });
+  loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
+  loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
 
-function metalLoaded(geo) {
-  metalGeometry = geo; 
+function metalLoaded(obj) {
+  metalGeometry = obj.geometry; 
   metalGeometry.boundingSphere = true //TODO: ????
+  console.log(metalGeometry);
+  scene.add(obj);
   
   // (Finally) Kick off the render loop!
   update();
