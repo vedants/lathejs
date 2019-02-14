@@ -94,6 +94,7 @@
   <script src = "/js/signals.js"></script>
   <script src = "/js/Cylinder.js"></script>
   <script src = "/js/Detector.js"></script>
+  <script src = "/js/ObjectPool.js"></script>
   <script src = "/js/sounds.js"></script>
   <script src = "/js/lathe.js"></script>
   <script src = "/js/Library.js"></script>
@@ -207,9 +208,6 @@ function onShadersLoaded() {
 		// Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
   canvas.addEventListener('touchstart', onClick, false);
-
-  // Kick off the render loop!
-  update();
 }
   
 function createCutting() {
@@ -397,6 +395,16 @@ function initObjects() {
   
   scene.add(lathe);
   
+  loader = new THREE.JSONLoader( true ); //used to be a BinaryLoader, but that's deprecated now
+  loader.load("/models/metal.js", function(geo) { metalLoaded( geo ) });
+}
+
+function metalLoaded(geo) {
+  metalGeometry = geo; 
+  metalGeometry.boundingSphere = true //TODO: ????
+  
+  // (Finally) Kick off the render loop!
+  update();
   
 }
 
