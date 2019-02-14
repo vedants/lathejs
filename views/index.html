@@ -62,6 +62,7 @@
       left: 0;
     }
   </style>
+  
 </head>
 <body>
 <div id="info">
@@ -72,19 +73,30 @@
   </span>
 </div>
   
+<!-- Load THREE.AR.JS Scripts   -->
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
-
-  <script src = "/js/Cylinder.js"></script>
-  <script src = "/js/Detector.js"></script>
-  <script src = "/js/Library.js"></script>
-<!--   <script src = "/js/Three.js"></script> -->
-  <script src = "/js/Tween.js"></script>
+  
+<!--  Load Lathe Scripts -->
   <script src = "/js/jquery-1.7.1.min.js"></script>
   <script src = "/js/signals.js"></script>
+  <script src = "/js/Cylinder.js"></script>
+  <script src = "/js/Detector.js"></script>
   <script src = "/js/sounds.js"></script>
   <script src = "/js/lathe.js"></script>
+  <script src = "/js/Library.js"></script>
+
+  <!-- Load Lathe Shaders   -->  
+  <script data-src="/shaders/wood_vertex.js?cache=2" data-name="Wood" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/wood_fragment.js?cache=2" data-name="Wood" type="x-shader/x-fragment"></script>
+
+  <script data-src="/shaders/metal_vertex.js?cache=2" data-name="Metal" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/metal_fragment.js?cache=2" data-name="Metal" type="x-shader/x-fragment"></script>
+
+  <script data-src="/shaders/stone_vertex.js?cache=2" data-name="Stone" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/stone_fragment.js?cache=2" data-name="Stone" type="x-shader/x-fragment"></script>
+  
   
 <script>
 
@@ -166,6 +178,12 @@ function init() {
   // orientation/position to the perspective camera, keeping our
   // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
+  
+  
+  
+  //init Shaders 
+  LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
+  initShaderLoading();
 
   // Create the lathe
   lathe = new Lathe();  
