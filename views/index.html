@@ -204,7 +204,71 @@ function onShadersLoaded() {
 }
   
 function initObjects() {
+  
+  //set up materials 
+  dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
+
+  var woodUniforms = {
+      DiffuseColour1: { type: "c", value: new THREE.Color(0xdbc6a9) },
+      DiffuseColour2: { type: "c", value: new THREE.Color(0xc4ae87) },
+      GrainCentre: { type: "v3", value: new THREE.Vector3(10,5,100) },
+      GrainMult: { type: "f", value: 10 }
+  };
+
+  var finalWoodUniform = THREE.UniformsUtils.merge( [THREE.ShaderLib["phong"].uniforms, woodUniforms] );
+
+  var tex = new THREE.TextureLoader().load("/textures/treebark.jpg");
+  tex.mapping = THREE.UVMapping;
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  finalWoodUniform.map.texture = tex;
+
+  var params = {
+      uniforms:  finalWoodUniform,
+      vertexShader:   LIBRARY.Shaders.Wood.vertex,
+      fragmentShader: LIBRARY.Shaders.Wood.fragment,
+      lights: true
+  }
+
+  MaterialLibrary.wood = new THREE.ShaderMaterial(params);
+  MaterialLibrary.woodMenu = new THREE.ShaderMaterial(params);
+
+  var metalUniforms = {
+      DiffuseColour1: { type: "c", value: new THREE.Color(0xeeeeee) },
+      DiffuseColour2: { type: "c", value: new THREE.Color(0x777777 ) }
+  };
+
+  var finalMetalUniform = THREE.UniformsUtils.merge( [THREE.ShaderLib["phong"].uniforms, metalUniforms] );
+  params = {
+      uniforms:  finalMetalUniform,
+      vertexShader:   LIBRARY.Shaders.Metal.vertex,
+      fragmentShader: LIBRARY.Shaders.Metal.fragment,
+      lights: true
+  }
+
+  MaterialLibrary.metal = new THREE.ShaderMaterial(params);
+  MaterialLibrary.metalMenu = new THREE.ShaderMaterial(params);
+
+  var stoneUniforms = {
+      DiffuseColour1: { type: "c", value: new THREE.Color(0x999999) },
+      DiffuseColour2: { type: "c", value: new THREE.Color(0x222222) }
+  };
+
+  var finalStoneUniform = THREE.UniformsUtils.merge( [THREE.ShaderLib["phong"].uniforms, stoneUniforms] );
+
+  params = {
+      uniforms:  finalStoneUniform,
+      vertexShader:   LIBRARY.Shaders.Stone.vertex,
+      fragmentShader: LIBRARY.Shaders.Stone.fragment,
+      lights: true
+  }
+
+  MaterialLibrary.stone = new THREE.ShaderMaterial(params);
+  MaterialLibrary.stoneMenu = new THREE.ShaderMaterial(params);
+
+
+
+  //set up lathe 
   lathe = new Lathe();  
   lathe.build();
 
