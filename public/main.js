@@ -338,10 +338,31 @@ function setRing (changedSegment, pressure) {
     //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
     //is there someway to make sure it always is? 
     segmentFactors[changedSegment] = newFactor;
-    
-    lathe.geometry.verticesNeedUpdate = true;//TODO: put this somewhere more computationally efficient.
-
   }
+}
+
+var poll_for_cut = function () {
+    $.ajax({
+       url: "http://lathejs.glitch.me/is_cut_poll",
+       success: function(data){
+           console.log(data); // { text: "Some data" } -> will be printed in your browser console every 5 seconds
+           check_and_cut(data);
+           poll_for_cut();
+       },
+       error: function() {
+           poll_for_cut();
+       },
+       timeout: 30000 // 30 seconds
+    });
+};
+
+function check_and_cut(newSegmentFactors) {
+  for (var i = 0; i < newSegmentFactors.length; i++) {
+    if (newSegmentFactors[i] != segmentFactors[i]) {
+      setRing(i, newSegmentFactors[i]);
+      }
+    }
+  lathe.geometry.verticesNeedUpdate = true;
 }
 
 /**
@@ -349,32 +370,13 @@ function setRing (changedSegment, pressure) {
  * our scene and rendering.
  */
 
-function check_and_cut() {
-  $.get("http://lathejs.glitch.me/is_cut", function (response) {
-    if (response != false)console.log(response);
-    if (response == true) {
-      $.get("http://lathejs.glitch.me/get_cut", function (response) {
-        var newSegmentFactors = response.body;
-        for (var i = 0; i < newSegmentFactors.length; i++) {
-          if (newSegmentFactors[i] != segmentFactors[i]) {
-            setRing(i, newSegmentFactors[i]);
-          }
-        }
-      });
-    }
-  });
-  // var segmentToChange = _i++ % lathe.totalLinks;
-  // console.log("cutting at " + segmentToChange);
-  // setRing (segmentToChange, 0.1);
-}
 function update() {
   //rotate the lathe block. 
   lathe.rotation.x += _ROTATE_SPEED; 
   
-  
   //check if the lathe has been cut. 
   //if yes, update it. 
-  check_and_cut();
+  //check_and_cut();
   
   
   // Clears color from the frame before rendering the camera (arView) or scene.
