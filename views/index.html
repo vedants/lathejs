@@ -135,7 +135,7 @@ var colors = [
 	var metalGeometry;
   var activeMaterialType = "metal"; //initial material is metal 
   
-  var segmentFactors; //stores how much all the segments in the lathe have been "cut" by. 
+  var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
   var lastChangedSegments; //stores which segment in the cylinder was changed last. 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
@@ -399,7 +399,7 @@ function initObjects() {
   scene.add(lathe);
   
   //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
-  for (var i = 0; i > lathe.totalLinks; i++) {
+  for (var i = 0; i < lathe.totalLinks; i++) {
     segmentFactors.push(1); 
   }
   
@@ -433,12 +433,16 @@ function setRing (changedSegment, pressure) {
   
   var newFactor = currFactor - pressure;
   
-  if (newValue < 0.2) newValue = 0.2; //never let the cylinder be less than 20% of the original thickness. 
+  if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
   
   for (j = 0; j < _branchSegments; j++) {
-    lathe.ring[changedSegments][j].position.x = cylinder.ringOrigin
+    lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
+    lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
+    //dont scale change along z! 
+    //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
+    //is there someway to make sure it always is? 
+    segmentFactors[changedSegment] = newFactor;
   }
-  
 }
 
 /**
@@ -447,7 +451,13 @@ function setRing (changedSegment, pressure) {
  */
 function update() {
   //rotate the lathe block. 
-  lathe.rotation.x += _ROTATE_SPEED
+  lathe.rotation.x += _ROTATE_SPEED; 
+  
+  //randomly cut the cylinder 
+  segmentToChange = Math.floor(Math.random() * lathe.totalLinks);
+  console.log("cutting at " + segmentToChange);
+  setRing (segmentToChange, 0.1);
+  
   // Clears color from the frame before rendering the camera (arView) or scene.
   renderer.clearColor();
 
