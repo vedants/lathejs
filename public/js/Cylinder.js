@@ -18,7 +18,7 @@ Cylinder = function ( materials, radius ) {
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
-	this.radius = 200;
+	this.radius = 0.25;
 
 	var R;
 	var S;
@@ -34,7 +34,7 @@ Cylinder = function ( materials, radius ) {
 	
 	this.totalLinks = 300; //number of ring segments along the length of the cylinder
 	
-	this.linkDist = 4.5; //width of each ring segment
+	this.linkDist = 0.045; //width of each ring segment
 	this.segmentAngle = Math.PI * 2 / _branchSegments; //angle between lines on the perimeter of each ring.
 	this.ring = new Array(this.totalLinks);
 	this.ringOrigin = new Array(this.totalLinks);

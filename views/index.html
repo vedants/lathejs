@@ -84,6 +84,7 @@
   <script src = "/js/jquery-1.7.1.min.js"></script>
   <script src = "/js/signals.js"></script>
   <script src = "/js/sounds.js"></script>
+  <script src = "/js/lathe.js"></script>
   
 <script>
 
@@ -176,7 +177,8 @@ function init() {
     }
   }
   var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
-  cube = new THREE.Mesh(geometry, material);
+  //cube = new THREE.Mesh(geometry, material);
+  cube = make_lathe();
   
   
   //experimental lathe things 
