@@ -10,18 +10,26 @@ var longpoll = require("express-longpoll")(app, { DEBUG: true });
 
 app.use(bodyParser.json());
 
-var is_changed = false;
+var is_changed;
 var segmentFactors = [];
 var _totalLinks = 100;
-for (var i = 0; i < _totalLinks; i++) {
+
+function reset() {
+  is_changed = false;
+  for (var i = 0; i < _totalLinks; i++) {
     segmentFactors.push(1); 
-  
+  }  
 }
 
 app.use(express.static('public'));
 
 app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html'); //TODO: pass _totalLinks in here somehow...
+});
+
+app.get('/reset', function (request, response) {
+  reset(); 
+  response.send("Okay.");
 });
 
 app.post('/cut', function(request, response) {
