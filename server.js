@@ -25,9 +25,11 @@ app.post('/cut', function(request, response) {
   var segmentNumber = request.body['segmentNumber'];
   var segmentPressure = request.body['segmentPressure'];
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
+    console.log("changing_is_changed");
      is_changed = true;
-    response.send("okay");
+      segmentFactors[segmentNumber] = segmentPressure;  
   }
+  response.send("okay");
    
 });
 
