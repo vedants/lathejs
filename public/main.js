@@ -114,10 +114,7 @@ var spawnDelay = 0;
 function spawnCutting(spawnX) {
 
     spawnDelay++;
-
-    if( spawnDelay < 15 ) {
-        return;
-    }
+    if( spawnDelay < 15 ) return; 
 
     spawnDelay = 0;
 
@@ -132,7 +129,6 @@ function spawnCutting(spawnX) {
 
     cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.5,Math.random()*0.0,Math.random()*0.0);
     cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
-
 
     scene.add(cuttingMesh);
 }
@@ -256,7 +252,7 @@ function initObjects() {
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
   
   //set up the cutter!!! 
-  var rectgeom = new THREE.BoxGeometry( 0.01, 0.1, 0.1 );
+  var rectgeom = new THREE.BoxGeometry( 0.01, 0.01, 0.06 );
   var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
   var tool = new THREE.Mesh( rectgeom, material );
   scene.add( tool );
@@ -301,9 +297,9 @@ function metalLoaded(obj) {
   //set up all the long-poll listeners 
   poll_for_cut();
   //poll_for_toolPos();
+  
   // (Finally) Kick off the render loop!
   update();
-  
 }
   
   /**
@@ -322,6 +318,8 @@ function setRing (changedSegment, pressure) {
   for (j = 0; j < _branchSegments; j++) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
+    tool.x = lathe.ring[changedSegment][j].x;
+    //tool.z = lathe.ringOrigin[changedSegment][j].y
     //dont scale change along z! 
     //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
     //is there someway to make sure it always is? 
