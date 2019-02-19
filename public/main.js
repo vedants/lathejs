@@ -254,6 +254,12 @@ function initObjects() {
   }
 
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
+  
+  //set up the cutter!!! 
+  var cutter = new THREE.BoxGeometry( 0.01, 0.1, 0.1 );
+  var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+  var cube = new THREE.Mesh( geometry, material );
+  scene.add( cube );
 
 
   //set up the lathe!!!
