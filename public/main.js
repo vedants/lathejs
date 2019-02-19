@@ -87,6 +87,9 @@ function init() {
   // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
   
+  //init button callbacks 
+  document.getElementById("zoomin").onclick = onZoomIn;
+  document.getElementById("zoomout").onclick = onZoomOut;
 
   //init shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -461,14 +464,14 @@ function onClick () {
 
 function onZoomIn () {
   var currScale = lathe.scale;  
-  var zoomFactor = 0.05;
-  if (currScale >= 2.0) return;
+  var zoomFactor = 0.10;
+  if (currScale >= 4.0) return;
   lathe.scale.set( currScale.x + zoomFactor, currScale.y + zoomFactor, currScale.z + zoomFactor);
 }
 
 function onZoomOut () {
   var currScale = lathe.scale;  
-  var zoomFactor = 0.05;
-  if (currScale <= 0.5) return;
+  var zoomFactor = 0.10;
+  if (currScale <= 0.25) return;
   lathe.scale.set( currScale.x - zoomFactor, currScale.y - zoomFactor, currScale.z - zoomFactor);
 }
