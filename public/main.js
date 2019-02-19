@@ -179,7 +179,6 @@ function initLights() {
   dirLight.castShadow = true;
   scene.add( dirLight)
 
-
   var dirLight = new THREE.DirectionalLight();
   dirLight.intensity = 0.3
   dirLight.position.x = camera.position.x-4;
