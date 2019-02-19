@@ -458,3 +458,17 @@ function onClick () {
   //lathe.quaternion.copy(ori);
   //TODO: update cylinder.ringOrigins by the new offset. 
 }
+
+function onZoomIn () {
+  var currScale = lathe.scale;  
+  var zoomFactor = 0.05;
+  if (currScale >= 2.0) return;
+  lathe.scale.set( currScale.x + zoomFactor, currScale.y + zoomFactor, currScale.z + zoomFactor);
+}
+
+function onZoomOut () {
+  var currScale = lathe.scale;  
+  var zoomFactor = 0.05;
+  if (currScale <= 0.5) return;
+  lathe.scale.set( currScale.x - zoomFactor, currScale.y - zoomFactor, currScale.z - zoomFactor);
+}
