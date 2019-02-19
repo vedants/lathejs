@@ -25,6 +25,7 @@ function reset() {
 app.use(express.static('public'));
 
 app.get('/', function(request, response) {
+  reset();
   response.sendFile(__dirname + '/views/index.html'); //TODO: pass _totalLinks in here somehow...
 });
 
@@ -38,7 +39,7 @@ app.post('/cut', function(request, response) {
   var segmentNumber = request.body['segmentNumber'];
   var segmentPressure = request.body['segmentPressure'];
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
-    console.log("changing_is_changed");
+    console.log("changing is_changed");
     is_changed = true;
     segmentFactors[segmentNumber] = segmentPressure;  
     longpoll.publish("/is_cut_poll", {
