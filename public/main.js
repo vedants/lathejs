@@ -294,8 +294,8 @@ function metalLoaded(obj) {
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
   console.log(metalGeometry);
-  obj.position.z = -0.3;
-  obj.scale.set(0.1);
+  obj.position.z = - 0.3;
+  //obj.scale.set(0.5);
   scene.add(obj);
   
   //set up all the long-poll listeners 
