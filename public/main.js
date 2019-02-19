@@ -112,6 +112,12 @@ function createCutting() {
 }
   
 var spawnDelay = 0;
+
+function spawnParticle(sector) {
+  //TODO: spawn wood chips, metal cuttings, or stone dust, depending on the material being cut. 
+  //for now, just default to spawning metal cuttings. 
+  spawnCuttings(sector); 
+}
 function spawnCutting(spawnX) {
 
     spawnDelay++;
@@ -358,6 +364,9 @@ var poll_for_cut = function () {
 function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
+      if (newSegmentFactors[i] > 0.2) {
+        spawnParticle(i);
+      }
       setRing(i, newSegmentFactors[i]);
       }
     }
