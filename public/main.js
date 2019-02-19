@@ -280,7 +280,6 @@ function initObjects() {
     segmentFactors.push(1); 
   }
   
-  
   loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
@@ -442,7 +441,6 @@ function onClick () {
   //lathe.quaternion.copy(ori);
   //TODO: update cylinder.ringOrigins by the new offset. 
 }
-
 
 function onZoomIn () {
   var currScale = lathe.scale;  
