@@ -11,6 +11,7 @@ var scene;
 var renderer;
 var cube;
 var cylinder;
+var tool; 
 
 var _ROTATE_SPEED = 2.5; //speed at which the lathe rotates 
   
@@ -269,10 +270,11 @@ function initObjects() {
   
   scene.add(lathe);
   
-  //set up the cutter!!! 
+  //set up the cutting tool!!! 
   var rectgeom = new THREE.BoxGeometry( 0.01, 0.01, 0.06 );
   var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-  var tool = new THREE.Mesh( rectgeom, material );
+  
+  tool = new THREE.Mesh( rectgeom, material );
   tool.position.x = 0; 
   tool.position.y = 0;
   tool.position.z = -0.5 +  (0.06 / 2); //lathe.pos.z + lathe.radius + half the length of the tool
@@ -321,9 +323,8 @@ function setRing (changedSegment, pressure) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
     
-    tool.position.x = 0;
-    tool.position.y = 0;
-    tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
+    //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
+    tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
     //tool.position.x = lathe.ring[changedSegment][j].x;
     //tool.z = lathe.ringOrigin[changedSegment][j].y
     //dont scale change along z! 
