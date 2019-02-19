@@ -1,3 +1,5 @@
+//initialize all the variables 
+
 var vrDisplay;
 var vrFrameData;
 var vrControls;
@@ -10,29 +12,18 @@ var renderer;
 var cube;
 var cylinder;
 
-var _ROTATE_SPEED = 2.5;
-    
-var colors = [
-  new THREE.Color( 0xffffff ),
-  new THREE.Color( 0xffff00 ),
-  new THREE.Color( 0xff00ff ),
-  new THREE.Color( 0xff0000 ),
-  new THREE.Color( 0x00ffff ),
-  new THREE.Color( 0x00ff00 ),
-  new THREE.Color( 0x0000ff ),
-  new THREE.Color( 0x000000 )
-];
-
-  var MaterialLibrary = {};
-
-  var cuttingList = [];
-	var cuttingPool = new ObjectPool();
-  var chipsGeometry;
-	var metalGeometry;
-  var activeMaterialType = "metal"; //initial material is metal 
+var _ROTATE_SPEED = 2.5; //speed at which the lathe rotates 
   
-  var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
-  var lastChangedSegments; //stores which segment in the cylinder was changed last. 
+var MaterialLibrary = {};
+
+var cuttingList = [];
+var cuttingPool = new ObjectPool();
+var chipsGeometry;
+var metalGeometry;
+var activeMaterialType = "metal"; //initial material is metal
+
+var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
+var lastChangedSegments; //stores which segment in the cylinder was changed last. 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
@@ -87,11 +78,11 @@ function init() {
   // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
   
-  //init button callbacks 
+  //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
 
-  //init shaders
+  //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
   initShaderLoading(); //function is in Library.js
 }
@@ -298,7 +289,6 @@ function initObjects() {
   for (var i = 0; i < lathe.totalLinks; i++) {
     segmentFactors.push(1); 
   }
-  
   
   
   loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
