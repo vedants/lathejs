@@ -346,6 +346,9 @@ function setRing (changedSegment, pressure) {
   }
 }
 
+/* Sets up a HTTP long poll to listen for messages from the server for when to cut the lathe.
+*  https://www.pubnub.com/blog/2014-12-01-http-long-polling/
+*/ 
 var poll_for_cut = function () {
     $.ajax({
        url: "http://lathejs.glitch.me/is_cut_poll",
@@ -361,6 +364,9 @@ var poll_for_cut = function () {
     });
 };
 
+/* Checks where the newSegmentFactors are different from the current segmentFactors, and updates those entries. 
+*  Also calls setRing, to cut the lathe accordingly. 
+*/
 function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
@@ -458,6 +464,7 @@ function onClick () {
   //lathe.quaternion.copy(ori);
   //TODO: update cylinder.ringOrigins by the new offset. 
 }
+
 
 function onZoomIn () {
   var currScale = lathe.scale;  
