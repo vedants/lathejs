@@ -201,7 +201,6 @@ function initObjects() {
   //set up materials 
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
-
   var woodUniforms = {
       DiffuseColour1: { type: "c", value: new THREE.Color(0xdbc6a9) },
       DiffuseColour2: { type: "c", value: new THREE.Color(0xc4ae87) },
@@ -257,13 +256,13 @@ function initObjects() {
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
 
-  //set up lathe 
+  //set up the lathe!!!
   lathe = new Lathe();  
-  lathe.build();
+  lathe.build(); //(see lathe.js)
 
   //lathe.material = MaterialLibrary[activeMaterialType];
   lathe.material = new THREE.MeshNormalMaterial ();
-  lathe.material.side = THREE.DoubleSide; //double sided.
+  lathe.material.side = THREE.DoubleSide;
   lathe.receiveShadow = true;
   lathe.castShadow = false;
   lathe.geometry.dynamic = true;
@@ -271,7 +270,7 @@ function initObjects() {
   lathe.geometry.computeVertexNormals();
   
   lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist
+  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
   lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
@@ -295,10 +294,8 @@ function metalLoaded(obj) {
   scene.add(obj);
   
   //set up all the long-poll listeners 
-  
   poll_for_cut();
   //poll_for_toolPos();
-  //poll_for_zoom();
   // (Finally) Kick off the render loop!
   update();
   
