@@ -179,9 +179,6 @@ function updateCuttings() {
       }
   }
 }
-
-  
-
   
 function initLights() {
   var dirLight = new THREE.DirectionalLight();
