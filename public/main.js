@@ -292,7 +292,8 @@ function metalLoaded(obj) {
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
   console.log(metalGeometry);
-  obj.position.z = -0.5;
+  obj.position.z = -0.3;
+  obj.scale.set(0.1);
   scene.add(obj);
   
   //set up all the long-poll listeners 
@@ -319,6 +320,10 @@ function setRing (changedSegment, pressure) {
   for (j = 0; j < _branchSegments; j++) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
+    
+    tool.position.x = 0;
+    tool.position.y = 0;
+    tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
     //tool.position.x = lathe.ring[changedSegment][j].x;
     //tool.z = lathe.ringOrigin[changedSegment][j].y
     //dont scale change along z! 
