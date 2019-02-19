@@ -88,7 +88,6 @@ function init() {
 }
   
 function onShadersLoaded() {
-  
   //chipsPool.createObject = createChips
   cuttingPool.createObject = createCutting
   //dustPool.createObject = createDust
@@ -96,9 +95,8 @@ function onShadersLoaded() {
   //initSounds();
   initLights();
   initObjects();
-  //initMenu();
 
-		// Bind our event handlers
+	// Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
   canvas.addEventListener('touchstart', onClick, false);
 }
@@ -108,9 +106,7 @@ function createCutting() {
   cutting.receiveShadow = false;
   cutting.doubleSided = false;
   cutting.castShadow = true;
-
   cutting.geometry.computeFaceNormals();
-
   return cutting;
 }
   
@@ -149,9 +145,7 @@ function updateCuttings() {
 
   for( i = max-1; i>= 0; i--) {
       cutting = cuttingList[i];
-
       cutting.rotation.addSelf(cutting.rotationVelocity);
-
       // if(cutting.scale.z < 3 && intersectionPoint) {
       //     cutting.scale.x = cutting.scale.y = cutting.scale.z += .2
       //     cutting.position = intersectionPoint.clone()
@@ -161,8 +155,6 @@ function updateCuttings() {
           cutting.velocity.y -= 1;
           cutting.position.addSelf(cutting.velocity);
       //}
-
-
       if( cutting.position.y < -4 ) { // 4 meters below initialization point
           scene.remove(cutting);
           cuttingPool.returnObject(cutting.poolId);
