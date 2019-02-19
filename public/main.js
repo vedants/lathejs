@@ -164,32 +164,31 @@ function initLights() {
   dirLight.intensity = 0.8
   dirLight.position.x = camera.position.x+4;
   dirLight.position.y = camera.position.y+2;
-  dirLight.position.z = camera.position.z-4
-
-  dirLight.lookAt(scene.position)
+  dirLight.position.z = camera.position.z-4;
+  dirLight.lookAt(scene.position);
 
   dirLight.shadow.camera.left = -9;
   dirLight.shadow.camera.right = 7;
   dirLight.shadow.camera.top = 4.50;
   dirLight.shadow.camera.bottom = -4.80;
   dirLight.castShadow = true;
-  scene.add( dirLight)
+  scene.add( dirLight);
 
   var dirLight = new THREE.DirectionalLight();
   dirLight.intensity = 0.3
   dirLight.position.x = camera.position.x-4;
   dirLight.position.y = camera.position.y+24;
-  dirLight.position.z = camera.position.z-12
-  dirLight.lookAt(scene.position)
-  scene.add( dirLight)
+  dirLight.position.z = camera.position.z-12;
+  dirLight.lookAt(scene.position);
+  scene.add( dirLight);
 
   var dirLight = new THREE.DirectionalLight();
   dirLight.intensity = 0.3
   dirLight.position.x = camera.position.x-4;
   dirLight.position.y = camera.position.y-24;
   dirLight.position.z = camera.position.z-2;
-  dirLight.lookAt(scene.position)
-  scene.add( dirLight)
+  dirLight.lookAt(scene.position);
+  scene.add( dirLight);
 }
   
 function initObjects() {
@@ -250,13 +249,6 @@ function initObjects() {
   }
 
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
-  
-  //set up the cutter!!! 
-  var rectgeom = new THREE.BoxGeometry( 0.01, 0.01, 0.06 );
-  var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-  var tool = new THREE.Mesh( rectgeom, material );
-  scene.add( tool );
-
 
   //set up the lathe!!!
   lathe = new Lathe();  
@@ -276,6 +268,15 @@ function initObjects() {
   lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
+  
+  //set up the cutter!!! 
+  var rectgeom = new THREE.BoxGeometry( 0.01, 0.01, 0.06 );
+  var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+  var tool = new THREE.Mesh( rectgeom, material );
+  tool.position.x = 0; 
+  tool.position.y = 0;
+  tool.position.z = -0.5 +  (0.06 / 2); //lathe.pos.z + lathe.radius + half the length of the tool
+  scene.add(tool);
   
   //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
   for (var i = 0; i < lathe.totalLinks; i++) {
@@ -318,7 +319,7 @@ function setRing (changedSegment, pressure) {
   for (j = 0; j < _branchSegments; j++) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
-    tool.x = lathe.ring[changedSegment][j].x;
+    //tool.position.x = lathe.ring[changedSegment][j].x;
     //tool.z = lathe.ringOrigin[changedSegment][j].y
     //dont scale change along z! 
     //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
