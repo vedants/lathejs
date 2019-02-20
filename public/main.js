@@ -82,6 +82,9 @@ function init() {
   //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
+  document.getElementById("wood").onclick = onWood;
+  //document.getElementByID("steel").onclick = onSteel;
+  //document.getElementByID("plastic").onclick = onPlastic;
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -100,6 +103,7 @@ function onShadersLoaded() {
 	// Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
   canvas.addEventListener('touchstart', onClick, false);
+  
 }
   
 function createCutting() {
@@ -264,7 +268,8 @@ function initObjects() {
   //lathe.material = MaterialLibrary[activeMaterialType];
   
   
-  lathe.material = new THREE.MeshNormalMaterial ();
+  //lathe.material = new THREE.MeshNormalMaterial ();
+  lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
   lathe.material.side = THREE.DoubleSide;
   lathe.receiveShadow = true;
   lathe.castShadow = false;
@@ -476,4 +481,15 @@ function onZoomOut () {
   var zoomFactor = 0.10;
   if (currScale <= 0.25) return;
   lathe.scale.set( currScale.x - zoomFactor, currScale.y - zoomFactor, currScale.z - zoomFactor);
+}
+
+function onWood() {
+  console.log("onWood");
+  lathe.material.color.setHex(0x6f4400);
+}
+function onSteel() {
+  lathe.material.color.setHex(0xbbbbbb);
+}
+function onPlastic() {
+  lathe.material.color.setHex(0xbbbb00);
 }
