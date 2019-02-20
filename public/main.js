@@ -83,8 +83,8 @@ function init() {
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
   document.getElementById("wood").onclick = onWood;
-  //document.getElementByID("steel").onclick = onSteel;
-  //document.getElementByID("plastic").onclick = onPlastic;
+  document.getElementById("steel").onclick = onSteel;
+  document.getElementById("plastic").onclick = onPlastic;
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -200,6 +200,14 @@ function initLights() {
   dirLight.position.z = camera.position.z-2;
   dirLight.lookAt(scene.position);
   scene.add( dirLight);
+  
+  var dirLight = new THREE.DirectionalLight();
+  dirLight.intensity = 0.3
+  dirLight.position.x = camera.position.x;
+  dirLight.position.y = camera.position.y;
+  dirLight.position.z = camera.position.z-1;
+  dirLight.lookAt(new THREE.Vector3( 1, 0, 0 ));
+  scene.add( dirLight);
 }
   
 function initObjects() {
@@ -291,7 +299,7 @@ function initObjects() {
   tool.position.x = 0; 
   tool.position.y = 0;
   tool.position.z = -0.5 +  (0.06 / 2); //lathe.pos.z + lathe.radius + half the length of the tool
-  scene.add(tool);
+  //scene.add(tool);
   
   //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
   for (var i = 0; i < lathe.totalLinks; i++) {
