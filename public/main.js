@@ -9,11 +9,14 @@ var canvas;
 var camera;
 var scene;
 var renderer;
+var listener; 
+var sound;
+
 var cube;
 var cylinder;
 var tool; 
 
-var _ROTATE_SPEED = 2.5; //speed at which the lathe rotates 
+var _ROTATE_SPEED = 0; //speed at which the lathe rotates (initially zero)
   
 var MaterialLibrary = {};
 
@@ -79,6 +82,13 @@ function init() {
   // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
   
+  // create listener that plays back sounds (spatialized to the camera position)
+  listener = new THREE.AudioListener();
+  camera.add( listener );
+  sound = new THREE.Audio( listener ); //audio source
+  
+
+
   //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
@@ -503,6 +513,15 @@ function onPlastic() {
 
 function onStartLathe() {
   _ROTATE_SPEED = 2.5;
+  // load a sound and set it as the Audio object's buffer
+  var audioLoader = new THREE.AudioLoader();
+  audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
+	sound.setBuffer( buffer );
+	sound.setLoop( true );
+	sound.setVolume( 0.5 );
+	sound.play();
+});
+
 }
 function onStopLathe() {
   _ROTATE_SPEED = 0;
