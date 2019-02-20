@@ -12,7 +12,6 @@ Lathe = function ( materials, radius ) {
 	THREE.Mesh.call( this, new THREE.Geometry(), materials );
 
 	var numCurrentPos = 0;
-	
 	this.doubleSided = true;
 	
 	var basePoint = new THREE.Vector3(0,0,0);
