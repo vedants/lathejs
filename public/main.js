@@ -222,7 +222,6 @@ function initLights() {
 }
   
 function initObjects() {
-  scene.add(sound);
   //set up materials 
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
@@ -301,6 +300,7 @@ function initObjects() {
   lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
+  lathe.add(sound);
   
   //set up the cutting tool!!! 
   var rectgeom = new THREE.BoxGeometry( 0.01, 0.01, 0.06 );
