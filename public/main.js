@@ -364,7 +364,7 @@ var poll_for_cut = function () {
 function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
-      if (newSegmentFactors[i] > 0.2) {
+      if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         spawnParticle(i);
       }
       setRing(i, newSegmentFactors[i]);

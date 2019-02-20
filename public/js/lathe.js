@@ -19,6 +19,7 @@ Lathe = function ( materials, radius ) {
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
 	this.radius = 0.1; // ~= 4inches  
+  this.minRadius = 0.001; //never let the lathe get thinner than this.
 
 	var R;
 	var S;
@@ -46,8 +47,9 @@ Lathe = function ( materials, radius ) {
 		//for each step
 		while (segmentsEachTime < this.totalLinks)
 		{
-			segmentsEachTime++
-			//last point
+			segmentsEachTime++;
+			
+      //last point
 			basePoint.x = branchPoint.position.x;
 			basePoint.y = branchPoint.position.y;
 			basePoint.z = branchPoint.position.z;
@@ -57,16 +59,16 @@ Lathe = function ( materials, radius ) {
 			
 			//difference from last segment
 			var diffVector = new THREE.Vector3();
-			diffVector.subVectors( branchPoint.position, basePoint)
+			diffVector.subVectors( branchPoint.position, basePoint);
 
-			var transformPoint = new THREE.Vector3()
+			var transformPoint = new THREE.Vector3();
 			transformPoint.addVectors(diffVector, new THREE.Vector3(10, 0, 0));
 
 			//height from transformPoint
-			R = new THREE.Vector3()
+			R = new THREE.Vector3();
 			R.crossVectors(transformPoint, diffVector);
 
-			S = new THREE.Vector3()
+			S = new THREE.Vector3();
 			S.crossVectors(R, diffVector);
 
 			R.normalize();
@@ -85,7 +87,6 @@ Lathe = function ( materials, radius ) {
 		//I believe the centroids aren't used for much beyond lighting?
 		
 		//this.geometry.computeCentroids()
-    
 		this.geometry.computeFaceNormals();
 		this.geometry.computeVertexNormals(); 
 		this.geometry.computeBoundingSphere();
@@ -103,7 +104,6 @@ Lathe = function ( materials, radius ) {
 		
 		var bFirstNode = numCurrentPos == 0
 		
-		//ring 2-len
 		var transformedRadius = this.radius;
 		
 		intSegmentStep = 0;
@@ -114,10 +114,9 @@ Lathe = function ( materials, radius ) {
 		
 		while (intSegmentStep < _branchSegments)
 		{
-			//root node
 			transformedRadius = this.radius;
 						
-			if( transformedRadius < 0.001) transformedRadius = 0.001 //never allow radius to be less than 0.03937 inches
+			if( transformedRadius < this.minRadius) transformedRadius = this.minRadius; //never allow radius to be less than 0.03937 inches
 			
 			pX = basePoint.x + transformedRadius * Math.cos(intSegmentStep * this.segmentAngle) * R.x + transformedRadius * Math.sin(intSegmentStep * this.segmentAngle) * S.x;
 			pY = basePoint.y + transformedRadius * Math.cos(intSegmentStep * this.segmentAngle) * R.y + transformedRadius * Math.sin(intSegmentStep * this.segmentAngle) * S.y;
@@ -138,19 +137,17 @@ Lathe = function ( materials, radius ) {
 		intSegmentStep = 0;
 		while (intSegmentStep < _branchSegments)
 		{
-			
 			if ( intSegmentStep < (_branchSegments - 1)) {
-				//second floor
+				//second ring
 				p1 = vertices.length - _branchSegments + intSegmentStep + 1;
 				p4 = vertices.length - _branchSegments + intSegmentStep ;
 				
-				//first floor
+				//first ring
 				p2 = vertices.length - _branchSegments * 2 + intSegmentStep + 1;
 				p3 = vertices.length - _branchSegments * 2 + intSegmentStep;
 			}
 			else {
 				//last side - connected to first point in ring
-				//second floor
 				p1 = vertices.length - _branchSegments;
 				p4 = vertices.length - _branchSegments + intSegmentStep;
 				
@@ -185,7 +182,7 @@ Lathe = function ( materials, radius ) {
 				new THREE.Vector2( startX,startY ),
 				new THREE.Vector2( endX ,startY )
 			])
-			
+      
 			intSegmentStep++;
 		}
 	}
