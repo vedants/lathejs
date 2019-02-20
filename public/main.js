@@ -85,6 +85,8 @@ function init() {
   document.getElementById("wood").onclick = onWood;
   document.getElementById("steel").onclick = onSteel;
   document.getElementById("plastic").onclick = onPlastic;
+  document.getElementById("start").onclick = onStartLathe;
+  document.getElementById("stop").onclick = onStopLathe;
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -201,13 +203,10 @@ function initLights() {
   dirLight.lookAt(scene.position);
   scene.add( dirLight);
   
-  var dirLight = new THREE.DirectionalLight();
-  dirLight.intensity = 0.3
-  dirLight.position.x = camera.position.x;
-  dirLight.position.y = camera.position.y;
-  dirLight.position.z = camera.position.z-1;
-  dirLight.lookAt(new THREE.Vector3( 1, 0, 0 ));
-  scene.add( dirLight);
+  var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
+  pointLight.position.set( 0,0, 0);
+  scene.add(pointLight);
+
 }
   
 function initObjects() {
@@ -499,5 +498,12 @@ function onSteel() {
   lathe.material.color.setHex(0xbbbbbb);
 }
 function onPlastic() {
-  lathe.material.color.setHex(0xbbbb00);
+  lathe.material.color.setHex(0x004488);
+}
+
+function onStartLathe() {
+  _ROTATE_SPEED = 2.5;
+}
+function onStopLathe() {
+  _ROTATE_SPEED = 0;
 }
