@@ -118,7 +118,7 @@ function spawnParticle(sector) {
   //for now, just default to spawning metal cuttings. 
   spawnCuttings(sector); 
 }
-function spawnCutting(spawnX) {
+function spawnCuttings(spawnX) {
 
     spawnDelay++;
     if( spawnDelay < 15 ) return; 
@@ -212,7 +212,7 @@ function initObjects() {
 
   var finalWoodUniform = THREE.UniformsUtils.merge( [THREE.ShaderLib["phong"].uniforms, woodUniforms] );
 
-  var tex = new THREE.TextureLoader().load("/textures/treebark.jpg");
+  var tex = new THREE.TextureLoader().load("textures/treebark.jpg");
   tex.mapping = THREE.UVMapping;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   finalWoodUniform.map.texture = tex;
@@ -262,8 +262,13 @@ function initObjects() {
   lathe.build(); //(see lathe.js)
 
   //lathe.material = MaterialLibrary[activeMaterialType];
-  lathe.material = new THREE.MeshNormalMaterial ();
-  lathe.material.side = THREE.DoubleSide;
+  var texture = new THREE.TextureLoader().load( "/textures/treebark.jpg" );
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+
+  //lathe.material = new THREE.MeshNormalMaterial ({map: texture});
+  lathe.material = new THREE.MeshBasicMaterial ({map: texture});
+  //lathe.material.side = THREE.DoubleSide;
   lathe.receiveShadow = true;
   lathe.castShadow = false;
   lathe.geometry.dynamic = true;
