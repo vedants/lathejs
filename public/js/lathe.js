@@ -40,7 +40,6 @@ Lathe = function ( materials, radius ) {
 	this.ringOrigin = new Array(this.totalLinks);
 	this.offsetPoints = new Array(this.totalLinks);
 	
-	
 	this.build = function() {
 		//reset
 		var segmentsEachTime = 0;
@@ -175,13 +174,6 @@ Lathe = function ( materials, radius ) {
 			var startY = 0
 			var endY = 1
 			
-			// faceVertexUvs[ 0 ].push([
-			// 	new THREE.Vector2( startX, endY),
-			// 	new THREE.Vector2( startX,startY ),
-			// 	new THREE.Vector2( endX ,startY ),
-			// 	new THREE.Vector2( endX, endY )
-			// ])
-
 			faceVertexUvs[ 0 ].push([
 				new THREE.Vector2( startX, endY),
 				new THREE.Vector2( startX,startY ),
@@ -197,7 +189,6 @@ Lathe = function ( materials, radius ) {
 			intSegmentStep++;
 		}
 	}
-	
 };
 
 
