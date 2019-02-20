@@ -222,7 +222,7 @@ function initLights() {
 }
   
 function initObjects() {
-  
+  scene.add(sound);
   //set up materials 
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
