@@ -85,11 +85,16 @@ function init() {
   // create listener that plays back sounds (spatialized to the camera position)
   listener = new THREE.AudioListener();
   camera.add( listener );
+  
   var source = listener.context.createBufferSource();
   source.connect(listener.context.destination);
   source.start();
-  window.addEventListener('touchstart', onStartLathe);
-  sound = new THREE.Audio( listener ); //audio source
+  
+  
+  //window.addEventListener('touchstart', onStartLathe);
+  //sound = new THREE.Audio( listener ); //audio source
+  sound = new THREE.PositionalAudio( listener );
+
 
   //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
@@ -97,8 +102,14 @@ function init() {
   document.getElementById("wood").onclick = onWood;
   document.getElementById("steel").onclick = onSteel;
   document.getElementById("plastic").onclick = onPlastic;
-  document.getElementById("start").onclick = onStartLathe;
+  //document.getElementById("start").onclick = onStartLathe;
+  //document.getElementById("start").addEventListener( 'click', onStartLathe );
   document.getElementById("stop").onclick = onStopLathe;
+  
+  window.addEventListener('touchstart', function() {
+    sound.play();
+  }
+
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -517,6 +528,9 @@ function onStartLathe() {
   _ROTATE_SPEED = 2.5;
   // load a sound and set it as the Audio object's buffer
   var audioLoader = new THREE.AudioLoader();
+  var sound1 = new THREE.PositionalAudio( listener );
+  lathe.add(sound1);
+
   audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
     sound.setBuffer( buffer );
     sound.setLoop( true );
