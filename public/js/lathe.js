@@ -187,7 +187,6 @@ Lathe = function ( materials, radius ) {
 	}
 };
 
-
 Lathe.prototype = new THREE.Mesh();
 Lathe.prototype.constructor = Lathe;
 Lathe.prototype.supr = THREE.Mesh.prototype;
