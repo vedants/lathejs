@@ -102,14 +102,8 @@ function init() {
   document.getElementById("wood").onclick = onWood;
   document.getElementById("steel").onclick = onSteel;
   document.getElementById("plastic").onclick = onPlastic;
-  //document.getElementById("start").onclick = onStartLathe;
-  //document.getElementById("start").addEventListener( 'click', onStartLathe );
+  document.getElementById("start").onclick = onStartLathe;
   document.getElementById("stop").onclick = onStopLathe;
-  
-  window.addEventListener('touchstart', function() {
-    sound.play();
-  }
-
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -527,11 +521,12 @@ function onPlastic() {
 function onStartLathe() {
   _ROTATE_SPEED = 2.5;
   // load a sound and set it as the Audio object's buffer
-  var audioLoader = new THREE.AudioLoader();
-  var sound1 = new THREE.PositionalAudio( listener );
-  lathe.add(sound1);
+  var audioLoader = new THREE.AudioLoader(); 
+  sound.context.resume();
+  listener.context.resume();
 
   audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
+    console.log("meow");
     sound.setBuffer( buffer );
     sound.setLoop( true );
     sound.setVolume(1);
@@ -541,4 +536,5 @@ function onStartLathe() {
 }
 function onStopLathe() {
   _ROTATE_SPEED = 0;
+  sound.stop();
 }
