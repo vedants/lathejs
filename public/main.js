@@ -40,9 +40,23 @@ THREE.ARUtils.getARDisplay().then(function (display) {
     vrDisplay = display;
     init();
   } else {
-    THREE.ARUtils.displayUnsupportedMessage();
+    //THREE.ARUtils.displayUnsupportedMessage();
+    init2D();
   }
 });
+
+function init2D() {
+  renderer = new THREE.WEBGLRenderer( {alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  console.log('setRenderer size', window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.autoClear = false;
+  canvas = renderer.domElement;
+  document.body.appendChild(canvas);
+  scene = new THREE.Scene();
+  LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
+  initShaderLoading(); //function is in Library.js
+}
 
 function init() {
   // Turn on the debugging panel
