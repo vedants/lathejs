@@ -79,7 +79,6 @@ Lathe = function ( materials, radius ) {
 			branchPoint.updateMatrix();
 
 			numCurrentPos++;
-			
 		}
 		
 		//computerCentroids was deprecated in the newer version of THREE.js 
