@@ -486,6 +486,7 @@ function onClick () {
   // move our lathe and place it at the camera's current position
   //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
   lathe.position.copy(pos);
+  lathe.quaternion.copy(ori);
   lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
   lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
   lathe.position.y = pos.y;
