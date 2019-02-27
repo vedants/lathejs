@@ -46,7 +46,6 @@ THREE.ARUtils.getARDisplay().then(function (display) {
 });
 
 function init2D() {
-
   renderer.setPixelRatio(window.devicePixelRatio);
   console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -55,8 +54,7 @@ function init2D() {
   document.body.appendChild(canvas);
   scene = new THREE.Scene();
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
-  initShaderLoading(); //function is in Library.js
-  
+  initShaderLoading(); 
 }
 
 function init() {
