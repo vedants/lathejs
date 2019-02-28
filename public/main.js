@@ -448,6 +448,7 @@ function update() {
   renderer.render(scene, camera);
   
   //rotate the lathe block. 
+  lathe.rotateOnAxis(lathe.direction, _ROTATE_SPEED);
   lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
@@ -501,9 +502,9 @@ function onClick () {
   left.transformDirection(dirMtx);
 
   // move our lathe and place it at the camera's current position
-  //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
   lathe.position.copy(pos);
   lathe.quaternion.copy(ori);
+  lathe.direction = left.normalize();
   //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
   //lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
   //lathe.position.y = pos.y;
@@ -536,7 +537,7 @@ function onPlastic() {
 }
 
 function onStartLathe() {
-  _ROTATE_SPEED = 2.5;
+  _ROTATE_SPEED = .25;
   // load a sound and set it as the Audio object's buffer
   var audioLoader = new THREE.AudioLoader(); 
   sound.context.resume();
