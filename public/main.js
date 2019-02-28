@@ -149,12 +149,12 @@ function createCutting() {
   
 var spawnDelay = 0;
 
-function spawnParticle(sector) {
+function spawnParticle(spawnPosition) {
   //TODO: spawn wood chips, metal cuttings, or stone dust, depending on the material being cut. 
   //for now, just default to spawning metal cuttings. 
-  spawnCuttings(sector); 
+  spawnCuttings(spawnPosition); 
 }
-function spawnCuttings(spawnX) {
+function spawnCuttings(spawnPosition) {
 
     spawnDelay++;
     if( spawnDelay < 0 ) return; //change this to 15 at some point? 
@@ -412,7 +412,8 @@ function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
-        spawnParticle(i);
+        var spawnPosition = lathe.rings[i][_branchSegments / 2 ]
+        spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
       }
