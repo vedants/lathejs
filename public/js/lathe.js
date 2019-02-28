@@ -10,7 +10,7 @@ var _branchSegments = 12; //number of sides on perimeter of each "ring" (approxi
 Lathe = function ( materials, radius ) {
 	
 	THREE.Mesh.call( this, new THREE.Geometry(), materials );
-
+  
 	var numCurrentPos = 0;
 	this.doubleSided = true;
 	

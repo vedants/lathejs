@@ -165,7 +165,7 @@ function spawnCuttings(spawnPosition) {
     
     cuttingMesh.position = spawnPosition;
     cuttingMesh.scale.set(0.001, 0.001, 0.001);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, 0.001, 0.001); //1 cm per second
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0); //1 cm per second
     
     //initialize scales to something small, and grow cuttings over time. 
      cuttingMesh.scale.x = 0.0001 + Math.random()*0.001;
@@ -194,10 +194,10 @@ function updateCuttings() {
           //cutting.position = intersectionPoint.clone()
        }
        else {
-          cutting.velocity.y -= 0.001; //acceleration of 1cm/s^2
+          cutting.velocity.y -= 0.00002; //acceleration of 1cm/s^2
           cutting.position.add(cutting.velocity);
       }
-      if( cutting.position.y < -4 ) { // 4 meters below initialization point
+      if( cutting.position.y < -1 ) { // 1 meter below initialization point
           scene.remove(cutting);
           cuttingPool.returnObject(cutting.poolId);
           cuttingList.splice(i,1);
