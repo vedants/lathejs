@@ -159,7 +159,7 @@ function spawnCuttings(spawnX) {
     spawnDelay++;
     if( spawnDelay < 0 ) return; //change this to 15 at some point? 
 
-    spawnDelay = 0;
+    //spawnDelay = 0;
 
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
