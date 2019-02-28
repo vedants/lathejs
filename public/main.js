@@ -169,9 +169,9 @@ function spawnCuttings(spawnPosition) {
     cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
     //TODO: initialize scales to zero, and grow cuttings over time. 
-    cuttingMesh.scale.x = 0.4//+ Math.random()*1;
-    cuttingMesh.scale.y = 0.4//+ Math.random()*1;
-    cuttingMesh.scale.z = 0.4
+    // cuttingMesh.scale.x = 0.4//+ Math.random()*1;
+    // cuttingMesh.scale.y = 0.4//+ Math.random()*1;
+    // cuttingMesh.scale.z = 0.4
 
     cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.5,Math.random()*0.0,Math.random()*0.0);
     cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
@@ -414,6 +414,7 @@ function check_and_cut(newSegmentFactors) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
+        console.log(i);
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
@@ -455,7 +456,7 @@ function update() {
   lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
-  updateCuttings();
+  //updateCuttings();
 
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
