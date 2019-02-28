@@ -139,7 +139,8 @@ function onShadersLoaded() {
 }
   
 function createCutting() {
-  var cutting = new THREE.Mesh( metalGeometry, MaterialLibrary.metal );
+  //var cutting = new THREE.Mesh( metalGeometry, MaterialLibrary.metal );
+  var cutting = new THREE.Mesh( metalGeometry, new THREE.MeshBasicMaterial( { color: 0xffff00 } ));
   cutting.receiveShadow = false;
   cutting.doubleSided = false;
   cutting.castShadow = true;
@@ -279,7 +280,7 @@ function initObjects() {
       lights: true
   }
 
-  MaterialLibrary.metal = new THREE.ShaderMaterial(params);
+  //MaterialLibrary.metal = new THREE.ShaderMaterial(params);
 
   var stoneUniforms = {
       DiffuseColour1: { type: "c", value: new THREE.Color(0x999999) },
@@ -344,8 +345,8 @@ function metalLoaded(obj) {
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
   console.log(metalGeometry);
-  obj.position.z = - 0.3;
-  //obj.scale.set(0.5);
+  obj.position.z =  0.3;
+  obj.scale.set(.01, .01, .01);
   scene.add(obj);
   
   //set up all the long-poll listeners 
