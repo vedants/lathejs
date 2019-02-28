@@ -153,7 +153,7 @@ function spawnParticle(spawnPosition) {
   spawnCuttings(spawnPosition); 
 }
 function spawnCuttings(spawnPosition) {
-    console.log(spawnPosition);
+    //console.log(spawnPosition);
     
     spawnDelay++;
     if( spawnDelay < 0 ) return; //change this back to 15 at some point? 
@@ -165,7 +165,7 @@ function spawnCuttings(spawnPosition) {
     
     cuttingMesh.position = spawnPosition;
     cuttingMesh.scale.set(0.001, 0.001, 0.001);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*.1,.1,.1);
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*1, 1, 1);
     
     //TODO: initialize scales to zero, and grow cuttings over time. 
     // cuttingMesh.scale.x = 0.4//+ Math.random()*1;
@@ -186,11 +186,12 @@ function updateCuttings() {
 
   for( i = max-1; i>= 0; i--) {
       cutting = cuttingList[i];
-      cutting.rotation += cutting.rotationVelocity;
+      cutting.rotation.set(cutting.rotation.x + cutting.rotationVelocity.x, cutting.rotation.y + cutting.rotationVelocity.y, cutting.rotation.z + cutting.rotationVelocity.z);
+      //cutting.rotation += cutting.rotationVelocity;
       //cutting.rotation.setFromVector3( cutting.rotation.toVector3() + cutting.rotationVelocity.toVector3());
-      if(cutting.scale.z < 0.03) {
+      if(cutting.scale.z < -1) {
            //cutting.scale.x = cutting.scale.y = cutting.scale.z += .005;
-      //     cutting.position = intersectionPoint.clone()
+          //cutting.position = intersectionPoint.clone()
        }
        else {
           cutting.velocity.y -= .1;
