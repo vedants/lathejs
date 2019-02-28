@@ -54,14 +54,14 @@ Lathe = function ( materials, radius ) {
 			basePoint.z = branchPoint.position.z;
 			
 			//move forward
-			branchPoint.translateZ(this.linkDist);
+			branchPoint.translateX(this.linkDist);
 			
 			//difference from last segment
 			var diffVector = new THREE.Vector3();
 			diffVector.subVectors( branchPoint.position, basePoint);
 
 			var transformPoint = new THREE.Vector3();
-			transformPoint.addVectors(diffVector, new THREE.Vector3(10, 0, 0));
+			transformPoint.addVectors(diffVector, new THREE.Vector3(0, 0, 10));
 
 			//height from transformPoint
 			R = new THREE.Vector3();
