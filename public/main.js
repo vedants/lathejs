@@ -165,14 +165,14 @@ function spawnCuttings(spawnPosition) {
     
     cuttingMesh.position = spawnPosition;
     cuttingMesh.scale.set(0.001, 0.001, 0.001);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*1, 1, 1);
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, 0.001, 0.001); //1 cm per second
     
     //TODO: initialize scales to zero, and grow cuttings over time. 
     // cuttingMesh.scale.x = 0.4//+ Math.random()*1;
     // cuttingMesh.scale.y = 0.4//+ Math.random()*1;
     // cuttingMesh.scale.z = 0.4
 
-    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.5,Math.random()*0.0,Math.random()*0.0);
+    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.25,Math.random()*0.0,Math.random()*0.0);
     cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
 
     scene.add(cuttingMesh);
@@ -194,9 +194,8 @@ function updateCuttings() {
           //cutting.position = intersectionPoint.clone()
        }
        else {
-          cutting.velocity.y -= .1;
-          //cutting.position.add(cutting.velocity);
-          //cutting.position.addSelf(cutting.velocity);
+          cutting.velocity.y -= 0//00000001; //acceleration of 1cm/s^2
+          cutting.position.add(cutting.velocity);
       }
       if( cutting.position.y < -4 ) { // 4 meters below initialization point
           scene.remove(cutting);
