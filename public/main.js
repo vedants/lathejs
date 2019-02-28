@@ -306,7 +306,7 @@ function initObjects() {
   //set up the lathe!!!
   var basePoint = new THREE.Vector3(0,0,0);
   var direction = new THREE.Vector3(1,0,0);
-  lathe = new Lathe(basePoint, direction);  
+  lathe = new Lathe(null, basePoint, direction);  
   lathe.build(); //(see lathe.js)
 
   //lathe.material = MaterialLibrary[activeMaterialType];
