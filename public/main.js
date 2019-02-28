@@ -155,17 +155,18 @@ function spawnParticle(spawnPosition) {
   spawnCuttings(spawnPosition); 
 }
 function spawnCuttings(spawnPosition) {
+    console.log(spawnPosition);
 
     spawnDelay++;
-    if( spawnDelay < 0 ) return; //change this to 15 at some point? 
+    if( spawnDelay < 0 ) return; //change this back to 15 at some point? 
 
     //spawnDelay = 0;
 
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
     
-    cuttingMesh.position = //TODO:....
-    cuttingMesh.scale.set(0.01, 0.01, 0.01);
+    cuttingMesh.position = spawnPosition; //TODO:....
+    cuttingMesh.scale.set(0.001, 0.001, 0.001);
     cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
     //TODO: initialize scales to zero, and grow cuttings over time. 
@@ -190,7 +191,7 @@ function updateCuttings() {
       cutting.rotation += cutting.rotationVelocity;
       //cutting.rotation.setFromVector3( cutting.rotation.toVector3() + cutting.rotationVelocity.toVector3());
       if(cutting.scale.z < 0.03) {
-           cutting.scale.x = cutting.scale.y = cutting.scale.z += .005;
+           //cutting.scale.x = cutting.scale.y = cutting.scale.z += .005;
       //     cutting.position = intersectionPoint.clone()
        }
        else {
@@ -456,7 +457,7 @@ function update() {
   lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
-  //updateCuttings();
+  updateCuttings();
 
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
