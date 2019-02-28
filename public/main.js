@@ -134,8 +134,7 @@ function onShadersLoaded() {
 
 	// Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
-  canvas.addEventListener('touchstart', onClick, false);
-  
+  canvas.addEventListener('touchstart', onClick, false); 
 }
   
 function createCutting() {
@@ -164,6 +163,9 @@ function spawnCuttings(spawnX) {
 
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
+    
+    cuttingMesh.position = //TODO:....
+    cuttingMesh.scale.set(0.01, 0.01, 0.01);
     cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
     //TODO: initialize scales to zero, and grow cuttings over time. 
