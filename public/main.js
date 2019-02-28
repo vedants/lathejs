@@ -154,7 +154,7 @@ function spawnParticle(spawnPosition) {
 }
 function spawnCuttings(spawnPosition) {
     console.log(spawnPosition);
-
+    
     spawnDelay++;
     if( spawnDelay < 0 ) return; //change this back to 15 at some point? 
 
@@ -163,7 +163,7 @@ function spawnCuttings(spawnPosition) {
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
     
-    cuttingMesh.position = spawnPosition; //TODO:....
+    cuttingMesh.position = spawnPosition;
     cuttingMesh.scale.set(0.001, 0.001, 0.001);
     cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
