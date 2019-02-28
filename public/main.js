@@ -370,23 +370,22 @@ function setRing (changedSegment, pressure) {
   
   pressure *= currFactor; 
   
-  var newFactor = currFactor - pressure;
+  var newFactor = pressure;//currFactor - pressure;
   
   if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
   
   for (j = 0; j < _branchSegments; j++) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
-    
-    //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
-    tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
-    //tool.position.x = lathe.ring[changedSegment][j].x;
-    //tool.z = lathe.ringOrigin[changedSegment][j].y
-    //dont scale change along z! 
-    //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
-    //is there someway to make sure it always is? 
-    segmentFactors[changedSegment] = newFactor;
   }
+  //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
+  tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
+  //tool.position.x = lathe.ring[changedSegment][j].x;
+  //tool.z = lathe.ringOrigin[changedSegment][j].y
+  //dont scale change along z! 
+  //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
+  //is there someway to make sure it always is? 
+  segmentFactors[changedSegment] = newFactor;
 }
 
 /* Sets up a HTTP long poll to listen for messages from the server for when to cut the lathe.
