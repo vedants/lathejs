@@ -165,7 +165,7 @@ function spawnCuttings(spawnPosition) {
     
     cuttingMesh.position = spawnPosition;
     cuttingMesh.scale.set(0.001, 0.001, 0.001);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*.1,.1,.1);
     
     //TODO: initialize scales to zero, and grow cuttings over time. 
     // cuttingMesh.scale.x = 0.4//+ Math.random()*1;
@@ -193,7 +193,7 @@ function updateCuttings() {
       //     cutting.position = intersectionPoint.clone()
        }
        else {
-          cutting.velocity.y -= 1;
+          cutting.velocity.y -= .1;
           cutting.position += cutting.velocity;
           //cutting.position.addSelf(cutting.velocity);
       }
