@@ -47,7 +47,6 @@ THREE.ARUtils.getARDisplay().then(function (display) {
 
 function init2D() {
   renderer.setPixelRatio(window.devicePixelRatio);
-  console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   canvas = renderer.domElement;
@@ -65,7 +64,6 @@ function init() {
   // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setPixelRatio(window.devicePixelRatio);
-  console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   canvas = renderer.domElement;
@@ -348,7 +346,6 @@ function metalLoaded(obj) {
   //TODO: This function doesn't seem to be working! Double check that the obj is being generated/loaded correctly. 
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
-  console.log(metalGeometry);
   obj.position.z =  0.3;
   obj.scale.set(.01, .01, .01);
   scene.add(obj);
@@ -395,7 +392,6 @@ var poll_for_cut = function () {
     $.ajax({
        url: "http://lathejs.glitch.me/is_cut_poll",
        success: function(data){
-           console.log(data); // { text: "Some data" } -> will be printed in your browser console every 5 seconds
            check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
@@ -469,7 +465,6 @@ function update() {
  * projection matrix provided from the device
  */
 function onWindowResize () {
-  console.log('setRenderer size', window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -532,7 +527,6 @@ function onZoomOut () {
 }
 
 function onWood() {
-  console.log("onWood");
   lathe.material.color.setHex(0x6f4400);
 }
 function onSteel() {
@@ -548,9 +542,7 @@ function onStartLathe() {
   var audioLoader = new THREE.AudioLoader(); 
   sound.context.resume();
   listener.context.resume();
-
   audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
-    console.log("meow");
     sound.setBuffer( buffer );
     sound.setLoop( true );
     sound.setVolume(1);
