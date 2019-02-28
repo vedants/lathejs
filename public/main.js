@@ -195,7 +195,7 @@ function updateCuttings() {
        }
        else {
           cutting.velocity.y -= .1;
-          cutting.position += cutting.velocity;
+          //cutting.position.add(cutting.velocity);
           //cutting.position.addSelf(cutting.velocity);
       }
       if( cutting.position.y < -4 ) { // 4 meters below initialization point
