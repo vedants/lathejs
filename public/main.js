@@ -404,7 +404,7 @@ function check_and_cut(newSegmentFactors) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
-        spawnPosition.applyEuler(lathe.rotation).add(lathe.position);
+        spawnPosition.add(lathe.position);
         console.log(spawnPosition);
         console.log(i);
         spawnParticle(spawnPosition);
