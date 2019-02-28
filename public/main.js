@@ -448,8 +448,8 @@ function update() {
   renderer.render(scene, camera);
   
   //rotate the lathe block. 
-  lathe.rotateOnAxis(lathe.direction, _ROTATE_SPEED);
-  lathe.rotation.x += _ROTATE_SPEED; 
+  lathe.rotateOnAxis(lathe.direction, _ROTATE_SPEED/10);
+  //lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
   updateCuttings();
@@ -503,8 +503,8 @@ function onClick () {
 
   // move our lathe and place it at the camera's current position
   lathe.position.copy(pos);
-  lathe.quaternion.copy(ori);
-  lathe.direction = left.normalize();
+  //lathe.quaternion.copy(ori);
+  //lathe.direction = left.normalize();
   //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
   //lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
   //lathe.position.y = pos.y;
