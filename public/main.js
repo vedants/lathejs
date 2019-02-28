@@ -165,40 +165,41 @@ function spawnCuttings(spawnPosition) {
     cuttingList.push(cuttingMesh);
     
     cuttingMesh.position = spawnPosition;
-    cuttingMesh.scale.set(0.01, 0.01, 0.01);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
-    //TODO: initialize scales to zero, and grow cuttings over time. 
-    // cuttingMesh.scale.x = 0.4//+ Math.random()*1;
-    // cuttingMesh.scale.y = 0.4//+ Math.random()*1;
-    // cuttingMesh.scale.z = 0.4
+    cuttingMesh.scale.set(0.001, 0.001, 0.001);
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
+    
+    //initialize scales to something small, and grow cuttings over time. 
+     cuttingMesh.scale.x = 0.0001 + Math.random()*0.001;
+     cuttingMesh.scale.y = 0.0001 + Math.random()*0.001;
+     cuttingMesh.scale.z = 0.0001
 
-    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.5,Math.random()*0.0,Math.random()*0.0);
+
+    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.25,Math.random()*0.0,Math.random()*0.0);
     cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
 
     scene.add(cuttingMesh);
 }
   
 function updateCuttings() {
-
   var i = 0; 
   var max = cuttingList.length; //number of cuttings 
   var cutting;
 
   for( i = max-1; i>= 0; i--) {
       cutting = cuttingList[i];
-      cutting.rotation += cutting.rotationVelocity;
+      cutting.rotation.set(cutting.rotation.x + cutting.rotationVelocity.x, cutting.rotation.y + cutting.rotationVelocity.y, cutting.rotation.z + cutting.rotationVelocity.z);
+      //cutting.rotation += cutting.rotationVelocity;
       //cutting.rotation.setFromVector3( cutting.rotation.toVector3() + cutting.rotationVelocity.toVector3());
-      if(cutting.scale.z < 0.03) {
-           cutting.scale.x = cutting.scale.y = cutting.scale.z += .005;
-      //     cutting.position = intersectionPoint.clone()
-       }
-       else {
-          cutting.velocity.y -= 1;
-          cutting.position += cutting.velocity;
-          //cutting.position.addSelf(cutting.velocity);
+      if(cutting.scale.z < 0.001) {
+           cutting.scale.x = cutting.scale.y = cutting.scale.z += .0002;
       }
-      if( cutting.position.y < -4 ) { // 4 meters below initialization point
+      else {
+          
+          cutting.velocity.y -= 0.00002;
+          cutting.position.add(cutting.velocity);
+      }
+      if( cutting.position.y < -1 ) { // 1 meter below initialization point
           scene.remove(cutting);
           cuttingPool.returnObject(cutting.poolId);
           cuttingList.splice(i,1);
