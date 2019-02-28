@@ -164,7 +164,7 @@ function spawnCuttings(spawnPosition) {
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
     
-    cuttingMesh.position = //TODO:....
+    cuttingMesh.position = spawnPosition;
     cuttingMesh.scale.set(0.01, 0.01, 0.01);
     cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
