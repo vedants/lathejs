@@ -368,7 +368,6 @@ function setRing (changedSegment, pressure) {
   pressure *= currFactor; 
   
   var newFactor = currFactor - pressure;
-  console.log(newFactor);
   
   if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
   
@@ -376,7 +375,6 @@ function setRing (changedSegment, pressure) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
   }
-  lathe.build();
   //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
   tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
   //tool.position.x = lathe.ring[changedSegment][j].x;
@@ -410,8 +408,6 @@ function check_and_cut(newSegmentFactors) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
         spawnPosition.addVectors(spawnPosition, lathe.position);
-        console.log(spawnPosition);
-        console.log(i);
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
