@@ -47,6 +47,7 @@ THREE.ARUtils.getARDisplay().then(function (display) {
 
 function init2D() {
   renderer.setPixelRatio(window.devicePixelRatio);
+  console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   canvas = renderer.domElement;
@@ -64,6 +65,7 @@ function init() {
   // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setPixelRatio(window.devicePixelRatio);
+  console.log('setRenderer size', window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   canvas = renderer.domElement;
@@ -127,9 +129,6 @@ function onShadersLoaded() {
   //dustPool.createObject = createDust
 
   //initSounds();
-  var axesHelper = new THREE.AxesHelper( 5 );
-  scene.add( axesHelper );
-
   initLights();
   initObjects();
 
@@ -156,26 +155,25 @@ function spawnParticle(spawnPosition) {
   spawnCuttings(spawnPosition); 
 }
 function spawnCuttings(spawnPosition) {
-    //console.log(spawnPosition);
-    
+
     spawnDelay++;
-    if( spawnDelay < 0 ) return; //change this back to 15 at some point? 
+    if( spawnDelay < 0 ) return; //change this to 15 at some point? 
 
     //spawnDelay = 0;
 
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
     
-    cuttingMesh.position = spawnPosition;
-    cuttingMesh.scale.set(0.001, 0.001, 0.001);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0); //1 cm per second
+    cuttingMesh.position = //TODO:....
+    cuttingMesh.scale.set(0.01, 0.01, 0.01);
+    cuttingMesh.velocity = new THREE.Vector3(Math.random()*15-7,5,5);
     
-    //initialize scales to something small, and grow cuttings over time. 
-     cuttingMesh.scale.x = 0.0001 + Math.random()*0.001;
-     cuttingMesh.scale.y = 0.0001 + Math.random()*0.001;
-     cuttingMesh.scale.z = 0.0001
+    //TODO: initialize scales to zero, and grow cuttings over time. 
+    // cuttingMesh.scale.x = 0.4//+ Math.random()*1;
+    // cuttingMesh.scale.y = 0.4//+ Math.random()*1;
+    // cuttingMesh.scale.z = 0.4
 
-    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.25,Math.random()*0.0,Math.random()*0.0);
+    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.5,Math.random()*0.0,Math.random()*0.0);
     cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
 
     scene.add(cuttingMesh);
@@ -189,18 +187,18 @@ function updateCuttings() {
 
   for( i = max-1; i>= 0; i--) {
       cutting = cuttingList[i];
-      cutting.rotation.set(cutting.rotation.x + cutting.rotationVelocity.x, cutting.rotation.y + cutting.rotationVelocity.y, cutting.rotation.z + cutting.rotationVelocity.z);
-      //cutting.rotation += cutting.rotationVelocity;
+      cutting.rotation += cutting.rotationVelocity;
       //cutting.rotation.setFromVector3( cutting.rotation.toVector3() + cutting.rotationVelocity.toVector3());
-      if(cutting.scale.z < 0.001) {
-           cutting.scale.x = cutting.scale.y = cutting.scale.z += .0002;
-          //cutting.position = intersectionPoint.clone()
+      if(cutting.scale.z < 0.03) {
+           cutting.scale.x = cutting.scale.y = cutting.scale.z += .005;
+      //     cutting.position = intersectionPoint.clone()
        }
        else {
-          cutting.velocity.y -= 0.00002; //acceleration of 1cm/s^2
-          cutting.position.add(cutting.velocity);
+          cutting.velocity.y -= 1;
+          cutting.position += cutting.velocity;
+          //cutting.position.addSelf(cutting.velocity);
       }
-      if( cutting.position.y < -1 ) { // 1 meter below initialization point
+      if( cutting.position.y < -4 ) { // 4 meters below initialization point
           scene.remove(cutting);
           cuttingPool.returnObject(cutting.poolId);
           cuttingList.splice(i,1);
@@ -337,7 +335,10 @@ function initObjects() {
   //scene.add(tool);
   
   //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
-  for (var i = 0; i < lathe.totalLinks; i++) {segmentFactors.push(1); }
+  for (var i = 0; i < lathe.totalLinks; i++) {
+    segmentFactors.push(1); 
+  }
+  
   loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
@@ -346,6 +347,7 @@ function metalLoaded(obj) {
   //TODO: This function doesn't seem to be working! Double check that the obj is being generated/loaded correctly. 
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
+  console.log(metalGeometry);
   obj.position.z =  0.3;
   obj.scale.set(.01, .01, .01);
   scene.add(obj);
@@ -374,12 +376,16 @@ function setRing (changedSegment, pressure) {
   for (j = 0; j < _branchSegments; j++) {
     lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
     lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
+    
+    //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
+    tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
+    //tool.position.x = lathe.ring[changedSegment][j].x;
+    //tool.z = lathe.ringOrigin[changedSegment][j].y
+    //dont scale change along z! 
+    //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
+    //is there someway to make sure it always is? 
+    segmentFactors[changedSegment] = newFactor;
   }
-  //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
-  tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
-  //tool.position.x = lathe.ring[changedSegment][j].x;
-  //tool.z = lathe.ringOrigin[changedSegment][j].y
-  segmentFactors[changedSegment] = newFactor;
 }
 
 /* Sets up a HTTP long poll to listen for messages from the server for when to cut the lathe.
@@ -389,6 +395,7 @@ var poll_for_cut = function () {
     $.ajax({
        url: "http://lathejs.glitch.me/is_cut_poll",
        success: function(data){
+           console.log(data); // { text: "Some data" } -> will be printed in your browser console every 5 seconds
            check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
@@ -407,7 +414,7 @@ function check_and_cut(newSegmentFactors) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
-        spawnPosition.addVectors(spawnPosition, lathe.position);
+        console.log(i);
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
@@ -449,7 +456,7 @@ function update() {
   lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
-  updateCuttings();
+  //updateCuttings();
 
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
@@ -462,6 +469,7 @@ function update() {
  * projection matrix provided from the device
  */
 function onWindowResize () {
+  console.log('setRenderer size', window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -524,6 +532,7 @@ function onZoomOut () {
 }
 
 function onWood() {
+  console.log("onWood");
   lathe.material.color.setHex(0x6f4400);
 }
 function onSteel() {
@@ -539,7 +548,9 @@ function onStartLathe() {
   var audioLoader = new THREE.AudioLoader(); 
   sound.context.resume();
   listener.context.resume();
+
   audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
+    console.log("meow");
     sound.setBuffer( buffer );
     sound.setLoop( true );
     sound.setVolume(1);

@@ -10,14 +10,13 @@ var _branchSegments = 12; //number of sides on perimeter of each "ring" (approxi
 Lathe = function ( materials, radius ) {
 	
 	THREE.Mesh.call( this, new THREE.Geometry(), materials );
-  
+
 	var numCurrentPos = 0;
 	this.doubleSided = true;
 	
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
-  this.direction = new THREE.Vector3(1,0,0);
 	this.radius = 0.1; // ~= 4inches  
   this.minRadius = 0.001; //never let the lathe get thinner than this.
 
