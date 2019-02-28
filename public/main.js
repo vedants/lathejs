@@ -157,7 +157,7 @@ function spawnParticle(sector) {
 function spawnCuttings(spawnX) {
 
     spawnDelay++;
-    if( spawnDelay < 15 ) return; 
+    if( spawnDelay < 0 ) return; //change this to 15 at some point? 
 
     spawnDelay = 0;
 
