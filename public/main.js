@@ -187,16 +187,17 @@ function updateCuttings() {
 
   for( i = max-1; i>= 0; i--) {
       cutting = cuttingList[i];
-      cutting.rotation.addSelf(cutting.rotationVelocity);
-      // if(cutting.scale.z < 3 && intersectionPoint) {
-      //     cutting.scale.x = cutting.scale.y = cutting.scale.z += .2
+      cutting.rotation += cutting.rotationVelocity;
+      //cutting.rotation.setFromVector3( cutting.rotation.toVector3() + cutting.rotationVelocity.toVector3());
+      if(cutting.scale.z < 0.03) {
+           cutting.scale.x = cutting.scale.y = cutting.scale.z += .005;
       //     cutting.position = intersectionPoint.clone()
-      //     cutting.position.z += 20
-      // }
-      // else {
+       }
+       else {
           cutting.velocity.y -= 1;
-          cutting.position.addSelf(cutting.velocity);
-      //}
+          cutting.position += cutting.velocity;
+          //cutting.position.addSelf(cutting.velocity);
+      }
       if( cutting.position.y < -4 ) { // 4 meters below initialization point
           scene.remove(cutting);
           cuttingPool.returnObject(cutting.poolId);
@@ -412,7 +413,7 @@ function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
-        var spawnPosition = lathe.rings[i][_branchSegments / 2 ]
+        var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
@@ -427,8 +428,6 @@ function check_and_cut(newSegmentFactors) {
  */
 
 function update() {
-  //rotate the lathe block. 
-  lathe.rotation.x += _ROTATE_SPEED; 
   
   // Clears color from the frame before rendering the camera (arView) or scene.
   renderer.clearColor();
@@ -451,6 +450,12 @@ function update() {
   // Render our three.js virtual scene
   renderer.clearDepth();
   renderer.render(scene, camera);
+  
+  //rotate the lathe block. 
+  lathe.rotation.x += _ROTATE_SPEED; 
+  
+  //update cuttings 
+  updateCuttings();
 
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
