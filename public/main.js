@@ -127,6 +127,9 @@ function onShadersLoaded() {
   //dustPool.createObject = createDust
 
   //initSounds();
+  var axesHelper = new THREE.AxesHelper( 5 );
+  scene.add( axesHelper );
+
   initLights();
   initObjects();
 
