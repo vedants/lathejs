@@ -334,10 +334,7 @@ function initObjects() {
   //scene.add(tool);
   
   //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
-  for (var i = 0; i < lathe.totalLinks; i++) {
-    segmentFactors.push(1); 
-  }
-  
+  for (var i = 0; i < lathe.totalLinks; i++) {segmentFactors.push(1); }
   loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
@@ -379,9 +376,6 @@ function setRing (changedSegment, pressure) {
   tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
   //tool.position.x = lathe.ring[changedSegment][j].x;
   //tool.z = lathe.ringOrigin[changedSegment][j].y
-  //dont scale change along z! 
-  //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
-  //is there someway to make sure it always is? 
   segmentFactors[changedSegment] = newFactor;
 }
 
@@ -410,6 +404,8 @@ function check_and_cut(newSegmentFactors) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
+        spawnPosition.applyEuler(lathe.rotation).add(lathe.position);
+        console.log(spawnPosition);
         console.log(i);
         spawnParticle(spawnPosition);
       }
