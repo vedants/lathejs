@@ -304,9 +304,7 @@ function initObjects() {
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
   //set up the lathe!!!
-  var basePoint = new THREE.Vector3(0,0,0);
-  var direction = new THREE.Vector3(1,1,0);
-  lathe = new Lathe(null, basePoint, direction);  
+  lathe = new Lathe();  
   lathe.build(); //(see lathe.js)
 
   //lathe.material = MaterialLibrary[activeMaterialType];
@@ -321,8 +319,8 @@ function initObjects() {
   lathe.geometry.computeFaceNormals();
   lathe.geometry.computeVertexNormals();
   
-  //lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  //lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
   //lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
@@ -450,7 +448,7 @@ function update() {
   renderer.render(scene, camera);
   
   //rotate the lathe block. 
-  lathe.rotateOnAxis(lathe.direction, _ROTATE_SPEED);
+  lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
   updateCuttings();

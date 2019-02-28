@@ -7,19 +7,19 @@ var PI2 = Math.PI * 2
 var TO_RADIANS = Math.PI / 180;
 var _branchSegments = 12; //number of sides on perimeter of each "ring" (approximation factor)
 
-Lathe = function (materials, basePoint, direction ) {
+Lathe = function ( materials, radius ) {
 	
 	THREE.Mesh.call( this, new THREE.Geometry(), materials );
   
 	var numCurrentPos = 0;
 	this.doubleSided = true;
 	
-	var basePoint = basePoint;
+	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
-	branchPoint.position = basePoint;
+	branchPoint.position = new THREE.Vector3(0,0,0);
+  this.direction = new THREE.Vector3(1,0,0);
 	this.radius = 0.1; // ~= 4inches  
   this.minRadius = 0.001; //never let the lathe get thinner than this.
-  this.direction = direction;
 
 	var R;
 	var S;
@@ -55,22 +55,14 @@ Lathe = function (materials, basePoint, direction ) {
 			basePoint.z = branchPoint.position.z;
 			
 			//move forward
-			//branchPoint.translateX(this.linkDist);
-      branchPoint.position.addScaledVector(this.direction, this.linkDist);
+			branchPoint.translateX(this.linkDist);
 			
 			//difference from last segment
 			var diffVector = new THREE.Vector3();
 			diffVector.subVectors( branchPoint.position, basePoint);
 
 			var transformPoint = new THREE.Vector3();
-      
-      if (diffVector.y != 0 || diffVector.z != 0)
-        var C = new THREE.Vector3(1, 0, 0);
-      else
-        var C = new THREE.Vector3(0, 1, 0);
-      transformPoint.crossVectors(diffVector,C);
-      
-			//transformPoint.addVectors(diffVector, new THREE.Vector3(0, 0, 10));
+			transformPoint.addVectors(diffVector, new THREE.Vector3(0, 0, 10));
 
 			//height from transformPoint
 			R = new THREE.Vector3();
