@@ -58,9 +58,6 @@ function init2D() {
 }
 
 function init() {
-  // Turn on the debugging panel
-  var arDebug = new THREE.ARDebug(vrDisplay);
-  document.body.appendChild(arDebug.getElement());
 
   // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -71,6 +68,13 @@ function init() {
   canvas = renderer.domElement;
   document.body.appendChild(canvas);
   scene = new THREE.Scene();
+  
+  // Turn on the debugging panel
+  var arDebug = new THREE.ARDebug(vrDisplay);
+  document.body.appendChild(arDebug.getElement());
+  //Turn on the debugging axes 
+  var axesHelper = new THREE.AxesHelper( 5 );
+  scene.add( axesHelper );
 
   // Creating the ARView, which is the object that handles
   // the rendering of the camera stream behind the three.js
@@ -196,7 +200,7 @@ function updateCuttings() {
       }
       else {
           
-          cutting.velocity.y -= 0.00002;
+          cutting.velocity.y -= 0.0002;
           cutting.position.add(cutting.velocity);
       }
       if( cutting.position.y < -1 ) { // 1 meter below initialization point
@@ -415,7 +419,7 @@ function check_and_cut(newSegmentFactors) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
         var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
-        console.log(i);
+        console.log(spawnPosition);
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
@@ -457,7 +461,7 @@ function update() {
   lathe.rotation.x += _ROTATE_SPEED; 
   
   //update cuttings 
-  //updateCuttings();
+  updateCuttings();
 
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
