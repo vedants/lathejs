@@ -21,6 +21,7 @@ var _ROTATE_SPEED = 0;
 var MaterialLibrary = {};
 
 var cuttingList = [];
+var chipsList = [];
 var cuttingPool = new ObjectPool();
 var chipsPool = new ObjectPool();
 var dustPool = new ObjectPool();
@@ -366,7 +367,7 @@ function initObjects() {
   loader.load("/models/wood.js", function(obj) { woodLoaded(obj) });
 }
 function woodLoaded(obj) {
-  chipsGeometry = obj;
+  chipsGeometry = obj.geometry;
   loader = new THREE.ObjectLoader(); 
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
@@ -416,7 +417,7 @@ var poll_for_cut = function () {
        url: "https://lathejs.glitch.me/is_cut_poll",
        success: function(data) {
            console.log("got what data"); 
-           //check_and_cut(data['segmentFactors']);
+           check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
        error: function() {
