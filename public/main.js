@@ -16,7 +16,7 @@ var cube;
 var cylinder;
 var tool; 
 
-var _ROTATE_SPEED = 0; //speed at which the lathe rotates (initially zero)
+var _ROTATE_SPEED = 0;
   
 var MaterialLibrary = {};
 
@@ -26,10 +26,10 @@ var chipsPool = new ObjectPool();
 var dustPool = new ObjectPool();
 var chipsGeometry;
 var metalGeometry;
-var activeMaterialType = "metal"; //initial material is metal
+var activeMaterialType = "metal";
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
-var lastChangedSegments; //stores which segment in the cylinder was changed last. 
+
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
@@ -42,22 +42,9 @@ THREE.ARUtils.getARDisplay().then(function (display) {
     vrDisplay = display;
     init();
   } else {
-    //THREE.ARUtils.displayUnsupportedMessage();
-    init2D();
+    THREE.ARUtils.displayUnsupportedMessage();
   }
 });
-
-function init2D() {
-  renderer.setPixelRatio(window.devicePixelRatio);
-  console.log('setRenderer size', window.innerWidth, window.innerHeight);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.autoClear = false;
-  canvas = renderer.domElement;
-  document.body.appendChild(canvas);
-  scene = new THREE.Scene();
-  LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
-  initShaderLoading(); 
-}
 
 function init() {
 
@@ -126,7 +113,7 @@ function init() {
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
-  initShaderLoading(); //function is in Library.js
+  initShaderLoading();
 }
   
 function onShadersLoaded() {
@@ -134,21 +121,22 @@ function onShadersLoaded() {
   cuttingPool.createObject = createCutting
   dustPool.createObject = createDust
 
-  //initSounds();
   initLights();
   initObjects();
 
-	// Bind our event handlers
   window.addEventListener('resize', onWindowResize, false);
   canvas.addEventListener('touchstart', onClick, false); 
 }
+
 function createChips() {
 }
+
 function createDust() {
 }
+
 function createCutting() {
   //var cutting = new THREE.Mesh( metalGeometry, MaterialLibrary.metal );
-  var cutting = new THREE.Mesh( metalGeometry, new THREE.MeshBasicMaterial( { color: 0xffff00 } ));
+  var cutting = new THREE.Mesh( metalGeometry, new THREE.MeshBasicMaterial( { color: 0xff0000 } ));
   cutting.receiveShadow = false;
   cutting.doubleSided = false;
   cutting.castShadow = true;
@@ -160,7 +148,6 @@ var spawnDelay = 0;
 
 function spawnParticle(spawnPosition) {
   //TODO: spawn wood chips, metal cuttings, or stone dust, depending on the material being cut. 
-  //for now, just default to spawning metal cuttings. 
   if (activeMaterialType == "wood") spawnChips(spawnPosition); 
   if (activeMaterialType == "metal") spawnCuttings(spawnPosition);
   if (activeMaterialType == "plastic") spawnDust(spawnPosition); 
@@ -179,9 +166,7 @@ function updateDust(){
 function spawnCuttings(spawnPosition) {
 
     spawnDelay++;
-    if( spawnDelay < 0 ) return; //change this to 15 at some point? 
-
-    //spawnDelay = 0;
+    if( spawnDelay < 0 ) return; //maybe change the 0 here to 15? 
 
     var cuttingMesh = cuttingPool.getObject();
     cuttingList.push(cuttingMesh);
@@ -205,23 +190,20 @@ function spawnCuttings(spawnPosition) {
   
 function updateCuttings() {
   var i = 0; 
-  var max = cuttingList.length; //number of cuttings 
+  var max = cuttingList.length;
   var cutting;
 
   for( i = max-1; i>= 0; i--) {
       cutting = cuttingList[i];
       cutting.rotation.set(cutting.rotation.x + cutting.rotationVelocity.x, cutting.rotation.y + cutting.rotationVelocity.y, cutting.rotation.z + cutting.rotationVelocity.z);
-      //cutting.rotation += cutting.rotationVelocity;
-      //cutting.rotation.setFromVector3( cutting.rotation.toVector3() + cutting.rotationVelocity.toVector3());
       if(cutting.scale.z < 0.001) {
            cutting.scale.x = cutting.scale.y = cutting.scale.z += .0002;
       }
-      else {
-          
+      else {    
           cutting.velocity.y -= 0.0002;
           cutting.position.add(cutting.velocity);
       }
-      if( cutting.position.y < -1 ) { // 1 meter below initialization point
+      if( cutting.position.y < -1 ) { // 1 meter below the lathe
           scene.remove(cutting);
           cuttingPool.returnObject(cutting.poolId);
           cuttingList.splice(i,1);
@@ -267,7 +249,7 @@ function initLights() {
 }
   
 function initObjects() {
-  //set up materials 
+
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
   var woodUniforms = {
@@ -362,12 +344,15 @@ function initObjects() {
     segmentFactors.push(1); 
   }
   
-  loader = new THREE.ObjectLoader(); //used to be a BinaryLoader, but that's deprecated now
+  loader = new THREE.ObjectLoader();
+  loader.load("/models/wood.js", function(obj) { woodLoaded(obj) });
+}
+function woodLoaded(obj) {
+  loader = new THREE.ObjectLoader(); 
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
 
 function metalLoaded(obj) {
-  //TODO: This function doesn't seem to be working! Double check that the obj is being generated/loaded correctly. 
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
   console.log(metalGeometry);
@@ -379,13 +364,10 @@ function metalLoaded(obj) {
   poll_for_cut();
   //poll_for_toolPos();
   
-  // (Finally) Kick off the render loop!
+  //Kick off the render loop!
   update();
 }
   
-  /**
-  Removes pressure % of the material from the segment of the lathe at position changedSegment.
-  */ 
 function setRing (changedSegment, pressure) {
   var currFactor = segmentFactors[changedSegment];
   if (currFactor < pressure) return; //cutting it would set it to negative scaling! 
@@ -476,7 +458,7 @@ function update() {
   renderer.render(scene, camera);
   
   //rotate the lathe block. 
-  lathe.rotation.x += _ROTATE_SPEED; 
+  lathe.rotation.z += _ROTATE_SPEED; 
   
   //update cuttings 
   updateCuttings();
