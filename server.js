@@ -39,7 +39,7 @@ app.post('/cut', function(request, response) {
     segmentFactors[segmentNumber] = segmentPressure;  
     longpoll.publish("/is_cut_poll", {segmentFactors});
   }
-  response.send("okay");
+  response.send("got cut.");
    
 });
 

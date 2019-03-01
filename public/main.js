@@ -415,11 +415,12 @@ var poll_for_cut = function () {
     $.ajax({
        url: "http://lathejs.glitch.me/is_cut_poll",
        success: function(data){
-           console.log(data); // { text: "Some data" } -> will be printed in your browser console every 5 seconds
-           check_and_cut(data['segmentFactors']);
+           console.log("got data"); 
+           //check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
        error: function() {
+           console.log("longpoll error");
            poll_for_cut();
        },
        timeout: 30000 // 30 seconds
@@ -477,7 +478,9 @@ function update() {
   
   //update cuttings 
   updateCuttings();
-
+  updateChips();
+  updateDust();
+  
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
   vrDisplay.requestAnimationFrame(update);
