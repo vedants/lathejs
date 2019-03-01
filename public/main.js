@@ -413,7 +413,7 @@ function setRing (changedSegment, pressure) {
 */ 
 var poll_for_cut = function () {
     $.ajax({
-       url: "http://lathejs.glitch.me/is_cut_poll",
+       url: "https://lathejs.glitch.me/is_cut_poll",
        success: function(data) {
            console.log("got what data"); 
            //check_and_cut(data['segmentFactors']);
@@ -421,7 +421,7 @@ var poll_for_cut = function () {
        },
        error: function() {
            console.log("longpoll error");
-           poll_for_cut();
+           //poll_for_cut();
        },
        timeout: 30000 // 30 seconds
     });
