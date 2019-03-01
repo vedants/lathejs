@@ -155,12 +155,11 @@ function createCutting() {
 var spawnDelay = 0;
 
 function spawnParticle(spawnPosition) {
-  //TODO: spawn wood chips, metal cuttings, or stone dust, depending on the material being cut. 
-  if (activeMaterialType == "wood") spawnChips(spawnPosition); 
+  if (activeMaterialType == "wood") spawnChips(spawnPosition);
   if (activeMaterialType == "metal") spawnCuttings(spawnPosition);
-  if (activeMaterialType == "plastic") spawnDust(spawnPosition); 
-  
+  if (activeMaterialType == "plastic") spawnDust(spawnPosition);
 }
+
 function spawnChips(spawnPosition) {
   
     spawnDelay++;
@@ -179,7 +178,23 @@ function spawnChips(spawnPosition) {
 
     scene.add(chipsMesh);
 }
+
 function updateChips() {
+  var i=0; 
+  var max = chipsList.length;
+  var chips;
+  for( i = max - 1; i >= 0; i--) {
+      chips = chipsList[i];
+      chips.position.add(chips.velocity);
+      chips.rotation.set(chips.rotation.x + chips.rotationVelocity.x, chips.rotation.y + chips.rotationVelocity.y, chips.rotation.z + chips.rotationVelocity.z);   
+      chips.velocity.y -= 0.0002;
+
+      if( chips.position.y < -1) {
+          scene.remove(chips);
+          chipsPool.returnObject(chips.poolId);
+          chipsList.splice(i,1);
+      }
+  }
 }
 
 function spawnDust(spawnPosition) {
