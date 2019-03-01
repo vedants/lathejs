@@ -22,6 +22,8 @@ var MaterialLibrary = {};
 
 var cuttingList = [];
 var cuttingPool = new ObjectPool();
+var chipsPool = new ObjectPool();
+var dustPool = new ObjectPool();
 var chipsGeometry;
 var metalGeometry;
 var activeMaterialType = "metal"; //initial material is metal
@@ -117,7 +119,7 @@ function init() {
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
   document.getElementById("wood").onclick = onWood;
-  document.getElementById("steel").onclick = onSteel;
+  document.getElementById("metal").onclick = onMetal;
   document.getElementById("plastic").onclick = onPlastic;
   document.getElementById("start").onclick = onStartLathe;
   document.getElementById("stop").onclick = onStopLathe;
@@ -128,9 +130,9 @@ function init() {
 }
   
 function onShadersLoaded() {
-  //chipsPool.createObject = createChips
+  chipsPool.createObject = createChips
   cuttingPool.createObject = createCutting
-  //dustPool.createObject = createDust
+  dustPool.createObject = createDust
 
   //initSounds();
   initLights();
@@ -140,7 +142,10 @@ function onShadersLoaded() {
   window.addEventListener('resize', onWindowResize, false);
   canvas.addEventListener('touchstart', onClick, false); 
 }
-  
+function createChips() {
+}
+function createDust() {
+}
 function createCutting() {
   //var cutting = new THREE.Mesh( metalGeometry, MaterialLibrary.metal );
   var cutting = new THREE.Mesh( metalGeometry, new THREE.MeshBasicMaterial( { color: 0xffff00 } ));
@@ -156,8 +161,21 @@ var spawnDelay = 0;
 function spawnParticle(spawnPosition) {
   //TODO: spawn wood chips, metal cuttings, or stone dust, depending on the material being cut. 
   //for now, just default to spawning metal cuttings. 
-  spawnCuttings(spawnPosition); 
+  if (activeMaterialType == "wood") spawnChips(spawnPosition); 
+  if (activeMaterialType == "metal") spawnCuttings(spawnPosition);
+  if (activeMaterialType == "plastic") spawnDust(spawnPosition); 
+  
 }
+function spawnChips(spawnPosition) {
+}
+function updateChips() {
+}
+
+function spawnDust(spawnPosition) {
+}
+function updateDust(){
+}
+
 function spawnCuttings(spawnPosition) {
 
     spawnDelay++;
@@ -322,9 +340,9 @@ function initObjects() {
   lathe.geometry.computeFaceNormals();
   lathe.geometry.computeVertexNormals();
   
-  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
-  lathe.rotation.y = 90 * TO_RADIANS; 
+  //lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+  //lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+  //lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
   lathe.add(sound);
@@ -374,7 +392,7 @@ function setRing (changedSegment, pressure) {
   
   pressure *= currFactor; 
   
-  var newFactor = currFactor - pressure;
+  var newFactor = pressure;//currFactor - pressure;
   
   if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
   
@@ -538,13 +556,16 @@ function onZoomOut () {
 }
 
 function onWood() {
-  console.log("onWood");
+  activeMaterialType = "wood";
+  
   lathe.material.color.setHex(0x6f4400);
 }
-function onSteel() {
+function onMetal() {
+  activeMaterialType = "metal";
   lathe.material.color.setHex(0xbbbbbb);
 }
 function onPlastic() {
+  activeMaterialType = "plastic";
   lathe.material.color.setHex(0x004488);
 }
 
