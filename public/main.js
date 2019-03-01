@@ -414,8 +414,8 @@ function setRing (changedSegment, pressure) {
 var poll_for_cut = function () {
     $.ajax({
        url: "http://lathejs.glitch.me/is_cut_poll",
-       success: function(data){
-           console.log("got data"); 
+       success: function(data) {
+           console.log("got what data"); 
            //check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
