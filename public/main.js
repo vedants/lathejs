@@ -129,6 +129,13 @@ function onShadersLoaded() {
 }
 
 function createChips() {
+  //var chips = new THREE.Mesh( chipsGeometry, MaterialLibrary.wood );
+  var chips = new THREE.Mesh( chipsGeometry, new THREE.MeshBasicMaterial( {color:0x00bbbb}));
+  chips.receiveShadow = false; 
+  chips.doubleSided = false; 
+  chips.castShadow = true; 
+  chips.geometry.computeFaceNormals();
+  return chips;
 }
 
 function createDust() {
@@ -154,6 +161,22 @@ function spawnParticle(spawnPosition) {
   
 }
 function spawnChips(spawnPosition) {
+  
+    spawnDelay++;
+    if( spawnDelay < 0 ) return; 
+    spawnDelay = 0;
+
+    var chipsMesh = chipsPool.getObject();
+    chipsList.push(chipsMesh);
+    chipsMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
+    chipsMesh.scale.x = 0.001 + Math.random()*0.001;
+    chipsMesh.scale.y = 0.001 + Math.random()*0.001;
+    chipsMesh.scale.z = 0.001
+    chipsMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.1,Math.random()*0.1,Math.random()*0.1);
+    chipsMesh.rotation = new THREE.Vector3(Math.PI*.5,Math.PI,Math.random()*Math.PI);
+    chipsMesh.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+
+    scene.add(chipsMesh);
 }
 function updateChips() {
 }
@@ -172,16 +195,11 @@ function spawnCuttings(spawnPosition) {
     cuttingList.push(cuttingMesh);
     
     cuttingMesh.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
-    
     cuttingMesh.scale.set(0.001, 0.001, 0.001);
     cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
-    
-    //initialize scales to something small, and grow cuttings over time. 
      cuttingMesh.scale.x = 0.0001 + Math.random()*0.001;
      cuttingMesh.scale.y = 0.0001 + Math.random()*0.001;
-     cuttingMesh.scale.z = 0.0001
-
-
+     cuttingMesh.scale.z = 0.0001;
     cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.25,Math.random()*0.0,Math.random()*0.0);
     cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
 
