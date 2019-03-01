@@ -32,6 +32,7 @@ app.get('/reset', function (request, response) {
 });
 
 app.post('/cut', function(request, response) {
+  console.log("got a cut");
   var segmentNumber = request.body['segmentNumber'];
   var segmentPressure = request.body['segmentPressure'];
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
@@ -39,7 +40,7 @@ app.post('/cut', function(request, response) {
     segmentFactors[segmentNumber] = segmentPressure;  
     longpoll.publish("/is_cut_poll", {segmentFactors});
   }
-  response.send("okay");
+  response.send("cut sent.");
    
 });
 
