@@ -21,7 +21,6 @@ var _ROTATE_SPEED = 0;
 var MaterialLibrary = {};
 
 var cuttingList = [];
-var chipsList = [];
 var cuttingPool = new ObjectPool();
 var chipsPool = new ObjectPool();
 var dustPool = new ObjectPool();
@@ -130,13 +129,6 @@ function onShadersLoaded() {
 }
 
 function createChips() {
-  //var chips = new THREE.Mesh( chipsGeometry, MaterialLibrary.wood );
-  var chips = new THREE.Mesh( chipsGeometry, new THREE.MeshBasicMaterial( {color:0x00bbbb}));
-  chips.receiveShadow = false; 
-  chips.doubleSided = false; 
-  chips.castShadow = true; 
-  chips.geometry.computeFaceNormals();
-  return chips;
 }
 
 function createDust() {
@@ -155,13 +147,11 @@ function createCutting() {
 var spawnDelay = 0;
 
 function spawnParticle(spawnPosition) {
-  if (activeMaterialType == "wood") {
-    spawnChips(spawnPosition); 
-  } else if (activeMaterialType == "metal") {
-    spawnCuttings(spawnPosition);
-  } else if (activeMaterialType == "plastic") {
-    spawnDust(spawnPosition); 
-  }
+  //TODO: spawn wood chips, metal cuttings, or stone dust, depending on the material being cut. 
+  if (activeMaterialType == "wood") spawnChips(spawnPosition); 
+  if (activeMaterialType == "metal") spawnCuttings(spawnPosition);
+  if (activeMaterialType == "plastic") spawnDust(spawnPosition); 
+  
 }
 function spawnChips(spawnPosition) {
   
@@ -172,9 +162,9 @@ function spawnChips(spawnPosition) {
     var chipsMesh = chipsPool.getObject();
     chipsList.push(chipsMesh);
     chipsMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
-    chipsMesh.scale.x = 0.001 + Math.random()*0.001;
-    chipsMesh.scale.y = 0.001 + Math.random()*0.001;
-    chipsMesh.scale.z = 0.001
+    chipsMesh.scale.x = 0.0001 + Math.random()*0.001;
+    chipsMesh.scale.y = 0.0001 + Math.random()*0.001;
+    chipsMesh.scale.z = 0.0001
     chipsMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.1,Math.random()*0.1,Math.random()*0.1);
     chipsMesh.rotation = new THREE.Vector3(Math.PI*.5,Math.PI,Math.random()*Math.PI);
     chipsMesh.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
@@ -182,23 +172,6 @@ function spawnChips(spawnPosition) {
     scene.add(chipsMesh);
 }
 function updateChips() {
-  var i=0; 
-  var max = chipsList.length;
-  var chips;
-  for( i = max - 1; i >= 0; i--) {
-      chips = chipsList[i];
-      chips.position.add(chips.velocity);
-      chips.rotation.set(chips.rotation.x + chips.rotationVelocity.x, chips.rotation.y + chips.rotationVelocity.y, chips.rotation.z + chips.rotationVelocity.z);
-      
-      chips.velocity.y -= 0.0002;
-
-      if( chips.position.y < -1) {
-          scene.remove(chips);
-          chipsPool.returnObject(chips.poolId);
-          chipsList.splice(i,1);
-      }
-  }
-
 }
 
 function spawnDust(spawnPosition) {
@@ -386,7 +359,7 @@ function initObjects() {
   loader.load("/models/wood.js", function(obj) { woodLoaded(obj) });
 }
 function woodLoaded(obj) {
-  chipsGeometry = obj.geometry;
+  chipsGeometry = obj;
   loader = new THREE.ObjectLoader(); 
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
