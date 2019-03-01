@@ -101,6 +101,8 @@ function init() {
   //window.addEventListener('touchstart', onStartLathe);
   //sound = new THREE.Audio( listener ); //audio source
   sound = new THREE.PositionalAudio( listener );
+  sound.context.resume();
+  listener.context.resume();
 
 
   //initialize button callbacks 
@@ -576,7 +578,6 @@ function onZoomOut () {
 
 function onWood() {
   activeMaterialType = "wood";
-  
   lathe.material.color.setHex(0x6f4400);
 }
 function onMetal() {

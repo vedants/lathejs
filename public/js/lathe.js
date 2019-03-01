@@ -31,7 +31,7 @@ Lathe = function ( materials, radius ) {
 	//Each UV layer is an array of UVs matching the order and number of vertices in faces 
 	var faceVertexUvs = this.geometry.faceVertexUvs
 	
-  //total length = totalLinks * linkDist = 300 * 0.002 = 0.6m ~= 2ft long
+  //total length = totalLinks * linkDist = 100 * 0.005 = 0.5m ~= 1.5ft long
 	this.totalLinks = 100; //number of ring segments along the length of the cylinder
 	this.linkDist = 0.005; //width of each ring segment
   this.depth = this.totalLinks * this.linkDist;
@@ -153,10 +153,6 @@ Lathe = function ( materials, radius ) {
 				p3 = vertices.length - _branchSegments * 2 + intSegmentStep;
 			}	
 
-			//THREE.FACE4 is depracated! 
-			//faces.push( new THREE.Face4( p1, p2, p3, p4  ) );
-
-			//replace with two THREE.FACE3s
 			faces.push( new THREE.Face3( p1, p2, p4 ) );
 			faces.push( new THREE.Face3( p4, p2, p3 ) );
 
