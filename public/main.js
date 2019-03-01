@@ -129,6 +129,13 @@ function onShadersLoaded() {
 }
 
 function createChips() {
+  //var chips = new THREE.Mesh( chipsGeometry, MaterialLibrary.wood );
+  var chips = new THREE.Mesh( chipsGeometry, new THREE.MeshBasicMaterial( {color:0x00bbbb}));
+  chips.receiveShadow = false; 
+  chips.doubleSided = false; 
+  chips.castShadow = true; 
+  chips.geometry.computeFaceNormals();
+  return chips;
 }
 
 function createDust() {
@@ -162,9 +169,9 @@ function spawnChips(spawnPosition) {
     var chipsMesh = chipsPool.getObject();
     chipsList.push(chipsMesh);
     chipsMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
-    chipsMesh.scale.x = 0.0001 + Math.random()*0.001;
-    chipsMesh.scale.y = 0.0001 + Math.random()*0.001;
-    chipsMesh.scale.z = 0.0001
+    chipsMesh.scale.x = 0.001 + Math.random()*0.001;
+    chipsMesh.scale.y = 0.001 + Math.random()*0.001;
+    chipsMesh.scale.z = 0.001
     chipsMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.1,Math.random()*0.1,Math.random()*0.1);
     chipsMesh.rotation = new THREE.Vector3(Math.PI*.5,Math.PI,Math.random()*Math.PI);
     chipsMesh.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
