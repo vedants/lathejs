@@ -348,6 +348,7 @@ function initObjects() {
   loader.load("/models/wood.js", function(obj) { woodLoaded(obj) });
 }
 function woodLoaded(obj) {
+  chipsGeometry = obj;
   loader = new THREE.ObjectLoader(); 
   loader.load("/models/metal.js", function(obj) { metalLoaded(obj) });
 }
@@ -355,10 +356,6 @@ function woodLoaded(obj) {
 function metalLoaded(obj) {
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
-  console.log(metalGeometry);
-  obj.position.z =  0.3;
-  obj.scale.set(.01, .01, .01);
-  scene.add(obj);
   
   //set up all the long-poll listeners 
   poll_for_cut();
