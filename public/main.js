@@ -180,20 +180,19 @@ function spawnChips(spawnPosition) {
 }
 
 function updateChips() {
-  var i=0; 
-  var max = chipsList.length;
+  var i=0, max = chipsList.length;
   var chips;
   for( i = max - 1; i >= 0; i--) {
-      chips = chipsList[i];
-      chips.position.add(chips.velocity);
-      chips.rotation.set(chips.rotation.x + chips.rotationVelocity.x, chips.rotation.y + chips.rotationVelocity.y, chips.rotation.z + chips.rotationVelocity.z);   
-      chips.velocity.y -= 0.0002;
+    chips = chipsList[i];
+    chips.position.add(chips.velocity);
+    chips.rotation.set(chips.rotation.x + chips.rotationVelocity.x, chips.rotation.y + chips.rotationVelocity.y, chips.rotation.z + chips.rotationVelocity.z);   
+    chips.velocity.y -= 0.0002;
 
-      if( chips.position.y < -1) {
-          scene.remove(chips);
-          chipsPool.returnObject(chips.poolId);
-          chipsList.splice(i,1);
-      }
+    if( chips.position.y < -1) {
+      scene.remove(chips);
+      chipsPool.returnObject(chips.poolId);
+      chipsList.splice(i,1);
+    }
   }
 }
 
@@ -204,22 +203,22 @@ function updateDust(){
 
 function spawnCuttings(spawnPosition) {
 
-    spawnDelay++;
-    if( spawnDelay < 0 ) return; //maybe change the 0 here to 15? 
+  spawnDelay++;
+  if( spawnDelay < 0 ) return; //maybe change the 0 here to 15? 
 
-    var cuttingMesh = cuttingPool.getObject();
-    cuttingList.push(cuttingMesh);
-    
-    cuttingMesh.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
-    cuttingMesh.scale.set(0.001, 0.001, 0.001);
-    cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
-     cuttingMesh.scale.x = 0.0001 + Math.random()*0.001;
-     cuttingMesh.scale.y = 0.0001 + Math.random()*0.001;
-     cuttingMesh.scale.z = 0.0001;
-    cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.25,Math.random()*0.0,Math.random()*0.0);
-    cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
+  var cuttingMesh = cuttingPool.getObject();
+  cuttingList.push(cuttingMesh);
 
-    scene.add(cuttingMesh);
+  cuttingMesh.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+  cuttingMesh.scale.set(0.001, 0.001, 0.001);
+  cuttingMesh.velocity = new THREE.Vector3(Math.random()*0.001, -0.002, 0);
+  cuttingMesh.scale.x = 0.0001 + Math.random()*0.001;
+  cuttingMesh.scale.y = 0.0001 + Math.random()*0.001;
+  cuttingMesh.scale.z = 0.0001;
+  cuttingMesh.rotationVelocity = new THREE.Vector3(Math.random()*0.25,Math.random()*0.0,Math.random()*0.0);
+  cuttingMesh.rotation = new THREE.Vector3(Math.PI*.5,-Math.PI*Math.random(), Math.PI*.5);
+
+  scene.add(cuttingMesh);
 }
   
 function updateCuttings() {
@@ -228,20 +227,20 @@ function updateCuttings() {
   var cutting;
 
   for( i = max-1; i>= 0; i--) {
-      cutting = cuttingList[i];
-      cutting.rotation.set(cutting.rotation.x + cutting.rotationVelocity.x, cutting.rotation.y + cutting.rotationVelocity.y, cutting.rotation.z + cutting.rotationVelocity.z);
-      if(cutting.scale.z < 0.001) {
-           cutting.scale.x = cutting.scale.y = cutting.scale.z += .0002;
-      }
-      else {    
-          cutting.velocity.y -= 0.0002;
-          cutting.position.add(cutting.velocity);
-      }
-      if( cutting.position.y < -1 ) { // 1 meter below the lathe
-          scene.remove(cutting);
-          cuttingPool.returnObject(cutting.poolId);
-          cuttingList.splice(i,1);
-      }
+    cutting = cuttingList[i];
+    cutting.rotation.set(cutting.rotation.x + cutting.rotationVelocity.x, cutting.rotation.y + cutting.rotationVelocity.y, cutting.rotation.z + cutting.rotationVelocity.z);
+    if(cutting.scale.z < 0.001) {
+      cutting.scale.x = cutting.scale.y = cutting.scale.z += .0002;
+    }
+    else {    
+      cutting.velocity.y -= 0.0002;
+      cutting.position.add(cutting.velocity);
+    }
+    if( cutting.position.y < -1 ) { // 1 meter below the lathe
+      scene.remove(cutting);
+      cuttingPool.returnObject(cutting.poolId);
+      cuttingList.splice(i,1);
+    }
   }
 }
   
@@ -279,11 +278,9 @@ function initLights() {
   var pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
   pointLight.position.set( 0,0, 0);
   scene.add(pointLight);
-
 }
   
 function initObjects() {
-
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
   var woodUniforms = {
