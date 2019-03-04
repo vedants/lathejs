@@ -539,18 +539,11 @@ function onClick () {
   //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
   console.log("moving lathe");
   lathe.position.copy(pos);
-  //lathe.quaternion.copy(ori);
-  //scene.translateX(pos.x);
-  //scene.translateY(pos.y); 
-  //scene.translateZ(pos.z);
+  //lathe.quaternion.copy(ori);  
   
-
-  
-  lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
-  lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
-  lathe.position.y = pos.y;
-  //lathe.quaternion.copy(ori);
-  //TODO: update cylinder.ringOrigins by the new offset. 
+  //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
+  //lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
+  //lathe.position.y = pos.y;
 }
 
 function onZoomIn () {
@@ -588,13 +581,13 @@ function onStartLathe() {
   listener.context.resume();
 
   audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
-    console.log("meow");
     sound.setBuffer( buffer );
     sound.setLoop( true );
     sound.setVolume(1);
     sound.play();
   });
 }
+
 function onStopLathe() {
   _ROTATE_SPEED = 0;
   sound.stop();
@@ -612,3 +605,5 @@ function updateLatheJSON() {
     dataType: "json"
   });  
 }
+
+

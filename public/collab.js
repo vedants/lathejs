@@ -219,7 +219,7 @@ var poll_for_update = function () {
 function check_and_update() {
   var loader = new THREE.ObjectLoader();
   loader.load(
-	  "models/json/lathe.json", function ( obj ) {
+	  "models/lathe.json", function ( obj ) {
       console.log("got lathe:"); 
       console.log(obj);
       lathe = obj; 
