@@ -26,6 +26,11 @@ app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html'); //TODO: pass _totalLinks in here somehow...
 });
 
+app.get('/collab', function(request, response) {
+  reset();
+  response.sendFile(__dirname + '/views/collab.html'); 
+});
+
 app.get('/reset', function (request, response) {
   reset(); 
   response.send("Reset.");
