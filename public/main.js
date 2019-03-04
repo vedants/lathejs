@@ -342,6 +342,8 @@ function initObjects() {
   //set up the lathe!!!
   lathe = new Lathe();  
   lathe.build(); //(see lathe.js)
+  console.log("AHHHHH");
+  console.log(lathe.rotation);
 
   //lathe.material = MaterialLibrary["metal"];
   
@@ -402,20 +404,23 @@ function setRing (changedSegment, pressure) {
   var currFactor = segmentFactors[changedSegment];
   if (currFactor < pressure) return; //cutting it would set it to negative scaling! 
   
-  pressure *= currFactor; 
-  
-  var newFactor = pressure;//currFactor - pressure;
+  var newFactor = pressure;
   
   if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
   
   for (j = 0; j < _branchSegments; j++) {
-    lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
-    lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
+    console.log("original");
+    console.log(lathe.ring[changedSegment][j].x + "," +  lathe.ring[changedSegment][j].y);
+    console.log("new"); 
+    console.log(lathe.ringOrigin[changedSegment][j].x * newFactor + "," + lathe.ringOrigin[changedSegment][j].y * newFactor);
+    
+    lathe.ring[changedSegment][j].x /= 2; //lathe.ringOrigin[changedSegment][j].x * newFactor;
+    lathe.ring[changedSegment][j].y /= 2; //lathe.ringOrigin[changedSegment][j].y * newFactor;
     
     //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
-    tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
+    //tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
     //tool.position.x = lathe.ring[changedSegment][j].x;
-    //tool.z = lathe.ringOrigin[changedSegment][j].y
+    //tool.position.z = lathe.ringOrigin[changedSegment][j].y
     //dont scale change along z! 
     //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
     //is there someway to make sure it always is? 
@@ -430,7 +435,7 @@ var poll_for_cut = function () {
     $.ajax({
        url: "https://lathejs.glitch.me/is_cut_poll",
        success: function(data) {
-           console.log("got what data"); 
+           console.log("got data"); 
            check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
@@ -446,6 +451,7 @@ var poll_for_cut = function () {
 *  Also calls setRing, to cut the lathe accordingly. 
 */
 function check_and_cut(newSegmentFactors) {
+  
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
@@ -455,9 +461,11 @@ function check_and_cut(newSegmentFactors) {
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
+      
       }
     }
-  lathe.geometry.verticesNeedUpdate = true;
+  lathe.build();
+  //lathe.geometry.verticesNeedUpdate = true;
 }
 
 /**
@@ -547,6 +555,7 @@ function onClick () {
 
   // move our lathe and place it at the camera's current position
   //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
+  console.log("moving lathe");
   lathe.position.copy(pos);
   lathe.quaternion.copy(ori);
   //scene.translateX(pos.x);
