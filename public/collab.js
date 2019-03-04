@@ -29,8 +29,6 @@ var chipsGeometry;
 var metalGeometry;
 var activeMaterialType = "metal";
 
-var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
-
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
@@ -234,13 +232,7 @@ function initObjects() {
   lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
   
   scene.add(lathe);
-  lathe.add(sound);
-  
-  
-  //initializes all the segmentFactors to 1 (since everything is at full, i.e. 100% scale initially
-  for (var i = 0; i < lathe.totalLinks; i++) {
-    segmentFactors.push(1); 
-  }
+  lathe.add(sound);  
   
   //set up all the long-poll listeners 
   poll_for_update();//TODO: poll for change instead.
@@ -257,7 +249,7 @@ var poll_for_update = function () {
        url: "https://lathejs.glitch.me/is_cut_poll",
        success: function(data) {
            console.log("got data"); 
-           check_and_update(data['segmentFactors']);
+           check_and_update();
            poll_for_cut();
        },
        error: function() {
@@ -269,7 +261,19 @@ var poll_for_update = function () {
 }
 
 function check_and_update() {
-    //todo
+  var loader = new THREE.ObjectLoader();
+  loader.load(
+	  "models/json/lathe.json",
+	// onLoad callback
+	// Here the loaded data is assumed to be an object
+	function ( obj ) {
+		// Add the loaded object to the scene
+		scene.add( obj );
+	},
+
+  
+  
+
     lathe.geometry.verticesNeedUpdate = true;
 }
 
