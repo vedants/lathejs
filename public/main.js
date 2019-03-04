@@ -410,12 +410,12 @@ function setRing (changedSegment, pressure) {
   
   for (j = 0; j < _branchSegments; j++) {
     console.log("original");
-    console.log(lathe.ring[changedSegment][j].x + "," +  lathe.ring[changedSegment][j].y);
+    console.log(lathe.ring[changedSegment][j]);
     console.log("new"); 
-    console.log(lathe.ringOrigin[changedSegment][j].x * newFactor + "," + lathe.ringOrigin[changedSegment][j].y * newFactor);
+    console.log(lathe.ringOrigin[changedSegment][j] * newFactor);
     
-    lathe.ring[changedSegment][j].x /= 2; //lathe.ringOrigin[changedSegment][j].x * newFactor;
-    lathe.ring[changedSegment][j].y /= 2; //lathe.ringOrigin[changedSegment][j].y * newFactor;
+    //lathe.ring[changedSegment][j].x /= 1; //lathe.ringOrigin[changedSegment][j].x * newFactor;
+    //lathe.ring[changedSegment][j].y /= 2; //lathe.ringOrigin[changedSegment][j].y * newFactor;
     
     //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
     //tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
