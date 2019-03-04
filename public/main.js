@@ -593,8 +593,7 @@ function onStartLathe() {
     sound.setLoop( true );
     sound.setVolume(1);
     sound.play();
-});
-
+  });
 }
 function onStopLathe() {
   _ROTATE_SPEED = 0;
@@ -603,13 +602,13 @@ function onStopLathe() {
 
 function updateLatheJSON() {
   var lathe_data = JSON.stringify(lathe_json = lathe.toJSON()); 
-  fs.writeFile("./lathe.json", lathe_data, (err) => {
-    if (err) {
-        console.error(err);
-        return;
-    };
-    console.log("File has been created");
-});
-
-  
+  $.ajax({
+    type: "POST",
+    url: "lathejs.glitch.me/save_lathe",
+    data: lathe_data,
+    success: function() {
+      console.log("Success!");
+    },
+    dataType: "json"
+  });  
 }

@@ -2,6 +2,7 @@
 
 // init project
 var express = require('express');
+var fs = require('fs');
 var app = express();
 var bodyParser = require('body-parser');
 var longpoll = require("express-longpoll")(app, { DEBUG: true });
@@ -47,8 +48,29 @@ app.post('/cut', function(request, response) {
   response.send("got cut.");
    
 });
+app.post('/save_lathe', function(request, response) {
+  var lathe_json = request.body; 
+  fs.writeFile("./lathe.json", lathe_data, (err) => {
+    if (err) {
+        console.error(err);
+        return;
+    };
+    console.log("File has been created");
+}
+
 
 longpoll.create("/is_cut_poll");
+longpoll.create("/is_lathe_updated");
+
+
+
+
+
+
+
+
+
+
   
 
 // listen for requests
