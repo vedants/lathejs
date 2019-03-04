@@ -409,21 +409,9 @@ function setRing (changedSegment, pressure) {
   if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
   
   for (j = 0; j < _branchSegments; j++) {
-    console.log("original");
-    console.log(lathe.ring[changedSegment][j]);
-    console.log("new"); 
-    console.log(lathe.ringOrigin[changedSegment][j] * newFactor);
     
-    //lathe.ring[changedSegment][j].x /= 1; //lathe.ringOrigin[changedSegment][j].x * newFactor;
-    //lathe.ring[changedSegment][j].y /= 2; //lathe.ringOrigin[changedSegment][j].y * newFactor;
-    
-    //tool.position.z = -0.5 +  (0.06 / 2);//lathe.pos.z + lathe.radius + half the length of the tool
-    //tool.position.x = lathe.position.x - (lathe.depth / 2) + (changedSegment/ lathe.totalLinks);
-    //tool.position.x = lathe.ring[changedSegment][j].x;
-    //tool.position.z = lathe.ringOrigin[changedSegment][j].y
-    //dont scale change along z! 
-    //TODO: this is going to cause problems is the lathe isn't aligned along the z-axis. 
-    //is there someway to make sure it always is? 
+    lathe.ring[changedSegment][j].x /= 2; //lathe.ringOrigin[changedSegment][j].x * newFactor;
+    lathe.ring[changedSegment][j].y /= 2; //lathe.ringOrigin[changedSegment][j].y * newFactor;
     segmentFactors[changedSegment] = newFactor;
   }
 }
