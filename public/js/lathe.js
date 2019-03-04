@@ -43,6 +43,10 @@ Lathe = function ( materials, radius ) {
 	this.build = function() {
 		//reset
 		var segmentsEachTime = 0;
+    var rot = this.rotation; 
+    var pos = this.position; 
+    //this.position = new THREE.Vector3(0,0,0);
+    //this.rotation = 
 		//for each step
 		while (segmentsEachTime < this.totalLinks)
 		{

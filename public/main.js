@@ -343,12 +343,12 @@ function initObjects() {
   lathe = new Lathe();  
   lathe.build(); //(see lathe.js)
 
-  lathe.material = MaterialLibrary["metal"];
+  //lathe.material = MaterialLibrary["metal"];
   
   
-  //lathe.material = new THREE.MeshNormalMaterial ();
-  // lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
-  // lathe.material.side = THREE.DoubleSide;
+  lathe.material = new THREE.MeshNormalMaterial ();
+  lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
+  lathe.material.side = THREE.DoubleSide;
   lathe.receiveShadow = true;
   lathe.castShadow = false;
   lathe.geometry.dynamic = true;
