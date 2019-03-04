@@ -405,13 +405,10 @@ function setRing (changedSegment, pressure) {
   if (currFactor < pressure) return; //cutting it would set it to negative scaling! 
   
   var newFactor = pressure;
-  
   if (newFactor < 0.2) newFactor = 0.2; //never let the lathe be less than 20% of the original thickness. 
-  
-  for (j = 0; j < _branchSegments; j++) {
-    
-    lathe.ring[changedSegment][j].x /= 2; //lathe.ringOrigin[changedSegment][j].x * newFactor;
-    lathe.ring[changedSegment][j].y /= 2; //lathe.ringOrigin[changedSegment][j].y * newFactor;
+  for (j = 0; j < _branchSegments; j++) {  
+    lathe.ring[changedSegment][j].x = lathe.ringOrigin[changedSegment][j].x * newFactor;
+    lathe.ring[changedSegment][j].y = lathe.ringOrigin[changedSegment][j].y * newFactor;
     segmentFactors[changedSegment] = newFactor;
   }
 }
@@ -545,16 +542,16 @@ function onClick () {
   //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
   console.log("moving lathe");
   lathe.position.copy(pos);
-  lathe.quaternion.copy(ori);
+  //lathe.quaternion.copy(ori);
   //scene.translateX(pos.x);
   //scene.translateY(pos.y); 
   //scene.translateZ(pos.z);
   
 
   
-  //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
-  //lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
-  //lathe.position.y = pos.y;
+  lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
+  lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
+  lathe.position.y = pos.y;
   //lathe.quaternion.copy(ori);
   //TODO: update cylinder.ringOrigins by the new offset. 
 }
