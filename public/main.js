@@ -603,8 +603,6 @@ function onStopLathe() {
 
 function updateLatheJSON() {
   var lathe_data = JSON.stringify(lathe_json = lathe.toJSON()); 
-  
-  var fs = require("fs");
   fs.writeFile("./lathe.json", lathe_data, (err) => {
     if (err) {
         console.error(err);
