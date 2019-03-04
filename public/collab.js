@@ -1,40 +1,17 @@
-//initialize all the variables 
-
 var vrDisplay;
 var vrFrameData;
 var vrControls;
 var arView;
-
 var canvas;
 var camera;
 var scene;
 var renderer;
 var listener; 
 var sound;
-
-var cube;
-var cylinder;
-var tool; 
-
-var _ROTATE_SPEED = 0;
   
 var MaterialLibrary = {};
-
-var cuttingList = [];
-var chipsList = [];
-var cuttingPool = new ObjectPool();
-var chipsPool = new ObjectPool();
-var dustPool = new ObjectPool();
-var chipsGeometry;
-var metalGeometry;
 var activeMaterialType = "metal";
 
-/**
- * Use the `getARDisplay()` utility to leverage the WebVR API
- * to see if there are any AR-capable WebVR VRDisplays. Returns
- * a valid display if found. Otherwise, display the unsupported
- * browser message.
- */
 THREE.ARUtils.getARDisplay().then(function (display) {
   if (display) {
     vrFrameData = new VRFrameData();
@@ -46,8 +23,6 @@ THREE.ARUtils.getARDisplay().then(function (display) {
 });
 
 function init() {
-
-  // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   console.log('setRenderer size', window.innerWidth, window.innerHeight);
@@ -57,24 +32,15 @@ function init() {
   document.body.appendChild(canvas);
   scene = new THREE.Scene();
   
-  // Turn on the debugging panel
   var arDebug = new THREE.ARDebug(vrDisplay);
   document.body.appendChild(arDebug.getElement());
-  //Turn on the debugging axes 
+
   var axesHelper = new THREE.AxesHelper( 5 );
   scene.add( axesHelper );
 
-  // Creating the ARView, which is the object that handles
-  // the rendering of the camera stream behind the three.js
-  // scene
   arView = new THREE.ARView(vrDisplay, renderer);
 
-  // The ARPerspectiveCamera is very similar to THREE.PerspectiveCamera,
-  // except when using an AR-capable browser, the camera uses
-  // the projection matrix provided from the device, so that the
-  // perspective camera's depth planes and field of view matches
-  // the physical camera on the device.
-  camera = new THREE.ARPerspectiveCamera(
+    camera = new THREE.ARPerspectiveCamera(
     vrDisplay,
     60,
     window.innerWidth / window.innerHeight,
@@ -82,12 +48,8 @@ function init() {
     vrDisplay.depthFar
   );
 
-  // VRControls is a utility from three.js that applies the device's
-  // orientation/position to the perspective camera, keeping our
-  // real world and virtual world in sync.
   vrControls = new THREE.VRControls(camera);
   
-  // create listener that plays back sounds (spatialized to the camera position)
   listener = new THREE.AudioListener();
   camera.add( listener );
   
@@ -99,15 +61,12 @@ function init() {
   sound.context.resume();
   listener.context.resume();
 
-
-  //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
   document.getElementById("wood").onclick = onWood;
   document.getElementById("metal").onclick = onMetal;
   document.getElementById("plastic").onclick = onPlastic;
 
-  //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
   initShaderLoading();
 }
@@ -235,18 +194,15 @@ function initObjects() {
   lathe.add(sound);  
   
   //set up all the long-poll listeners 
-  poll_for_update();//TODO: poll for change instead.
+  poll_for_update();
   
   //Kick off the render loop!
   update();
 }
 
-/* Sets up a HTTP long poll to listen for messages from the server for when to update the lathe.
-*  https://www.pubnub.com/blog/2014-12-01-http-long-polling/
-*/ 
 var poll_for_update = function () {
     $.ajax({
-       url: "https://lathejs.glitch.me/is_cut_poll",
+       url: "https://lathejs.glitch.me/is_lathe_updated",
        success: function(data) {
            console.log("got data"); 
            check_and_update();
@@ -254,7 +210,7 @@ var poll_for_update = function () {
        },
        error: function() {
            console.log("longpoll error");
-           //poll_for_cut();
+           poll_for_cut();
        },
        timeout: 30000 // 30 seconds
     });
@@ -263,59 +219,25 @@ var poll_for_update = function () {
 function check_and_update() {
   var loader = new THREE.ObjectLoader();
   loader.load(
-	  "models/json/lathe.json",
-	// onLoad callback
-	// Here the loaded data is assumed to be an object
-	function ( obj ) {
-		// Add the loaded object to the scene
-		scene.add( obj );
-	},
-
-  
-  
-
-    lathe.geometry.verticesNeedUpdate = true;
+	  "models/json/lathe.json", function ( obj ) {
+      console.log("got lathe:"); 
+      console.log(obj);
+      lathe = obj; 
+	  });
 }
 
-/**
- * The render loop, called once per frame. Handles updating
- * our scene and rendering.
- */
-
+ //The render loop, called once per frame. Handles updating our scene and rendering. 
 function update() {
-  
-  // Clears color from the frame before rendering the camera (arView) or scene.
   renderer.clearColor();
-
-  // Render the device's camera stream on screen first of all.
-  // It allows to get the right pose synchronized with the right frame.
   arView.render();
-
-  // Update our camera projection matrix in the event that
-  // the near or far planes have updated
   camera.updateProjectionMatrix();
-
-  // From the WebVR API, populate `vrFrameData` with
-  // updated information for the frame
   vrDisplay.getFrameData(vrFrameData);
-
-  // Update our perspective camera's positioning
   vrControls.update();
-
-  // Render our three.js virtual scene
   renderer.clearDepth();
   renderer.render(scene, camera);
-  
-  // Kick off the requestAnimationFrame to call this function
-  // when a new VRDisplay frame is rendered
   vrDisplay.requestAnimationFrame(update);
 }
 
-/**
- * On window resize, update the perspective camera's aspect ratio,
- * and call `updateProjectionMatrix` so that we can get the latest
- * projection matrix provided from the device
- */
 function onWindowResize () {
   console.log('setRenderer size', window.innerWidth, window.innerHeight);
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -323,16 +245,9 @@ function onWindowResize () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-/**
- * When clicking on the screen, move the lathe to directly in front of the user's
- * current position.
- */
-function onClick () {
-  // Fetch the pose data from the current frame
-  var pose = vrFrameData.pose;
 
-  // Convert the pose orientation and position into
-  // THREE.Quaternion and THREE.Vector3 respectively
+function onClick () {
+  var pose = vrFrameData.pose;
   var ori = new THREE.Quaternion(
     pose.orientation[0],
     pose.orientation[1],

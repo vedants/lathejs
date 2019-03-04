@@ -12,7 +12,8 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "express-longpoll": "^0.0.4"
+    "express-longpoll": "^0.0.4",
+    "fs": "^0.0.1-security"
   },
   "engines": {
     "node": "8.x"
