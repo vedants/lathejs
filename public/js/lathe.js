@@ -42,12 +42,6 @@ Lathe = function ( materials, radius ) {
 	
 	this.build = function() {
 		//reset
-		
-    var rot = this.rotation; 
-    var pos = this.position; 
-    this.position = new THREE.Vector3(0,0,0);
-    this.rotation = new THREE.Euler( 0, 0, 0, 'XYZ' );
-    
     var segmentsEachTime = 0;
 		//for each step
 		while (segmentsEachTime < this.totalLinks)
@@ -87,13 +81,6 @@ Lathe = function ( materials, radius ) {
 			numCurrentPos++;
 		}
 		
-		//computerCentroids was deprecated in the newer version of THREE.js 
-		//I believe the centroids aren't used for much beyond lighting?
-		
-    //this.position = pos; 
-    //this.rotation = rot; 
-    
-		//this.geometry.computeCentroids()
 		this.geometry.computeFaceNormals();
 		this.geometry.computeVertexNormals(); 
 		this.geometry.computeBoundingSphere();
