@@ -596,10 +596,11 @@ function onStopLathe() {
 function updateLatheJSON() {
   var lathe_data = JSON.stringify(lathe.toJSON()); 
   console.log(lathe_data);
+  
   $.ajax({
     type: "POST",
     url: "https://lathejs.glitch.me/save_lathe",
-    data: lathe_data,
+    data: JSON.stringify(lathe),
     success: function() {
       console.log("Success!");
     },

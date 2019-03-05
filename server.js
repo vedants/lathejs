@@ -52,6 +52,8 @@ app.post('/save_lathe', function(request, response) {
   var lathe_json = request.body; 
   console.log("request"); 
   console.log(request);
+  console.log(request.body);
+  console.log(request.data);
   fs.writeFile(__dirname + "/lathe.json", lathe_json, (err) => {
     if (err) {
         console.error(err);
