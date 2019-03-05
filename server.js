@@ -61,6 +61,7 @@ app.post('/save_lathe', function(request, response) {
     };
     console.log("File has been created");
   });
+  response.send("sure, why not.");   
 });
 
 
