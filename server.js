@@ -7,9 +7,10 @@ var app = express();
 var bodyParser = require('body-parser');
 var longpoll = require("express-longpoll")(app, { DEBUG: true });
 
-app.use(bodyParser.json());
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+//app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 var is_changed; 
 var segmentFactors = []; //stores the server view of the segmentFactors
@@ -25,7 +26,7 @@ function reset() {
 
 app.get('/', function(request, response) {
   reset();
-  response.sendFile(__dirname + '/views/index.html'); //TODO: pass _totalLinks in here somehow...
+  response.sendFile(__dirname + '/views/index.html');
 });
 
 app.get('/collab', function(request, response) {
@@ -52,10 +53,9 @@ app.post('/cut', function(request, response) {
 app.post('/save_lathe', function(request, response) {
   var lathe_json = request.body; 
   console.log("request"); 
-  console.log(request);
   console.log(request.body);
   
-  fs.writeFile(__dirname + "/lathe.json", lathe_json, (err) => {
+  fs.writeFile(__dirname + "/lathe.json", request.body.toJSON(), (err) => {
     if (err) {
         console.error(err);
         return;
