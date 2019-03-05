@@ -8,6 +8,7 @@ var scene;
 var renderer;
 var listener; 
 var sound;
+var lathe;
   
 var MaterialLibrary = {};
 var activeMaterialType = "metal";
@@ -174,30 +175,35 @@ function initObjects() {
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
   //set up the lathe!!!
-  lathe = new Lathe();  
-  lathe.build(); //TODO: get lathe mesh over network, instead of building it locally. 
+  //lathe = new Lathe();  
+  //lathe.build(); //TODO: get lathe mesh over network, instead of building it locally. 
+  
+  var loader = new THREE.JSONLoader();
+  loader.load(
+	  "https://lathejs.glitch.me/models/lathe.json", function ( obj ) {
+    console.log("got lathe:"); 
+    lathe = obj.toJSON(); 
 
-  //lathe.material = MaterialLibrary["metal"];
-  
-  lathe.material = new THREE.MeshNormalMaterial ();
-  lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
-  lathe.material.side = THREE.DoubleSide;
-  lathe.receiveShadow = true;
-  lathe.castShadow = false;
-  lathe.geometry.dynamic = true;
-  lathe.geometry.computeFaceNormals();
-  lathe.geometry.computeVertexNormals();
-  
-  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  
-  scene.add(lathe);
-  lathe.add(sound);  
-  
-  //set up all the long-poll listeners 
-  poll_for_update();
-  
-  //Kick off the render loop!
-  update();
+    lathe.material = new THREE.MeshNormalMaterial ();
+    lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
+    lathe.material.side = THREE.DoubleSide;
+    lathe.receiveShadow = true;
+    lathe.castShadow = false;
+    lathe.geometry.dynamic = true;
+    lathe.geometry.computeFaceNormals();
+    lathe.geometry.computeVertexNormals();
+
+    lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+
+    scene.add(lathe);
+    lathe.add(sound);  
+
+    //set up all the long-poll listeners 
+    poll_for_update();
+
+    //Kick off the render loop!
+    update();  
+    });
 }
 
 var poll_for_update = function () {
@@ -219,10 +225,10 @@ var poll_for_update = function () {
 function check_and_update() {
   var loader = new THREE.ObjectLoader();
   loader.load(
-	  "models/lathe.json", function ( obj ) {
+	  "http://lathejs.glitch.me/models/lathe.json", function ( obj ) {
       console.log("got lathe:"); 
       console.log(obj);
-      lathe = obj; 
+      lathe = obj.toJSON(); 
 	  });
 }
 
