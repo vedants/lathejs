@@ -9,6 +9,7 @@ var longpoll = require("express-longpoll")(app, { DEBUG: true });
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 var is_changed; 
 var segmentFactors = []; //stores the server view of the segmentFactors
@@ -53,7 +54,7 @@ app.post('/save_lathe', function(request, response) {
   console.log("request"); 
   console.log(request);
   console.log(request.body);
-  console.log(request.data);
+  
   fs.writeFile(__dirname + "/lathe.json", lathe_json, (err) => {
     if (err) {
         console.error(err);
