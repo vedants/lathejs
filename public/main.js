@@ -594,7 +594,7 @@ function onStopLathe() {
 }
 
 function updateLatheJSON() {
-  var lathe_data = JSON.stringify(lathe.toJSON()); 
+  var lathe_data = lathe.toJSON();
   console.log(lathe_data);
   
   $.ajax({

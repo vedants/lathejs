@@ -174,13 +174,11 @@ function initObjects() {
 
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
-  //set up the lathe!!!
-  //lathe = new Lathe();  
-  //lathe.build(); //TODO: get lathe mesh over network, instead of building it locally. 
   
-  var loader = new THREE.JSONLoader();
+  var loader = new THREE.ObjectLoader();
   loader.load(
 	  "https://lathejs.glitch.me/models/lathe.json", function ( obj ) {
+    console.log(obj);
     console.log("got lathe:"); 
     lathe = obj.toJSON(); 
 

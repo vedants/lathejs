@@ -10,7 +10,7 @@ var longpoll = require("express-longpoll")(app, { DEBUG: true });
 app.use(express.static('public'));
 //app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '50mb', parameterLimit: 100000, extended: true }));
 
 var is_changed; 
 var segmentFactors = []; //stores the server view of the segmentFactors
