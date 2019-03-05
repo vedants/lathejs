@@ -597,7 +597,7 @@ function updateLatheJSON() {
   var lathe_data = JSON.stringify(lathe_json = lathe.toJSON()); 
   $.ajax({
     type: "POST",
-    url: "lathejs.glitch.me/save_lathe",
+    url: "https://lathejs.glitch.me/save_lathe",
     data: lathe_data,
     success: function() {
       console.log("Success!");

@@ -56,7 +56,8 @@ app.post('/save_lathe', function(request, response) {
         return;
     };
     console.log("File has been created");
-}
+  });
+});
 
 
 longpoll.create("/is_cut_poll");
