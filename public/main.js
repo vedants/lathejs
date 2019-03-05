@@ -602,7 +602,7 @@ function updateLatheJSON() {
     success: function() {
       console.log("Success!");
     },
-    dataType: "json"
+    dataType: "application/json"
   });  
 }
 
