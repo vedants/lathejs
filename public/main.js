@@ -600,7 +600,7 @@ function updateLatheJSON() {
   $.ajax({
     type: "POST",
     url: "https://lathejs.glitch.me/save_lathe",
-    data: JSON.stringify(lathe),
+    data: '{"hello":"hi", "segmentPressure": 0.4}',
     success: function() {
       console.log("Success!");
     },
