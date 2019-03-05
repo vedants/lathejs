@@ -212,7 +212,7 @@ var poll_for_update = function () {
            console.log("longpoll error");
            poll_for_cut();
        },
-       timeout: 30000 // 30 seconds
+       timeout: 30000
     });
 }
 

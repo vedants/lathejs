@@ -61,16 +61,6 @@ app.post('/save_lathe', function(request, response) {
 
 longpoll.create("/is_cut_poll");
 longpoll.create("/is_lathe_updated");
-
-
-
-
-
-
-
-
-
-
   
 
 // listen for requests
