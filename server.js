@@ -50,7 +50,9 @@ app.post('/cut', function(request, response) {
 });
 app.post('/save_lathe', function(request, response) {
   var lathe_json = request.body; 
-  fs.writeFile(_dirname + "/lathe.json", lathe_json, (err) => {
+  console.log("request"); 
+  console.log(request);
+  fs.writeFile(__dirname + "/lathe.json", lathe_json, (err) => {
     if (err) {
         console.error(err);
         return;
