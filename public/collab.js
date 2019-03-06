@@ -175,7 +175,7 @@ function initObjects() {
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
   
-  var loader = new THREE.ObjectLoader();
+  var loader = new THREE.JSONLoader();
   loader.load(
 	  "https://lathejs.glitch.me/models/lathe.json", function ( obj ) {
     console.log(obj);
