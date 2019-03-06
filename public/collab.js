@@ -187,6 +187,7 @@ function initObjects() {
     lathe.material.side = THREE.DoubleSide;
     lathe.receiveShadow = true;
     lathe.castShadow = false;
+    lathe.geometry = lathe.geometries[0];
     lathe.geometry.dynamic = true;
     lathe.geometry.computeFaceNormals();
     lathe.geometry.computeVertexNormals();
