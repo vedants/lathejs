@@ -63,15 +63,18 @@
     <a href="/" id="reset">reset  </a>
   </span>
   <span class="title">ar_lathe[collab]</span><br/>
+  <span class="speechbox">detected commands:</span><br/>
 </div>
   
 <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
 <script>
+  $('#speechbox').text
 if (annyang) {
   // Let's define our first command. First the text we expect, and then the function it should call
   var commands = {
-    'show tps report': function() {
-      $('#tpsreport').animate({bottom: '-100px'});
+    'hello world': function() {
+      console.log("okay"); 
+      //$('#tpsreport').animate({bottom: '-100px'});
     }
   };
 
