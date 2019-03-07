@@ -173,6 +173,22 @@ function initObjects() {
   }
 
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
+  lathe = new Lathe();  
+  lathe.build(); //(see lathe.js)
+
+  //lathe.material = MaterialLibrary["metal"];
+  
+  
+  lathe.material = new THREE.MeshNormalMaterial ();
+  lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
+  lathe.material.side = THREE.DoubleSide;
+  lathe.receiveShadow = true;
+  lathe.castShadow = false;
+  lathe.geometry.dynamic = true;
+  lathe.geometry.computeFaceNormals();
+  lathe.geometry.computeVertexNormals();
+  
+  lathe.position.z = -0.5 - lathe.radius;
 
   var loader = new THREE.ObjectLoader();
   loader.load(
@@ -188,7 +204,7 @@ function initObjects() {
     lathe.geometry.computeFaceNormals();
     lathe.geometry.computeVertexNormals();
 
-    lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+    lathe.position.z = -0.5; //position the lathe a little bit in front of the screen
 
     scene.add(lathe);
     lathe.add(sound);  
@@ -220,11 +236,14 @@ var poll_for_update = function () {
 function check_and_update() {
   var loader = new THREE.ObjectLoader();
   loader.load(
-	  "http://lathejs.glitch.me/models/lathe.json", function ( obj ) {
-      console.log("got lathe:"); 
-      console.log(obj);
-      lathe = obj.toJSON(); 
-	  });
+	  "https://lathejs.glitch.me/models/lathe_model.js", function ( obj ) {
+    //update geometry, but not material, pose, scale, etc.
+    lathe.geometry = obj;
+      
+    lathe.geometry.dynamic = true;
+    lathe.geometry.computeFaceNormals();
+    lathe.geometry.computeVertexNormals();
+  }
 }
 
  //The render loop, called once per frame. Handles updating our scene and rendering. 

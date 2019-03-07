@@ -8,7 +8,6 @@ var bodyParser = require('body-parser');
 var longpoll = require("express-longpoll")(app, { DEBUG: true });
 
 app.use(express.static('public'));
-//app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', parameterLimit: 100000, extended: true }));
 
@@ -65,9 +64,11 @@ app.post('/save_lathe', function(request, response) {
   response.send("sure, why not.");   
 });
 
-
-longpoll.create("/is_cut_poll");
-longpoll.create("/is_lathe_updated");
+//checks if the lathe has been cut by the hand wheels. 
+//triggered by lathe, listener in main.js
+longpoll.create("/is_cut_poll"); 
+//checks if the lathe geometry 
+longpoll.create("/is_lathe_updated");//checks if the geometry has been 
 
 // listen for requests
 var listener = app.listen(process.env.PORT, function() {
