@@ -55,7 +55,7 @@ app.post('/save_lathe', function(request, response) {
   console.log("request"); 
   console.log(request.body);
   
-  fs.writeFile(__dirname + "/public/models/lathe.json", JSON.stringify(request.body), (err) => {
+  fs.writeFile(__dirname + "/public/models/lathe_model.js", JSON.stringify(request.body), (err) => {
     if (err) {
         console.error(err);
         return;

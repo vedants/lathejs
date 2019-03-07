@@ -175,12 +175,12 @@ function initObjects() {
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
   
-  var loader = new THREE.JSONLoader();
+  var loader = new THREE.ObjectLoader();
   loader.load(
 	  "https://lathejs.glitch.me/models/lathe.json", function ( obj ) {
     console.log(obj);
     console.log("got lathe:"); 
-    lathe = obj.toJSON(); 
+    lathe = JSON.parse(obj);
 
     lathe.material = new THREE.MeshNormalMaterial ();
     lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
