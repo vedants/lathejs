@@ -67,7 +67,8 @@ app.post('/save_lathe', function(request, response) {
 //checks if the lathe has been cut by the hand wheels. 
 //triggered by lathe, listener in main.js
 longpoll.create("/is_cut_poll"); 
-//checks if the lathe geometry 
+//checks if the lathe geometry has been updated. 
+//triggered by main.js, listener in collab.js
 longpoll.create("/is_lathe_updated");//checks if the geometry has been 
 
 // listen for requests
