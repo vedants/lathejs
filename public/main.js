@@ -16,7 +16,7 @@ var cube;
 var cylinder;
 var tool; 
 
-var _ROTATE_SPEED = 0;
+var _ROTATE_SPEED = 0;  
   
 var MaterialLibrary = {};
 

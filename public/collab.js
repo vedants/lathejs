@@ -174,20 +174,16 @@ function initObjects() {
 
   MaterialLibrary.stone = new THREE.ShaderMaterial(params);
 
-  
   var loader = new THREE.ObjectLoader();
   loader.load(
-	  "https://lathejs.glitch.me/models/lathe.json", function ( obj ) {
-    console.log(obj);
-    console.log("got lathe:"); 
-    lathe = JSON.parse(obj);
+	  "https://lathejs.glitch.me/models/lathe_model.js", function ( obj ) {
+    lathe = obj;
 
     lathe.material = new THREE.MeshNormalMaterial ();
     lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
     lathe.material.side = THREE.DoubleSide;
     lathe.receiveShadow = true;
     lathe.castShadow = false;
-    lathe.geometry = lathe.geometries[0];
     lathe.geometry.dynamic = true;
     lathe.geometry.computeFaceNormals();
     lathe.geometry.computeVertexNormals();
