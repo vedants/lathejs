@@ -9,8 +9,6 @@ var renderer;
 var listener; 
 var sound;
 var lathe;
-var lathes; 
-var currLathe;
   
 var MaterialLibrary = {};
 var activeMaterialType = "metal";
@@ -120,8 +118,6 @@ function initLights() {
 }
   
 function initObjects() {
-  lathes = [];
-  
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
   var woodUniforms = {
@@ -209,11 +205,9 @@ function initObjects() {
     lathe.geometry.computeVertexNormals();
 
     lathe.position.z = -0.5; //position the lathe a little bit in front of the screen
-    
-    lathes.push(lathe);
+
     scene.add(lathe);
     lathe.add(sound);  
-    currLathe = lathe;
 
     //set up all the long-poll listeners 
     poll_for_update();

@@ -356,7 +356,7 @@ function initObjects() {
   lathe.geometry.computeVertexNormals();
   
   lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+  //lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
   //lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
@@ -424,7 +424,7 @@ var poll_for_cut = function () {
        },
        error: function() {
            console.log("longpoll error");
-           poll_for_cut();
+           //poll_for_cut();
        },
        timeout: 30000 // 30 seconds
     });
@@ -444,9 +444,9 @@ function check_and_cut(newSegmentFactors) {
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
+      
       }
     }
-    //updateLatheJSON();
     lathe.geometry.verticesNeedUpdate = true;
 }
 
@@ -480,7 +480,7 @@ function update() {
   renderer.render(scene, camera);
   
   //rotate the lathe block. 
-  //lathe.rotation.z += _ROTATE_SPEED; 
+  lathe.rotation.z += _ROTATE_SPEED; 
   
   //update cuttings 
   updateCuttings();
@@ -538,7 +538,7 @@ function onClick () {
   // move our lathe and place it at the camera's current position
   //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
   console.log("moving lathe");
-  //lathe.position.copy(pos);
+  lathe.position.copy(pos);
   //lathe.quaternion.copy(ori);  
   
   //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
