@@ -447,6 +447,7 @@ function check_and_cut(newSegmentFactors) {
       
       }
     }
+    updateLatheJSON();
     lathe.geometry.verticesNeedUpdate = true;
 }
 
