@@ -33,6 +33,11 @@ app.get('/collab', function(request, response) {
   response.sendFile(__dirname + '/views/collab.html'); 
 });
 
+app.get('/speech', function(request, response) {
+  reset();
+  response.sendFile(__dirname + '/views/speech.html'); 
+});
+
 app.get('/reset', function (request, response) {
   reset(); 
   response.send("Reset.");
