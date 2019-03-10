@@ -55,18 +55,23 @@ app.post('/cut', function(request, response) {
    
 });
 app.post('/save_lathe', function(request, response) {
+  console.log("request received at server...");
+  console.log(new Date().getTime() / 1000);
+  
   var lathe_json = request.body; 
   console.log("request"); 
   console.log(request.body);
-  
-  fs.writeFile(__dirname + "/public/models/lathe_model.js", JSON.stringify(request.body), (err) => {
+  var suffix = Math.random();
+  fs.writeFile(__dirname + "/public/models/lathe_model" + suffix + ".js", JSON.stringify(request.body), (err) => {
     if (err) {
         console.error(err);
         return;
     };
     console.log("File has been created");
   });
-  response.send("sure, why not.");   
+  response.send("file has been created.");   
+  console.log("file saved.");
+  console.log(new Date().getTime() / 1000);
 });
 
 //checks if the lathe has been cut by the hand wheels. 

@@ -600,6 +600,9 @@ function onStopLathe() {
 
 
 function updateLatheJSON() {
+  console.log("POSTing JSON...");
+  console.log(new Date().getTime() / 1000);
+
   var lathe_data = lathe.toJSON();
   console.log(lathe_data);
   
