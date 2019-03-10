@@ -1,3 +1,4 @@
+
 var vrDisplay;
 var vrFrameData;
 var vrControls;
