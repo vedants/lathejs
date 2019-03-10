@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', parameterLimit: 100000, extended:
 
 var is_changed; 
 var segmentFactors = []; //stores the server view of the segmentFactors
-var _totalLinks = 100; //number of axial divisions on the lathe. 
+var _totalLinks = 10; //number of axial divisions on the lathe. 
 
 function reset() {
   is_changed = false;

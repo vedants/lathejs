@@ -5,7 +5,7 @@
 
 var PI2 = Math.PI * 2
 var TO_RADIANS = Math.PI / 180;
-var _branchSegments = 12; //number of sides on perimeter of each "ring" (approximation factor)
+var _branchSegments = 6; //number of sides on perimeter of each "ring" (approximation factor)
 
 Lathe = function ( materials, radius ) {
 	
@@ -32,8 +32,8 @@ Lathe = function ( materials, radius ) {
 	var faceVertexUvs = this.geometry.faceVertexUvs
 	
   //total length = totalLinks * linkDist = 100 * 0.005 = 0.5m ~= 1.5ft long
-	this.totalLinks = 100; //number of ring segments along the length of the cylinder
-	this.linkDist = 0.005; //width of each ring segment
+	this.totalLinks = 10; //number of ring segments along the length of the cylinder
+	this.linkDist = 0.05; //width of each ring segment
   this.depth = this.totalLinks * this.linkDist;
 	this.segmentAngle = Math.PI * 2 / _branchSegments; //angle between lines on the perimeter of each ring.
 	this.ring = new Array(this.totalLinks);
