@@ -594,9 +594,9 @@ function onStopLathe() {
 }
 
 //update lathe 3d model every 5 seconds
-// setInterval(function(){ 
-//     //updateLatheJSON()
-// }, 20000);
+ setInterval(function(){ 
+     updateLatheJSON()
+ }, 5000);
 
 
 function updateLatheJSON() {
