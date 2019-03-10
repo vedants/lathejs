@@ -355,7 +355,7 @@ function initObjects() {
   lathe.geometry.computeFaceNormals();
   lathe.geometry.computeVertexNormals();
   
-  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+  //lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
   //lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
   //lathe.rotation.y = 90 * TO_RADIANS; 
   
