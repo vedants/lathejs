@@ -594,6 +594,12 @@ function onStopLathe() {
   sound.stop();
 }
 
+//update lathe 3d model every 5 seconds
+setInterval(function(){ 
+    updateLatheJSON()
+}, 1000);
+
+
 function updateLatheJSON() {
   var lathe_data = lathe.toJSON();
   console.log(lathe_data);
