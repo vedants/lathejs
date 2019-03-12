@@ -12,10 +12,12 @@ var renderer;
 var listener; 
 var sound;
 
+
 var cube;
 var cylinder;
 var tool; 
-
+var lathe; 
+var ref_lathe; 
 var _ROTATE_SPEED = 0;  
   
 var MaterialLibrary = {};
@@ -356,9 +358,9 @@ function initObjects() {
   lathe.geometry.computeFaceNormals();
   lathe.geometry.computeVertexNormals();
   
-  //lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
-  //lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
-  //lathe.rotation.y = 90 * TO_RADIANS; 
+  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
+  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+  lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
   lathe.add(sound);
@@ -419,7 +421,7 @@ var poll_for_cut = function () {
     $.ajax({
        url: base_url + "/is_cut_poll",
        success: function(data) {
-           console.log("got data"); 
+           console.log("got data");
            check_and_cut(data['segmentFactors']);
            poll_for_cut();
        },
@@ -439,9 +441,10 @@ function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
-        var spawnPosition = lathe.ring[i][_branchSegments / 2 ]
-        spawnPosition = spawnPosition.applyMatrix4(lathe.matrixWorld);
-        console.log(spawnPosition);
+        //GOD FREAKING DAMMIT 
+        var spawnPosition = lathe.ring[i][_branchSegments / 2].clone();
+        spawnPosition = spawnPosition.applyMatrix4(lathe.matrixWorld);// = lathe.matrixWorld * spawnPosition;
+        console.log(lathe.matrixWorld);
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
@@ -449,6 +452,7 @@ function check_and_cut(newSegmentFactors) {
       }
     }
     lathe.geometry.verticesNeedUpdate = true;
+    
 }
 
 /**
