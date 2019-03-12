@@ -12,7 +12,7 @@ var lathe;
   
 var MaterialLibrary = {};
 var activeMaterialType = "metal";
-
+var base_url = "http://v.local:8000"
 THREE.ARUtils.getARDisplay().then(function (display) {
   if (display) {
     vrFrameData = new VRFrameData();
@@ -192,7 +192,7 @@ function initObjects() {
 
   var loader = new THREE.ObjectLoader();
   loader.load(
-	  "https://lathejs.glitch.me/models/lathe_model.js", function ( obj ) {
+	  base_url + "/models/lathe_model.js", function (obj) {
     lathe = obj;
 
     lathe.material = new THREE.MeshNormalMaterial ();
@@ -218,32 +218,24 @@ function initObjects() {
 }
 
 var poll_for_update = function () {
+  //Approach #1: longpolls for update status, updates lathe geom when signal sent
+  //might possibly cause network congestion vs. Approach #2? 
+  //need to profile. 
     $.ajax({
-       url: "https://lathejs.glitch.me/is_lathe_updated",
+       url: base_url + "/is_lathe_updated",
        success: function(data) {
            console.log("got data"); 
            check_and_update();
-           poll_for_cut();
+           poll_for_update();
        },
        error: function() {
            console.log("longpoll error");
-           poll_for_cut();
+           poll_for_update();
        },
        timeout: 30000
     });
-}
-
-function check_and_update() {
-  var loader = new THREE.ObjectLoader();
-  loader.load(
-	  "https://lathejs.glitch.me/models/lathe_model.js", function ( obj ) {
-    //update geometry, but not material, pose, scale, etc.
-    lathe.geometry = obj;
-      
-    lathe.geometry.dynamic = true;
-    lathe.geometry.computeFaceNormals();
-    lathe.geometry.computeVertexNormals();
-  });
+  
+  //Approach #2: continuously keep updating lathe geometry at fixed time intervals. 
 }
 
  //The render loop, called once per frame. Handles updating our scene and rendering. 
@@ -264,7 +256,6 @@ function onWindowResize () {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
-
 
 function onClick () {
   var pose = vrFrameData.pose;
@@ -318,4 +309,34 @@ function onMetal() {
 function onPlastic() {
   activeMaterialType = "plastic";
   lathe.material.color.setHex(0x004488);
+}
+
+function check_and_update() {
+  //Approach #1: get file from fileserver 
+  
+  //this approach has high CPU consumption on virtual machine container!!
+  //not sure if bottlenecked by I/O, or network calls. 
+	 /*
+  var loader = new THREE.ObjectLoader();
+  loader.load(
+      base_url + "/models/lathe_model.js", function (obj) {
+    //update geometry, but not material, pose, scale, etc.
+    lathe.geometry = obj;
+    lathe.geometry.verticesNeedUpdate = true;
+    // lathe.geometry.dynamic = true;
+    // lathe.geometry.computeFaceNormals();
+    // lathe.geometry.computeVertexNormals();
+  });
+	*/
+  
+  //Approach #2: lathe data is stringified and stored in-memory on webserver 
+  $.ajax({
+  url: base_url + "/load_lathe",
+  success: function (data) {
+    lathe.geometry = data; 
+  }
+});
+  
+  
+  
 }

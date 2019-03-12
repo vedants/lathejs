@@ -28,6 +28,7 @@ var dustPool = new ObjectPool();
 var chipsGeometry;
 var metalGeometry;
 var activeMaterialType = "metal";
+var base_url = "http://v.local:8000"; //lathejs.glitch.me
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
 
@@ -380,6 +381,7 @@ function initObjects() {
   loader = new THREE.ObjectLoader();
   loader.load("/models/wood.js", function(obj) { woodLoaded(obj) });
 }
+
 function woodLoaded(obj) {
   chipsGeometry = obj.geometry;
   loader = new THREE.ObjectLoader(); 
@@ -390,10 +392,9 @@ function metalLoaded(obj) {
   metalGeometry = obj.geometry; 
   metalGeometry.computeBoundingSphere();
   
-  //set up all the long-poll listeners 
+  //set up all the long-poll listeners
   poll_for_cut();
-  //poll_for_toolPos();
-  
+   setUpTimer(); 
   //Kick off the render loop!
   update();
 }
@@ -416,7 +417,7 @@ function setRing (changedSegment, pressure) {
 */ 
 var poll_for_cut = function () {
     $.ajax({
-       url: "https://lathejs.glitch.me/is_cut_poll",
+       url: base_url + "/is_cut_poll",
        success: function(data) {
            console.log("got data"); 
            check_and_cut(data['segmentFactors']);
@@ -426,7 +427,7 @@ var poll_for_cut = function () {
            console.log("longpoll error");
            poll_for_cut();
        },
-       timeout: 30000 // 30 seconds
+       timeout: 60000 // every 60 seconds, reset the connection. 
     });
 };
 
@@ -580,7 +581,7 @@ function onStartLathe() {
   sound.context.resume();
   listener.context.resume();
 
-  audioLoader.load( 'https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
+  audioLoader.load( 'http://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
     sound.setBuffer( buffer );
     sound.setLoop( true );
     sound.setVolume(1);
@@ -593,22 +594,27 @@ function onStopLathe() {
   sound.stop();
 }
 
-//update lathe 3d model every 5 seconds
- // setInterval(function(){ 
- //     //updateLatheJSON()
- // }, 5000);
+//update lathe model every INTERVAL milliseconds
+function setUpTimer() {
+	var interval = 5 * 1000; 
+	setInterval(function() { 
+      //sendUpdateSignal();
+      //updateLatheJSON();
+	}, interval);
+}
 
-
+function sendUpdateSignal() {
+  console.log("updating lathe...");
+  $.ajax({type:"GET", url: base_url + "/update_lathe"});
+}
 function updateLatheJSON() {
-  console.log("POSTing JSON...");
-  console.log(new Date().getTime() / 1000);
-
   var lathe_data = lathe.toJSON();
+  console.log("POSTing JSON...");
   console.log(lathe_data);
   
   $.ajax({
     type: "POST",
-    url: "https://lathejs.glitch.me/save_lathe",
+    url: base_url + "/save_lathe",
     data: lathe_data,
     success: function() {
       console.log("Success!");
@@ -617,5 +623,3 @@ function updateLatheJSON() {
     mode: "cors"
   });  
 }
-
-
