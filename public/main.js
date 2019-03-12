@@ -441,10 +441,8 @@ function check_and_cut(newSegmentFactors) {
   for (var i = 0; i < newSegmentFactors.length; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
       if (newSegmentFactors[i] > lathe.minRadius) {  //dont create cuttings if at minimum radius.
-        //GOD FREAKING DAMMIT 
         var spawnPosition = lathe.ring[i][_branchSegments / 2].clone();
-        spawnPosition = spawnPosition.applyMatrix4(lathe.matrixWorld);// = lathe.matrixWorld * spawnPosition;
-        console.log(lathe.matrixWorld);
+        spawnPosition = spawnPosition.applyMatrix4(lathe.matrixWorld);
         spawnParticle(spawnPosition);
       }
       setRing(i, newSegmentFactors[i]);
