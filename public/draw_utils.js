@@ -276,8 +276,6 @@ function generateStroke(strokeData) {
   return mesh;
 }
 
-
-
 /**
  * Small utility function to sum the last n frames of acceleration to see if
  * the device was shaken. If the device was shaken, then the last stroke is
