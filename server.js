@@ -44,12 +44,8 @@ wss.on('connection', function (ws) {
     for(var i = 0; i < connections.length; i++) {
       connections[i].send(message);
     }
-  })
-  // setInterval(
-  //   () => ws.send(`${new Date()}`),
-  //   1000
-  // )
-})
+  });
+});
 
 
 var lathe_json_data = {}; 

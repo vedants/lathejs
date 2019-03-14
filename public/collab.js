@@ -11,7 +11,6 @@ var scene;
 var renderer;
 var listener; 
 var sound;
-var strokes_group; 
 
 var cube;
 var cylinder;
@@ -19,7 +18,7 @@ var tool;
 var lathe; 
 var ink;
 var _ROTATE_SPEED = 0;  
-var _mode = "move"; //"move" or "draw"
+var _mode = "draw"; //"move" or "draw"
   
 var MaterialLibrary = {};
 
@@ -449,34 +448,23 @@ function setUpWebSocket() {
   ws.onopen = function () {
       console.log('websocket is connected ...')
       // sending a send event to websocket server
-      ws.send('collab client is connected')
-  };
+      ws.send('drawing client is connected');
+  }
   // event emmited when receiving message 
-  ws.onmessage = function (evt) {
-      console.log("msg: " + evt.data);
-      if (evt.data.includes("is connected")) {
-        console.log("client is connected");
-        return; 
-      }
-
-      //clear strokes group
-      for (var i = strokes_group.children.length - 1; i >= 0; i--) {
-        strokes_group.remove(strokes_group.children[i]);
-      }
-      //add all the new strokes 
-      var objloader = new THREE.ObjectLoader();
-      var strokes_arr = JSON.parse(evt.data);
-      for (var i = 0; i < strokes_arr.length; i++) {
-        var stroke = objloader.parse(strokes_arr[i]); 
-        strokes_group.add(stroke);
-      }
-  };
+  ws.onmessage = function (ev) {
+      console.log("message received");
+  }
   ws.onclose = function(evt) { 
-      console.log("closed " +  evt)
+      console.log("websocket closed: " +  evt)
     };
   ws.onerror = function(evt) { 
-    console.log("error "+ evt);
+    console.log("websocket error: "+ evt);
   };
+}
+
+function sendStrokesOverWebSocket() {
+  var strokes_json = JSON.stringify(strokes); 
+  ws.send(strokes_json);  
 }
 
 

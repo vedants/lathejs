@@ -11,7 +11,7 @@ var scene;
 var renderer;
 var listener; 
 var sound;
-
+var strokes_group; 
 
 var cube;
 var cylinder;
@@ -31,6 +31,7 @@ var chipsGeometry;
 var metalGeometry;
 var activeMaterialType = "metal";
 var base_url = "http://v.local:8000"; //lathejs.glitch.me
+var ws = new WebSocket('ws://v.local:40510'); //websocket server
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
 
@@ -106,6 +107,10 @@ function init() {
   sound = new THREE.PositionalAudio( listener );
   sound.context.resume();
   listener.context.resume();
+
+  strokes_group = new THREE.Group();
+  scene.add(strokes_group);
+  setUpWebSocket();
 
 
   //initialize button callbacks 
@@ -348,7 +353,6 @@ function initObjects() {
 
   //lathe.material = MaterialLibrary["metal"];
   
-  
   lathe.material = new THREE.MeshNormalMaterial ();
   lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
   lathe.material.side = THREE.DoubleSide;
@@ -396,7 +400,7 @@ function metalLoaded(obj) {
   
   //set up all the long-poll listeners
   poll_for_cut();
-   setUpTimer(); 
+  
   //Kick off the render loop!
   update();
 }
@@ -596,32 +600,37 @@ function onStopLathe() {
   sound.stop();
 }
 
-//update lathe model every INTERVAL milliseconds
-function setUpTimer() {
-	var interval = 5 * 1000; 
-	setInterval(function() { 
-      //sendUpdateSignal();
-      //updateLatheJSON();
-	}, interval);
-}
+function setUpWebSocket() {
+    // event emmited when connected
+  ws.onopen = function () {
+      console.log('websocket is connected ...')
+      // sending a send event to websocket server
+      ws.send('fab client is connected')
+  };
+  // event emmited when receiving message 
+  ws.onmessage = function (evt) {
+      console.log("msg: " + evt.data);
+      if (evt.data.includes("is connected")) {
+        console.log("new client has connected!");
+        return; 
+      }
 
-function sendUpdateSignal() {
-  console.log("updating lathe...");
-  $.ajax({type:"GET", url: base_url + "/update_lathe"});
-}
-function updateLatheJSON() {
-  var lathe_data = lathe.toJSON();
-  console.log("POSTing JSON...");
-  console.log(lathe_data);
-  
-  $.ajax({
-    type: "POST",
-    url: base_url + "/save_lathe",
-    data: lathe_data,
-    success: function() {
-      console.log("Success!");
-    },
-    dataType: "jsonp", 
-    mode: "cors"
-  });  
+      //clear strokes group
+      for (var i = strokes_group.children.length - 1; i >= 0; i--) {
+        strokes_group.remove(strokes_group.children[i]);
+      }
+      //add all the new strokes 
+      var objloader = new THREE.ObjectLoader();
+      var strokes_arr = JSON.parse(evt.data);
+      for (var i = 0; i < strokes_arr.length; i++) {
+        var stroke = objloader.parse(strokes_arr[i]); 
+        strokes_group.add(stroke);
+      }
+  };
+  ws.onclose = function(evt) { 
+      console.log("websocket closed: " +  evt)
+    };
+  ws.onerror = function(evt) { 
+    console.log("websocket error: "+ evt);
+  };
 }

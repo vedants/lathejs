@@ -38,6 +38,7 @@ renderer.domElement.addEventListener('touchend', function(event) {
 drawing = false;
 stroke.length = 0;
 strokeIndex += 1;
+sendStrokesOverWebSocket();
 });
 
 update_draw_utils();
