@@ -11,13 +11,13 @@ var scene;
 var renderer;
 var listener; 
 var sound;
-
+var strokes_group; 
 
 var cube;
 var cylinder;
 var tool; 
 var lathe; 
-var ref_lathe; 
+var ink;
 var _ROTATE_SPEED = 0;  
 var _mode = "move"; //"move" or "draw"
   
@@ -31,7 +31,10 @@ var dustPool = new ObjectPool();
 var chipsGeometry;
 var metalGeometry;
 var activeMaterialType = "metal";
-var base_url = "http://v.local:8000"; //lathejs.glitch.me
+
+var base_url = "http://v.local:8000"; //http server
+var ws = new WebSocket('ws://v.local:40510'); //websocket server
+
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
 
@@ -109,6 +112,11 @@ function init() {
   listener.context.resume();
 
 
+  strokes_group = new THREE.Group();
+  scene.add(strokes_group);
+  setUpWebSocket();
+
+
   //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
   document.getElementById("zoomout").onclick = onZoomOut;
@@ -124,10 +132,6 @@ function init() {
 }
   
 function onShadersLoaded() {
-  chipsPool.createObject = createChips
-  cuttingPool.createObject = createCutting
-  dustPool.createObject = createDust
-
   initLights();
   initObjects();
 
@@ -172,6 +176,12 @@ function initLights() {
 }
   
 function initObjects() {
+  var ink_radius = 1 / 1000; 
+  var geometry = new THREE.SphereGeometry(ink_radius);
+  var material = new THREE.MeshNormalMaterial();
+  ink = new THREE.Mesh(geometry, material);
+  
+
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
   var woodUniforms = {
@@ -270,7 +280,6 @@ function metalLoaded(obj) {
   
   //set up all the long-poll listeners
   poll_for_cut();
-   setUpTimer(); 
   //Kick off the render loop!
   update();
 }
@@ -391,7 +400,10 @@ function onClick () {
     //lathe.position.y = pos.y;
   }
   if (_mode == "draw") {
-
+    var ink_clone = ink.clone(); 
+    scene.add(ink_clone); 
+    ink_clone.position.copy(pos); 
+    ink_clone.quaternion.copy(ori);
   }
 }
 
@@ -431,3 +443,44 @@ function onDraw() {
 function onMove() {
   _mode = "move"; 
 }
+
+function setUpWebSocket() {
+    // event emmited when connected
+  ws.onopen = function () {
+      console.log('websocket is connected ...')
+      // sending a send event to websocket server
+      ws.send('collab client is connected')
+  };
+  // event emmited when receiving message 
+  ws.onmessage = function (evt) {
+      console.log("msg: " + evt.data);
+      if (evt.data.includes("is connected")) {
+        console.log("client is connected");
+        return; 
+      }
+
+      //clear strokes group
+      for (var i = strokes_group.children.length - 1; i >= 0; i--) {
+        strokes_group.remove(strokes_group.children[i]);
+      }
+      //add all the new strokes 
+      var objloader = new THREE.ObjectLoader();
+      var strokes_arr = JSON.parse(evt.data);
+      for (var i = 0; i < strokes_arr.length; i++) {
+        var stroke = objloader.parse(strokes_arr[i]); 
+        strokes_group.add(stroke);
+      }
+  };
+  ws.onclose = function(evt) { 
+      console.log("closed " +  evt)
+    };
+  ws.onerror = function(evt) { 
+    console.log("error "+ evt);
+  };
+}
+
+
+
+
+
+

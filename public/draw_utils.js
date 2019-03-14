@@ -1,122 +1,3 @@
-<!--
-/*
- * Copyright 2017 Google Inc. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
--->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>three.ar.js - Graffiti</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no,
-  minimum-scale=1.0, maximum-scale=1.0">
-  <style>
-    body {
-      font-family: monospace;
-      margin: 0;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100vh;
-      -webkit-user-select: none;
-      user-select: none;
-    }
-    #info {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translate(-50%, 0);
-      margin: 1em;
-      z-index: 10;
-      display: block;
-      line-height: 2em;
-      text-align: center;
-    }
-    #info * {
-      color: #fff;
-    }
-    .title {
-      background-color: rgba(40, 40, 40, 0.4);
-      padding: 0.4em 0.6em;
-      border-radius: 0.1em;
-    }
-    .links {
-      background-color: rgba(40, 40, 40, 0.6);
-      padding: 0.4em 0.6em;
-      border-radius: 0.1em;
-    }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  </style>
-</head>
-<body>
-<div id="info">
-  <span class="title">Touch and hold to draw. Shake to undo.</span><br/>
-</div>
-<script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
-<script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
-<script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
-
-<script id="fragmentShader" type="shader">
-precision mediump float;
-precision mediump int;
-varying vec3 vPosition;
-varying vec3 vNormal;
-varying vec2 vUv;
-varying vec3 vVelocity;
-void main()	{
-  vec2 uv = vUv;
-  uv *= 2.0;
-  uv -= 1.0;
-  float aa = 1.0 - abs( uv.y );
-  aa = smoothstep( 0.0, 0.05, aa );
-  gl_FragColor = vec4( vNormal, aa );
-}
-</script>
-<script id="vertexShader" type="shader">
-  uniform mat4 modelViewMatrix;
-  uniform mat4 projectionMatrix;
-  uniform mat3 normalMatrix;
-  attribute vec3 position;
-  attribute vec3 normal;
-  attribute vec2 uv;
-  attribute vec3 velocity;
-  varying vec3 vPosition;
-  varying vec3 vNormal;
-  varying vec2 vUv;
-  varying vec3 vVelocity;
-  void main()
-  {
-      vPosition = position;
-      vNormal = normal;
-      vUv = uv;
-      vVelocity = velocity;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-</script>
-<script>
-var vrDisplay;
-var vrControls;
-var arView;
-var canvas;
-var camera;
-var scene;
-var renderer;
-var ws; //websocket 
 // Drawing constants.
 var MINIMIM_POINT_DISTANCE = 0.001;
 var MINIMUM_STROKE_POINTS = 2;
@@ -146,65 +27,22 @@ var drawMaterial = new THREE.RawShaderMaterial({
   side: THREE.DoubleSide,
   transparent: true
 });
-/**
- * Use the `getARDisplay()` utility to leverage the WebVR API
- * to see if there are any AR-capable WebVR VRDisplays. Returns
- * a valid display if found. Otherwise, display the unsupported
- * browser message.
- */
-THREE.ARUtils.getARDisplay().then(function (display) {
-  if (display) {
-    vrDisplay = display;
-    init();
-  } else {
-    THREE.ARUtils.displayUnsupportedMessage();
-  }
-});
-function init() {
-  // Turn on the debugging panel
-  //var arDebug = new THREE.ARDebug(vrDisplay);
-  //document.body.appendChild(arDebug.getElement());
-  // Setup the three.js rendering environment
-  renderer = new THREE.WebGLRenderer({ alpha: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.autoClear = false;
-  canvas = renderer.domElement;
-  document.body.appendChild(canvas);
-  scene = new THREE.Scene();
-  // Creating the ARView, which is the object that handles
-  // the rendering of the camera stream behind the three.js
-  // scene
-  arView = new THREE.ARView(vrDisplay, renderer);
-  // The ARPerspectiveCamera is very similar to THREE.PerspectiveCamera,
-  // except when using an AR-capable browser, the camera uses
-  // the projection matrix provided from the device, so that the
-  // perspective camera's depth planes and field of view matches
-  // the physical camera on the device.
-  camera = new THREE.ARPerspectiveCamera(vrDisplay, 60, window.innerWidth / window.innerHeight, 0.01, 100);
-  // VRControls is a utility from three.js that applies the device's
-  // orientation/position to the perspective camera, keeping our
-  // real world and virtual world in sync.
-  vrControls = new THREE.VRControls(camera);
-  // Bind our event handlers
-  window.addEventListener('resize', onWindowResize, false);
-  // Start drawing when the user touches the screen.
-  renderer.domElement.addEventListener('touchstart', function(event) {
-    drawing = true;
-  });
-  // Stop the current draw stroke when the user finishes the touch.
-  renderer.domElement.addEventListener('touchend', function(event) {
-    drawing = false;
-    stroke.length = 0;
-    strokeIndex += 1;
-    //send all the strokes over the internet 
-    sendStrokesOverWebSocket(); 
-  });
 
-  ws = new WebSocket('ws://v.local:40510'); //websocket server
-  setUpWebSocket();
-  update();
-}
+
+renderer.domElement.addEventListener('touchstart', function(event) {
+drawing = true;
+});
+
+
+renderer.domElement.addEventListener('touchend', function(event) {
+drawing = false;
+stroke.length = 0;
+strokeIndex += 1;
+});
+
+update_draw_utils();
+
+
 // Get a point in front of the device to use as the drawing location.
 // Pass in a THREE.Vector3 to be populated with data to avoid creating garbage.
 // This strange function structure is a way of avoiding creating garbage while
@@ -223,8 +61,10 @@ var getDrawPoint = (function() {
     out.add(rotatedForward);
   }
 })();
+
+
 // Basic physics parameters to help smooth out input data for nicer
-// brsuh strokes
+// brush strokes
 var strokeWidth = STROKE_WIDTH_MINIMUM;
 var position = new THREE.Vector3();
 var previousPosition = new THREE.Vector3();
@@ -237,6 +77,7 @@ var previousVelocity = new THREE.Vector3();
 var acceleration = new THREE.Vector3();
 // An array to keep track of the past accelerations
 var accelerationArray = [];
+
 /**
  * This function returns an object that represents a point in the stroke.
  * The position, normal, velocity and width values are used to help calculate
@@ -252,6 +93,8 @@ function getStroke()
     width: strokeWidth
   };
 }
+
+
 /**
  * This function is called when the user touches down and starts to draw
  * a stroke
@@ -281,6 +124,8 @@ function processDraw() {
   // Add the stroke to the threejs scene for rendering
   scene.add(strokes[strokeIndex]);
 }
+
+
 /**
  * This function is responsible for constantly rendering a brush reticle
  * when the user is not touching down on the screen. This helps to pre-
@@ -311,6 +156,9 @@ function processDrawBrush() {
   // Add the brush reticle to the threejs scene for rendering
   scene.add(brush);
 }
+
+
+
 /**
  * This function calculates the positions, normals, uvs and velocities
  * float32Arrays needed to create a buffer geometry so we can render our brush
@@ -412,9 +260,7 @@ function generateStroke(strokeData) {
   }
   // Create a Threejs BufferGeometry
   var geometry = new THREE.BufferGeometry();
-  function disposeArray() { 
-    //this.array = null; 
-  }
+  function disposeArray() { this.array = null; }
   // Add attributes to the buffer geometry using the Float32Arrays created
   // above. This will tell our shader pipeline information about each vertex
   // so we can create all types of dynamic strokes & paints
@@ -428,6 +274,9 @@ function generateStroke(strokeData) {
   mesh.drawMode = THREE.TriangleStripDrawMode;
   return mesh;
 }
+
+
+
 /**
  * Small utility function to sum the last n frames of acceleration to see if
  * the device was shaken. If the device was shaken, then the last stroke is
@@ -463,6 +312,9 @@ function checkForShake()
     }
   }
 }
+
+
+
 /**
  * Clears all the strokes and essentially lets the user start over
  */
@@ -495,10 +347,8 @@ function clearLastStroke()
   strokeIndex -= 1;
   scene.remove(strokes[strokeIndex]);
 }
-/**
- * update physics function, called once per frame. Handles updating and
- * smoothing out rough input data from AR Session
- */
+
+
 function updatePhysics()
 {
   // Cache previous positions & normals
@@ -524,67 +374,13 @@ function updatePhysics()
   strokeWidth = THREE.Math.lerp(strokeWidth, velocity.length() * STROKE_WIDTH_MODIFIER, STROKE_WIDTH_EASING);
   strokeWidth = Math.min( Math.max( strokeWidth, STROKE_WIDTH_MINIMUM ), STROKE_WIDTH_MAXIMUM );
 }
-/**
- * The render loop, called once per frame. Handles updating
- * our scene and rendering.
- */
-function update() {
-  // Clears color from the frame before rendering the camera (arView) or scene.
-  renderer.clearColor();
-  // Render the device's camera stream on screen first of all.
-  // It allows to get the right pose synchronized with the right frame.
-  arView.render();
-  // Update our camera projection matrix in the event that
-  // the near or far planes have updated
-  camera.updateProjectionMatrix();
-  // Update our perspective camera's positioning
-  vrControls.update();
-  // Update Brush Physics
-  updatePhysics();
-  // Check for shake to undo functionality
-  checkForShake();
-  // Update the current graffiti stroke.
-  if (drawing) {
-    processDraw();
-  }
-  // Uncomment to draw brush reticle
-  // processDrawBrush();
-  // Render our three.js virtual scene
-  renderer.clearDepth();
-  renderer.render(scene, camera);
-  // Kick off the requestAnimationFrame to call this function
-  // when a new VRDisplay frame is rendered
-  vrDisplay.requestAnimationFrame(update);
-}
-/**
- * On window resize, update the perspective camera's aspect ratio,
- * and call `updateProjectionMatrix` so that we can get the latest
- * projection matrix provided from the device
- */
-function onWindowResize () {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
 
-function setUpWebSocket() {
-    // event emmited when connected
-  ws.onopen = function () {
-      console.log('websocket is connected ...')
-      // sending a send event to websocket server
-      ws.send('drawing client is connected');
-  }
-  // event emmited when receiving message 
-  ws.onmessage = function (ev) {
-      console.log("message received");
-  }
-}
 
-function sendStrokesOverWebSocket() {
-  var strokes_json = JSON.stringify(strokes); 
-  ws.send(strokes_json);  
-}
 
-</script>
-</body>
-</html>
+//TODO: put this stuff in the update loop: 
+function update_draw_utils() {
+	updatePhysics(); 
+ 	checkForShake();
+	if ( drawing ) { processDraw(); }
+ 	processDrawBrush();
+}

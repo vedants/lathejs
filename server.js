@@ -2,10 +2,55 @@
 
 // init project
 var express = require('express');
-var fs = require('fs');
+var fs = require('fs');   //filesystem 
+var ws = require('ws')  //websocket
 var app = express();
 var bodyParser = require('body-parser');
 var longpoll = require("express-longpoll")(app, { DEBUG: false });
+
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({port: 40510});
+var connections = []; 
+
+// wsServer.on('request', function(request) {
+//   var connection = request.accept('echo-protocol', request.origin);
+//   connections.push(connection);
+//   console.log((new Date()) + ' Connection accepted.');
+  
+//   connection.on('message', function(message) {
+//       if (message.type === 'utf8') {
+//           console.log('Received Message: ' + message.utf8Data);
+//         //send the received message to all of the connections in the connection array
+//         for(var i = 0; i < connections.length; i++) {
+//             connections[i].sendUTF(message.utf8Data);
+//         }
+//       }
+//   });
+//   connection.on('close', function(reasonCode, description) {
+//     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+//   });
+// });
+
+
+
+wss.on('connection', function (ws) {
+  //connections.push(connection);
+  var connection = ws;//.accept('echo-protocol', ws.origin);
+  connections.push(connection);
+
+  ws.on('message', function (message) {
+    console.log('received: %s', message); 
+    //send the received message to all of the connections in the connection array
+    for(var i = 0; i < connections.length; i++) {
+      connections[i].send(message);
+    }
+  })
+  // setInterval(
+  //   () => ws.send(`${new Date()}`),
+  //   1000
+  // )
+})
+
 
 var lathe_json_data = {}; 
 
@@ -35,14 +80,15 @@ app.get('/collab', function(request, response) {
   response.sendFile(__dirname + '/views/collab.html'); 
 });
 
+app.get('/draw', function(request, response) {
+  reset();
+  response.sendFile(__dirname + '/views/draw.html'); 
+});
+
+
 app.get('/speech', function(request, response) {
   reset();
   response.sendFile(__dirname + '/views/speech.html'); 
-});
-
-app.get('/reset', function (request, response) {
-  reset(); 
-  response.send("Reset.");
 });
 
 app.post('/cut', function(request, response) {
@@ -56,6 +102,8 @@ app.post('/cut', function(request, response) {
   }
   response.send("got cut.");
 });
+
+
 
 app.get('/update_lathe', function(request, response) {
   console.log("updating lathe status...");

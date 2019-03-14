@@ -79,6 +79,44 @@
 
   <script data-src="/shaders/stone_vertex.js" data-name="Stone" type="x-shader/x-vertex"></script>
   <script data-src="/shaders/stone_fragment.js" data-name="Stone" type="x-shader/x-fragment"></script>
+<!-- Load Drawing Shaders   -->  
+  <script id="fragmentShader" type="shader">
+    precision mediump float;
+    precision mediump int;
+    varying vec3 vPosition;
+    varying vec3 vNormal;
+    varying vec2 vUv;
+    varying vec3 vVelocity;
+    void main() {
+      vec2 uv = vUv;
+      uv *= 2.0;
+      uv -= 1.0;
+      float aa = 1.0 - abs( uv.y );
+      aa = smoothstep( 0.0, 0.05, aa );
+      gl_FragColor = vec4( vNormal, aa );
+    }
+</script>
+<script id="vertexShader" type="shader">
+  uniform mat4 modelViewMatrix;
+  uniform mat4 projectionMatrix;
+  uniform mat3 normalMatrix;
+  attribute vec3 position;
+  attribute vec3 normal;
+  attribute vec2 uv;
+  attribute vec3 velocity;
+  varying vec3 vPosition;
+  varying vec3 vNormal;
+  varying vec2 vUv;
+  varying vec3 vVelocity;
+  void main()
+  {
+      vPosition = position;
+      vNormal = normal;
+      vUv = uv;
+      vVelocity = velocity;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+</script>
   
 <!--  Load Lathe Scripts -->
   <script src = "/js/jquery-1.7.1.min.js"></script>
