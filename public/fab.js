@@ -1,5 +1,4 @@
 //initialize all the variables 
-
 var vrDisplay;
 var vrFrameData;
 var vrControls;
@@ -34,6 +33,7 @@ var base_url = "http://v.local:8000"; //lathejs.glitch.me
 var ws = new WebSocket('ws://v.local:40510'); //websocket server
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
+var offset = ""; 
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
@@ -101,9 +101,6 @@ function init() {
   source.connect(listener.context.destination);
   source.start();
   
-  
-  //window.addEventListener('touchstart', onStartLathe);
-  //sound = new THREE.Audio( listener ); //audio source
   sound = new THREE.PositionalAudio( listener );
   sound.context.resume();
   listener.context.resume();
@@ -136,7 +133,9 @@ function onShadersLoaded() {
   initObjects();
 
   window.addEventListener('resize', onWindowResize, false);
-  canvas.addEventListener('touchstart', onClick, false); 
+  
+  canvas.addEventListener('touchstart', onClickStart, false); 
+  canvas.addEventListener('touchend', onClickEnd, false); 
 }
 
 function createChips() {
@@ -400,7 +399,7 @@ function metalLoaded(obj) {
   
   //set up all the long-poll listeners
   poll_for_cut();
-  
+
   //Kick off the render loop!
   update();
 }
@@ -488,6 +487,10 @@ function update() {
   
   //rotate the lathe block. 
   lathe.rotation.z += _ROTATE_SPEED; 
+
+  if (offset != "") {
+    updateLathePosition(); 
+  }
   
   //update cuttings 
   updateCuttings();
@@ -515,7 +518,7 @@ function onWindowResize () {
  * When clicking on the screen, move the lathe to directly in front of the user's
  * current position.
  */
-function onClick () {
+function onClickStart () {
   // Fetch the pose data from the current frame
   var pose = vrFrameData.pose;
 
@@ -542,15 +545,23 @@ function onClick () {
   forward.transformDirection(dirMtx);
   left.transformDirection(dirMtx);
 
-  // move our lathe and place it at the camera's current position
-  //don't rotate it! This means you must have the angle of the lathe block correct when you initialize the app. 
-  //console.log("moving lathe");
   lathe.position.copy(pos);
   lathe.quaternion.copy(ori);  
+
+  offset = lathe.position - pos;
   
   //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
   //lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
   //lathe.position.y = pos.y;
+}
+function onClickEnd () {
+  offset = ""; 
+}
+
+function updateLathePosition() {
+  var pose = vrFrameData.pose;
+  var camera_pos = new THREE.Vector3(pose.position[0],pose.position[1],pose.position[2]);
+  lathe.position = camera_pos + offset; 
 }
 
 function onZoomIn () {
