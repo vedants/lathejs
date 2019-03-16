@@ -33,7 +33,7 @@ var base_url = "http://v.local:8000"; //lathejs.glitch.me
 var ws = new WebSocket('ws://v.local:40510'); //websocket server
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
-var offset = ""; 
+var offset = {};
 
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
@@ -545,23 +545,25 @@ function onClickStart () {
   forward.transformDirection(dirMtx);
   left.transformDirection(dirMtx);
 
-  lathe.position.copy(pos);
-  lathe.quaternion.copy(ori);  
+  offset.pos  = new THREE.Vector3();
+  offset.pos.subVectors(lathe.position, pos);
+  offset.rot = ori; 
 
-  offset = lathe.position - pos;
-  
-  //lathe.position.z = pos.z  +  (0.5 + lathe.radius) * forward.z; //position the lathe a little bit in front of the screen
-  //lathe.position.x = pos.x + (0.5 * lathe.totalLinks * lathe.linkDist) * left.x;
-  //lathe.position.y = pos.y;
 }
 function onClickEnd () {
-  offset = ""; 
+  offset = {}; 
 }
 
 function updateLathePosition() {
   var pose = vrFrameData.pose;
   var camera_pos = new THREE.Vector3(pose.position[0],pose.position[1],pose.position[2]);
-  lathe.position = camera_pos + offset; 
+  var camera_rot = new THREE.Quaternion(pose.orientation[0], pose.orientation[1], pose.orientation[2], pose.orientation[3]);
+  var new_pos = new THREE.Vector3(); 
+  var new_rot = new THREE.Quaternion();
+  new_pos.addVectors(camera_pos, offset.pos); 
+  new_rot = offset.rot.angleTo(camera_rot);
+  lathe.position.copy(new_pos);
+  lathe.quaternion.copy(new_rot);
 }
 
 function onZoomIn () {
