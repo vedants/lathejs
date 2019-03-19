@@ -35,6 +35,31 @@ var ws = new WebSocket('ws://v.local:40510'); //websocket server
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
 var offset = {};
 
+
+$(document).ready(function () {
+  console.log("ready");
+
+    $("#sidebar").mCustomScrollbar({
+         theme: "minimal"
+    });
+
+    $('#sidebarCollapse').on('click', function () {
+        console.log("opening");
+        // open or close navbar
+        $('#sidebar').toggleClass('active');
+        // close dropdowns
+        $('.collapse.in').toggleClass('in');
+        // and also adjust aria-expanded attributes we use for the open/closed arrows
+        // in our CSS
+        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+    });
+
+});
+
+
+
+
+
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
