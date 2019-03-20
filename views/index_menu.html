@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Collapsible sidebar using Bootstrap 4</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>holoLathe</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+
+                <li>
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Materials</a>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a href="#" id="wood">Wood</a>
+                        </li>
+                        <li>
+                            <a href="#" id="plastic">Plastic</a>
+                        </li>
+                        <li>
+                            <a href="#" id="metal">Aluminium</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <i class="fas fa-search-plus"></i><a href="#" id="zoomin" style="display:inline;">Zoom In</a>
+                    <i class="fas fa-search-minus"></i><a href="#" id="zoomout" style="display:inline;">Zoom Out</a>
+                </li>
+                <!-- <li>
+                    <label for="zoomRange">Zoom</label>
+                    <input type="range" class="custom-range" id="zoomRange">
+                </li> -->
+                <li>
+                    <span class="links">
+                        <i class="fas fa-undo"></i><a href="#" id="undo" style="display:inline;">Undo</a> 
+                        <i class="fas fa-redo"></i> <a href="#" id="redo" style="display:inline;">Redo</a> 
+                    </span>
+                </li>
+                <li>
+                    <i class="fas fa-play"></i><a href="#" id="start" style="display:inline;">Start</a>
+                    <i class="fas fa-stop"></i><a href="#" id="stop" style="display:inline;">Stop</a>
+                </li>
+                <li>
+                    <a href="#" id="reset">Reset</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid">
+
+                    <button type="button" id="sidebarCollapse" class="btn">
+                        <i class="fas fa-align-left"></i>
+                        <span></span>
+                    </button>
+                    <!-- <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button> -->
+            </nav>
+            <div class="line"></div>
+        </div>
+    </div>
+</div>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <!-- Load THREE.AR.JS Scripts   -->
+    <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
+    <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
+    <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
+      
+      
+    <!-- Load Lathe Shaders   -->  
+      <script data-src="/shaders/wood_vertex.js" data-name="Wood" type="x-shader/x-vertex"></script>
+      <script data-src="/shaders/wood_fragment.js" data-name="Wood" type="x-shader/x-fragment"></script>
+
+      <script data-src="/shaders/metal_vertex.js" data-name="Metal" type="x-shader/x-vertex"></script>
+      <script data-src="/shaders/metal_fragment.js" data-name="Metal" type="x-shader/x-fragment"></script>
+
+      <script data-src="/shaders/stone_vertex.js" data-name="Stone" type="x-shader/x-vertex"></script>
+      <script data-src="/shaders/stone_fragment.js" data-name="Stone" type="x-shader/x-fragment"></script>
+      
+    <!--  Load Lathe Scripts -->
+      <!-- <script src = "/js/jquery-1.7.1.min.js"></script> -->
+      <script src = "/js/signals.js"></script>
+      <script src = "/js/Cylinder.js"></script>
+      <script src = "/js/Detector.js"></script>
+      <script src = "/js/ObjectPool.js"></script>
+      <script src = "/js/sounds.js"></script>
+      <script src = "/js/lathe.js"></script>
+      <script src = "/js/Library.js"></script>
+      
+    <!-- this file has all the interesting things in it -->
+      <script src ="/fab.js"> </script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, user-scalable=no,
   minimum-scale=1.0, maximum-scale=1.0">
   <style>
-    /*body {
+    body {
       font-family: monospace;
       margin: 0;
       overflow: hidden;
@@ -44,40 +44,44 @@
       position: absolute;
       top: 0;
       left: 0;
-    }*/
+      z-index: -1;
+    }
   </style>
-  
-  <!-- Our Custom CSS -->
-<link rel="stylesheet" href="/style.css">
-<!-- Scrollbar Custom CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 
 </head>
 <body>
   <div class="wrapper">
       <nav id="sidebar">
       <div class="sidebar-header">
-          <h3>Bootstrap Sidebar</h3>
+          <h3>holoLathe</h3>
       </div>
 
+<!-- <div id="info">
+  <span class="links">
+    <a href="#" id="zoomin">+</a> 
+    <a href="#" id="zoomout">-</a> |
+    <a href="#" id="wood" >wood</a>  
+    <a href="#" id="metal">steel</a>   
+    <a href="#" id="plastic">plastic</a> | 
+    <a href="#" id="undo">undo</a>  
+    <a href="#" id="redo">redo</a> |
+    <a href="#" id="start">start</a>
+    <a href="#" id="stop">stop</a>
+    <a href="/" id="reset">reset  </a>
+  </span>
+  <span class="title">ar_lathe</span><br/>
+</div> -->
+
       <ul class="list-unstyled components">
-          <p>Dummy Heading</p>
+          <p>Menu</p>
           <li class="active">
               <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
-              <ul class="collapse list-unstyled" id="homeSubmenu">
-                  <li>
-                      <a href="#">Home 1</a>
-                  </li>
-                  <li>
-                      <a href="#">Home 2</a>
-                  </li>
-                  <li>
-                      <a href="#">Home 3</a>
-                  </li>
-              </ul>
           </li>
           <li>
-              <a href="#">About</a>
+              <a href="#" id="zoomin">Zoom In</a>
+          </li>
+          <li>
+              <a href="#" id="zoomout">Zoom Out</a>
           </li>
           <li>
               <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
@@ -102,7 +106,6 @@
       </ul>
   </nav>
 
-
 <div id="content">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -111,31 +114,13 @@
                 <i class="fas fa-align-left"></i>
                 <span>Toggle Sidebar</span>
             </button>
-
         </div>
     </nav>
-
-
-<div id="info">
-  <span class="links">
-    <a href="#" id="zoomin">+</a> 
-    <a href="#" id="zoomout">-</a> |
-    <a href="#" id="wood" >wood</a>  
-    <a href="#" id="metal">steel</a>   
-    <a href="#" id="plastic">plastic</a> | 
-    <a href="#" id="undo">undo</a>  
-    <a href="#" id="redo">redo</a> |
-    <a href="#" id="start">start</a>
-    <a href="#" id="stop">stop</a>
-    <a href="/" id="reset">reset  </a>
-  </span>
-  <span class="title">ar_lathe</span><br/>
-</div>
-</div>
+  </div>
 </div>
 
 <!-- Load Bootstrap 4  -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
   
 <!-- Load THREE.AR.JS Scripts   -->
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
@@ -155,7 +140,7 @@
   
 <!--  Load Lathe Scripts -->
   <!-- <script src = "/js/jquery-1.7.1.min.js"></script> -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
   <script src = "/js/signals.js"></script>
   <script src = "/js/Cylinder.js"></script>
   <script src = "/js/Detector.js"></script>

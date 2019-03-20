@@ -35,31 +35,6 @@ var ws = new WebSocket('ws://v.local:40510'); //websocket server
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
 var offset = {};
 
-
-$(document).ready(function () {
-  console.log("ready");
-
-    $("#sidebar").mCustomScrollbar({
-         theme: "minimal"
-    });
-
-    $('#sidebarCollapse').on('click', function () {
-        console.log("opening");
-        // open or close navbar
-        $('#sidebar').toggleClass('active');
-        // close dropdowns
-        $('.collapse.in').toggleClass('in');
-        // and also adjust aria-expanded attributes we use for the open/closed arrows
-        // in our CSS
-        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-    });
-
-});
-
-
-
-
-
 /**
  * Use the `getARDisplay()` utility to leverage the WebVR API
  * to see if there are any AR-capable WebVR VRDisplays. Returns
@@ -85,7 +60,8 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.autoClear = false;
   canvas = renderer.domElement;
-  document.body.appendChild(canvas);
+  //document.body.appendChild(canvas);
+  document.getElementsByClassName("wrapper")[0].appendChild(canvas);
   scene = new THREE.Scene();
   
   // Turn on the debugging panel
@@ -477,8 +453,7 @@ function check_and_cut(newSegmentFactors) {
       
       }
     }
-    lathe.geometry.verticesNeedUpdate = true;
-    
+    lathe.geometry.verticesNeedUpdate = true;   
 }
 
 /**
@@ -513,9 +488,9 @@ function update() {
   //rotate the lathe block. 
   lathe.rotation.z += _ROTATE_SPEED; 
 
-  if (offset != "") {
-    updateLathePosition(); 
-  }
+  // if ($.isEmptyObject(offset)){
+  //   updateLathePosition(); 
+  // }
   
   //update cuttings 
   updateCuttings();
@@ -666,9 +641,15 @@ function setUpWebSocket() {
       }
   };
   ws.onclose = function(evt) { 
+    ws.send("fab client is closing...");
       console.log("websocket closed: " +  evt)
     };
   ws.onerror = function(evt) { 
     console.log("websocket error: "+ evt);
   };
+
+  //close the websocket when the page closes
+  window.onbeforeunload = function() {
+    //ws.close();
+  }; 
 }
