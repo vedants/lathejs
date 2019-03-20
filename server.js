@@ -22,7 +22,10 @@ wss.on('connection', function (ws) {
     console.log('received: %s', message); 
     //send the received message to all of the connections in the connection array
     for(var i = 0; i < connections.length; i++) {
-      connections[i].send(message);
+      if (connections.readyState != 3){
+        //socket is not closed
+        connections[i].send(message);  
+      }
     }
   });
 });
@@ -40,6 +43,11 @@ function reset() {
 }
 
 app.get('/', function(request, response) {
+  reset();
+  response.sendFile(__dirname + '/views/index_menu.html');
+});
+
+app.get('/old', function(request, response) {
   reset();
   response.sendFile(__dirname + '/views/index.html');
 });
