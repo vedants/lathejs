@@ -82,7 +82,7 @@ a, a:hover, a:focus {
 }
 
 #sidebar ul li a {
-    padding: 10px;
+    padding-left: 10px;
     font-size: 1.0em;
     display: block;
 }
@@ -101,6 +101,15 @@ a, a:hover, a:focus {
 #sidebar svg {
     margin-left: 10px;
     margin-right: 0px;
+    vertical-align: 0em;
+}
+.right-icon{
+    position:absolute;
+    left:110px;
+}
+.right-item {
+    position: absolute;
+    left: 140px;
 }
 
 

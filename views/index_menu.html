@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Collapsible sidebar using Bootstrap 4</title>
+    <title>holoLathe</title>
 
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
@@ -42,7 +42,7 @@
                 </li>
                 <li>
                     <i class="fas fa-search-plus"></i><a href="#" id="zoomin" style="display:inline;">Zoom in</a>
-                    <i class="fas fa-search-minus"></i><a href="#" id="zoomout" style="display:inline;">Zoom out</a>
+                    <i class="fas fa-search-minus right-icon"></i><a href="#" id="zoomout" class="right-item" style="display:inline;">Zoom out</a>
                 </li>
                 <!-- <li>
                     <label for="zoomRange">Zoom</label>
@@ -51,12 +51,12 @@
                 <li>
                     <span class="links">
                         <i class="fas fa-undo"></i><a href="#" id="undo" style="display:inline;">Undo</a> 
-                        <i class="fas fa-redo"></i> <a href="#" id="redo" style="display:inline;">Redo</a> 
+                        <i class="fas fa-redo right-icon"></i> <a href="#" id="redo" class="right-item" style="display:inline;">Redo</a> 
                     </span>
                 </li>
                 <li>
                     <i class="fas fa-play"></i><a href="#" id="start" style="display:inline;">Start</a>
-                    <i class="fas fa-stop"></i><a href="#" id="stop" style="display:inline;">Stop</a>
+                    <i class="fas fa-stop right-icon"></i><a href="#" id="stop" class= "right-item" style="display:inline;">Stop</a>
                 </li>
                 <li>
                     <a href="/" id="reset">Reset</a>
@@ -67,12 +67,13 @@
         
         <div id="content">
             <!-- Menu collapse button  -->
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid" style="z-index:5">
+            <nav class="navbar navbar-expand-lg navbar-light" style="z-index:5;">
+                <div class="container-fluid">
                     <button type="button" id="sidebarCollapse" class="btn">
                         <i class="fas fa-align-left"></i>
                         <span></span>
                     </button>
+                </div>
             </nav>
             <!--  the canvas gets inserted into the DOM here -->
         </div>
@@ -117,7 +118,12 @@
       <script type="text/javascript">
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
+            if ( $('#sidebar').css('display') == 'none' ) {
+                    $('#sidebar').css('display','block');
+                  }
+                  else {
+                    $('#sidebar').css('display','none');
+                  }
             });
         });
     </script>
