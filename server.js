@@ -22,7 +22,7 @@ wss.on('connection', function (ws) {
     console.log('received: %s', message); 
     //send the received message to all of the connections in the connection array
     for(var i = 0; i < connections.length; i++) {
-      if (connections.readyState != 3){
+      if (connections[i].readyState != 3){
         //socket is not closed
         connections[i].send(message);  
       }
