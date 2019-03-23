@@ -22,7 +22,7 @@ wss.on('connection', function (ws) {
     console.log('received: %s', message); 
     //send the received message to all of the connections in the connection array
     for(var i = 0; i < connections.length; i++) {
-      if (connections[i].readyState != 3){
+      if (connections[i].readyState != 3) {
         //socket is not closed
         connections[i].send(message);  
       }
@@ -62,22 +62,27 @@ app.get('/draw', function(request, response) {
   response.sendFile(__dirname + '/views/draw.html'); 
 });
 
-
 app.get('/speech', function(request, response) {
   reset();
   response.sendFile(__dirname + '/views/speech.html'); 
 });
 
 app.post('/cut', function(request, response) {
-  console.log("got cut signal @ " + new Date().toLocaleTimeString());
+  console.log('got cut signal @ ' + new Date().toLocaleTimeString());
   var segmentNumber = request.body['segmentNumber'];
   var segmentPressure = request.body['segmentPressure'];
   if (segmentFactors[segmentNumber] != segmentPressure && segmentPressure > 0) {
     is_changed = true;
     segmentFactors[segmentNumber] = segmentPressure;  
-    longpoll.publish("/is_cut_poll", {segmentFactors});
+    longpoll.publish('/is_cut_poll', {segmentFactors});
   }
-  response.send("got cut.");
+  response.send('got cut.');
+});
+
+app.post('/sendPath', function(request, response) {
+  console.log('got message from lathe');
+  var path = request.body;
+  console.log(path);
 });
 
 app.post('/save_lathe', function(request, response) {
