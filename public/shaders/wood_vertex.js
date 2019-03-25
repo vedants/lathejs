@@ -4,6 +4,9 @@ varying vec3 vViewPosition;
 varying vec3 vNormal;
 varying vec2 vUv;
 
+//#define USE_SHADOWMAP 1
+#define MAX_SHADOWS 1
+
 #ifdef USE_SHADOWMAP
 
     varying vec4 vShadowCoord[ MAX_SHADOWS ];

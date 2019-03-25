@@ -1,3 +1,5 @@
+
+
 vec4 permute( vec4 x ) {
 
     return mod( ( ( x * 34.0 ) + 1.0 ) * x, 289.0 );
@@ -11,13 +13,17 @@ vec4 taylorInvSqrt( vec4 r ) {
 
 uniform vec3 ambientLightColor;
 
+#define MAX_DIR_LIGHTS 3
+
 #if MAX_DIR_LIGHTS > 0
 
     uniform vec3 directionalLightColor[ MAX_DIR_LIGHTS ];
-    uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];
+    uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];    
 
 #endif
 
+//#define USE_SHADOWMAP 1
+#define MAX_SHADOWS 1
 
 #ifdef USE_SHADOWMAP
 
@@ -147,27 +153,60 @@ float surface( vec3 coord ) {
 
 }
 
+float surface2( vec3 coord ) {
+
+    float n = 0.0;
+
+    n += 0.7    * abs( snoise( coord ) );
+    n += 0.25   * abs( snoise( coord * 2.0 ) );
+    //n += 0.125  * abs( snoise( coord * 4.0 ) );
+    //n += 0.0625 * abs( snoise( coord * 8.0 ) );
+    return n;
+
+}
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 void main()
 {
-
+    //TEST
+  
+    
+    vec3 directionalLightDirection[3];
+    vec3 directionalLightColor[3];  
+  
+    directionalLightDirection[0] = vec3(-1, 1, 1);
+    directionalLightDirection[1] = vec3(-1, 1, -1);
+    directionalLightDirection[2] = vec3(0.5, 0.1, 0.25);
+  
+    directionalLightColor[0] = vec3(1, 1, 1);
+    directionalLightColor[1] = vec3(1, 1, 1);
+    directionalLightColor[2] = vec3(1, 1, 1);
+  
     vec3 normal = normalize( vNormal );
     vec3 viewPosition = normalize( vViewPosition );
+  
+    float specular = 0.3;
+    float diffuse = 1.0;
 
     #if MAX_DIR_LIGHTS > 0
 
         vec3 dirDiffuse  = vec3( 0.0 );
         vec3 dirSpecular = vec3( 0.0 );
+        float dirDiffuseWeight;
 
         for( int i = 0; i < MAX_DIR_LIGHTS; i ++ ) {
 
             vec4 lDirection = viewMatrix * vec4( directionalLightDirection[ i ], 0.0 );
 
             vec3 dirVector = normalize( lDirection.xyz );
-            float dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 );
+            //is light coming from correct side
+            dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 ); //0.5
 
-            dirDiffuse  += diffuse * directionalLightColor[ i ] * dirDiffuseWeight;
+            dirDiffuse += diffuse * directionalLightColor[ i ] * dirDiffuseWeight;
 
-            // specular
             vec3 dirHalfVector = normalize( dirVector + viewPosition );
             float dirDotNormalHalf = max( dot( normal, dirHalfVector ), 0.0 );
             float dirSpecularWeight = max( pow( dirDotNormalHalf, shininess ), 0.0 );
@@ -177,10 +216,7 @@ void main()
         }
 
     #endif
-
-    float d = length( vec3(mPosition.x*.3,mPosition.y*.3,0.0) - GrainCentre + surface(mPosition*.01));
-    float g = clamp(cos(d*GrainMult),0.0,1.0);
-
+    
     vec3 totalDiffuse = vec3( 0.0 );
     vec3 totalSpecular = vec3( 0.0 );
 
@@ -188,14 +224,69 @@ void main()
         totalDiffuse += dirDiffuse;
         totalSpecular += dirSpecular;
     #endif
+    
+    //OLD STUFF
+    /*
+    //doesnt seem to have much of an effect
+    vec3 GrainCentre = vec3(10,5,100);
 
-
+    float d = length( vec3(mPosition.x*.3,mPosition.y*.3,0.0) - GrainCentre + surface(mPosition*.01));
+    float g = clamp(cos(d*GrainMult),0.0,1.0);
+    
     vec3 DiffuseColour = mix(totalDiffuse*DiffuseColour1,totalDiffuse*DiffuseColour2,g);
-
-    //DiffuseColour = mix(DiffuseColour, totalDiffuse*DiffuseColour1 , smoothstep(.91,0.98,distance( mPosition, vec3(0.0,0.0,mPosition.z))/200.0));
-    DiffuseColour = mix(DiffuseColour, totalDiffuse*texture2D( map, vUv*2.0 ).xyz , smoothstep(.91,0.98,distance( mPosition, vec3(0.0,0.0,mPosition.z))/200.0));
-
-    gl_FragColor = vec4(DiffuseColour * ( totalDiffuse * DiffuseColour) + totalSpecular + ambientLightColor * ambient,1.0);
+    DiffuseColour = mix(DiffuseColour, totalDiffuse*texture2D( map, vUv*2.0 ).xyz , smoothstep(.91,0.98,distance( mPosition, vec3(0.0,0.0,mPosition.z))*10.0));
+    
+    // d and d_bigger are around 100
+    vec3 d2 = vec3(d - 100.0, 0, 0);
+    //actually does something cool!!! - position multiplier was too small
+    vec3 snoise = vec3(abs(snoise(mPosition * 100.0)), 0, 0);
+    */
+  
+    //gs 5 gm 50 // more marbled
+    //gs 1 gm 1000 // more wood-like
+  
+    //lower gs/gm ratio = more wood-like
+    //gs = inverse pattern size (bigger = smaller pattern)
+  
+    //increase GS keeping GM const: same pattern but smaller
+    //increase GM keeping CS const: smaller and more wood-like
+    //increase both keeping ratio constant: more wood-like
+    
+    //just x: vertical stripes
+    //just y: horizontal stripes
+    //just z: rings
+    //x & y: no loops
+    //x & z: kind of a vertical loopy pattern, closer to website
+    //y & z: pretty close to original
+  
+    float GrainSize = 10.0;
+  
+    float GrainMult = 100.0;
+  
+    vec3 scaledPos = vec3( 0.0,mPosition.y*170.0,0.0) + surface(mPosition*10.0);
+    vec3 scratches = mix(vec3(0,0,0),vec3(0.2,0.2,0.3),surface2(scaledPos));
+  
+    float newSurface = surface(vec3(mPosition.x*0.1, mPosition.y, mPosition.z*0.1) * GrainSize);
+  
+    float d3 = length( vec3(mPosition.x*0.3,mPosition.y*0.3,0.0) - GrainCentre + newSurface);
+    float g3 = clamp(cos(d3*GrainMult),0.0,1.0);
+  
+    vec3 DiffuseColour3 = mix(DiffuseColour1,DiffuseColour2,g3);
+    DiffuseColour3 -= 0.5 * scratches;
+    //DiffuseColour3 = mix(DiffuseColour3, totalDiffuse*texture2D( map, vUv).xyz , smoothstep(.91,0.98,distance( mPosition, vec3(0.0,0.0,mPosition.z))*10.2));
+  
+    directionalLightDirection[0] = vec3(0,0.2,0);
+  
+    vec3 mPositionCentered = mPosition - vec3(0,0,0.25);
+  
+    // testing for subsurface calculation
+    //vec4 lDirection = viewMatrix * vec4( directionalLightDirection[ 0 ] - mPositionCentered, 0.0 );
+    //vec3 dirVector = normalize( lDirection.xyz );
+    vec3 dirVector2 = normalize(directionalLightDirection[ 0 ] - mPositionCentered);
+    vec3 normal2 = normalize(mNormal);
+    //gl_FragColor = vec4(dot(normal2, dirVector2),0.0,0.0,1.0);
+  
+    gl_FragColor = vec4(DiffuseColour3 * ( totalDiffuse * DiffuseColour3) + totalSpecular + vec3(0.16,0.13,0.11),1.0);//DiffuseColour * ( totalDiffuse * DiffuseColour) + totalSpecular + ambientLightColor * ambient,1.0);
 
     vec3 shadowColor = vec3( 1.0 );
 
@@ -291,6 +382,6 @@ void main()
 
     #endif
 
-    gl_FragColor.xyz = gl_FragColor.xyz * shadowColor;
+    //gl_FragColor.xyz = gl_FragColor.xyz * shadowColor;
 
 }
