@@ -10,12 +10,12 @@ app.use(express.static('public'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', parameterLimit: 100000, extended: true }));
 
-
 var wss = new WebSocketServer({port: 40510});
 var connections = []; 
 
 wss.on('connection', function (ws) {
   var connection = ws;
+  console.log('new connection');
   connections.push(connection);
 
   ws.on('message', function (message) {
@@ -82,7 +82,7 @@ app.post('/cut', function(request, response) {
 app.post('/sendPath', function(request, response) {
   console.log('got message from lathe');
   var path = request.body;
-  console.log(path);
+  console.log(path);gi
 });
 
 app.post('/save_lathe', function(request, response) {

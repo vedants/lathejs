@@ -18,6 +18,7 @@ var tool;
 var lathe; 
 var ref_lathe; 
 var _ROTATE_SPEED = 0;  
+var _TRANSLATE_FACTOR = .01;//1 cm 
   
 var MaterialLibrary = {};
 
@@ -119,6 +120,16 @@ function init() {
   document.getElementById("plastic").onclick = onPlastic;
   document.getElementById("start").onclick = onStartLathe;
   document.getElementById("stop").onclick = onStopLathe;
+
+  document.getElementById("debugconsole").onclick = ontoggleDebugConsole;
+
+  document.getElementById("posx+").onclick = onPosXPlus;
+  document.getElementById("posx-").onclick = onPosXMinus;
+  document.getElementById("posy+").onclick = onPosYPlus;
+  document.getElementById("posy-").onclick = onPosYMinus;
+  document.getElementById("posz+").onclick = onPosZPlus;
+  document.getElementById("posz-").onclick = onPosZMinus;
+
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
@@ -362,8 +373,8 @@ function initObjects() {
   lathe.geometry.computeFaceNormals();
   lathe.geometry.computeVertexNormals();
   
-  lathe.position.z = -0.5 - lathe.radius; //position the lathe a little bit in front of the screen
   lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+  lathe.position.z = -0.3 - lathe.radius; //position the lathe a little bit in front of the screen
   lathe.rotation.y = 90 * TO_RADIANS; 
   
   scene.add(lathe);
@@ -488,9 +499,9 @@ function update() {
   //rotate the lathe block. 
   lathe.rotation.z += _ROTATE_SPEED; 
 
-  // if ($.isEmptyObject(offset)){
-  //   updateLathePosition(); 
-  // }
+  if (! $.isEmptyObject(offset)){
+    updateLathePosition(); 
+  }
   
   //update cuttings 
   updateCuttings();
@@ -520,50 +531,62 @@ function onWindowResize () {
  */
 function onClickStart () {
   // Fetch the pose data from the current frame
-  var pose = vrFrameData.pose;
+  // var pose = vrFrameData.pose;
 
-  // Convert the pose orientation and position into
-  // THREE.Quaternion and THREE.Vector3 respectively
-  var ori = new THREE.Quaternion(
-    pose.orientation[0],
-    pose.orientation[1],
-    pose.orientation[2],
-    pose.orientation[3]
-  );
+  // // Convert the pose orientation and position into
+  // // THREE.Quaternion and THREE.Vector3 respectively
+  // var ori = new THREE.Quaternion(
+  //   pose.orientation[0],
+  //   pose.orientation[1],
+  //   pose.orientation[2],
+  //   pose.orientation[3]
+  // );
 
-  var pos = new THREE.Vector3(
-    pose.position[0],
-    pose.position[1],
-    pose.position[2]
-  );
+  // var pos = new THREE.Vector3(
+  //   pose.position[0],
+  //   pose.position[1],
+  //   pose.position[2]
+  // );
   
-  var dirMtx = new THREE.Matrix4();
-  dirMtx.makeRotationFromQuaternion(ori);
+  // var dirMtx = new THREE.Matrix4();
+  // dirMtx.makeRotationFromQuaternion(ori);
   
-  var forward = new THREE.Vector3(0,0, -1.0); 
-  var left = new THREE.Vector3(-1.0, 0,0);
-  forward.transformDirection(dirMtx);
-  left.transformDirection(dirMtx);
+  // var forward = new THREE.Vector3(0,0, -1.0); 
+  // var left = new THREE.Vector3(-1.0, 0,0);
+  // forward.transformDirection(dirMtx);
+  // left.transformDirection(dirMtx);
 
-  offset.pos  = new THREE.Vector3();
-  offset.pos.subVectors(lathe.position, pos);
-  offset.rot = ori; 
+  // offset.pos  = new THREE.Vector3();
+  // offset.pos.subVectors(lathe.position, pos);
+  // offset.rot = ori; 
+  //lathe.position.copy(new THREE.Vector3(0,0,0));
+  //lathe.quaternion.copy(new THREE.Quaternion(0,0,0,1));
+  lathe.parent = camera;
+  lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+  lathe.position.y = 0; 
+  lathe.position.z = -0.3 - lathe.radius; //position the lathe a little bit in front of the screen
+  lathe.rotation.x = 0; 
+  lathe.rotation.y = 90 * TO_RADIANS; 
+  lathe.rotation.z = 0;
 
 }
 function onClickEnd () {
-  offset = {}; 
+  lathe.position.copy(lathe.getWorldPosition());
+  lathe.quaternion.copy(lathe.getWorldQuaternion());
+  lathe.parent = scene;
 }
 
 function updateLathePosition() {
-  var pose = vrFrameData.pose;
-  var camera_pos = new THREE.Vector3(pose.position[0],pose.position[1],pose.position[2]);
-  var camera_rot = new THREE.Quaternion(pose.orientation[0], pose.orientation[1], pose.orientation[2], pose.orientation[3]);
-  var new_pos = new THREE.Vector3(); 
-  var new_rot = new THREE.Quaternion();
-  new_pos.addVectors(camera_pos, offset.pos); 
-  new_rot = offset.rot.angleTo(camera_rot);
-  lathe.position.copy(new_pos);
-  lathe.quaternion.copy(new_rot);
+  // var pose = vrFrameData.pose;
+  // var camera_pos = new THREE.Vector3(pose.position[0],pose.position[1],pose.position[2]);
+  // var camera_rot = new THREE.Quaternion(pose.orientation[0], pose.orientation[1], pose.orientation[2], pose.orientation[3]);
+  // var new_pos = new THREE.Vector3(); 
+  // var new_rot = new THREE.Quaternion();
+  // new_pos.addVectors(camera_pos, offset.pos); 
+  // //angle between the two quaternions
+  // new_rot = offset.rot.inverse().multiply(camera_rot)
+  // lathe.position.copy(new_pos);
+  // lathe.quaternion.copy(lathe.quaternion.multiply(new_rot));
 }
 
 function onZoomIn () {
@@ -611,6 +634,29 @@ function onStartLathe() {
 function onStopLathe() {
   _ROTATE_SPEED = 0;
   sound.stop();
+}
+
+function ontoggleDebugConsole() {
+  //TODO: toggle visibility of id=debugconsole span in html. 
+}
+
+function onPosXPlus() {
+  lathe.position.x += _TRANSLATE_FACTOR;
+}
+function onPosXMinus() {
+  lathe.position.x -= _TRANSLATE_FACTOR;
+}
+function onPosYPlus() {
+  lathe.position.y += _TRANSLATE_FACTOR;
+}
+function onPosYMinus() {
+  lathe.position.y -= _TRANSLATE_FACTOR;
+}
+function onPosZPlus() {
+  lathe.position.z += _TRANSLATE_FACTOR;
+}
+function onPosZMinus() {
+  lathe.position.z -= _TRANSLATE_FACTOR;
 }
 
 function setUpWebSocket() {
