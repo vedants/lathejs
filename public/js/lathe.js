@@ -5,7 +5,8 @@
 
 var PI2 = Math.PI * 2
 var TO_RADIANS = Math.PI / 180;
-var _branchSegments = 6; //number of sides on perimeter of each "ring" (approximation factor)
+//this MUST be an even number! 
+var _branchSegments = 24; //number of sides on perimeter of each "ring" (approximation factor)
 
 Lathe = function ( materials, radius ) {
 	
@@ -17,8 +18,8 @@ Lathe = function ( materials, radius ) {
 	var basePoint = new THREE.Vector3(0,0,0);
 	var branchPoint = new THREE.Object3D();
 	branchPoint.position = new THREE.Vector3(0,0,0);
-	this.radius = 0.1; // ~= 4inches  
-  this.minRadius = 0.001; //never let the lathe get thinner than this.
+	this.radius = 0.02540 / 2; // ~= 3/8 * 1.2 inches  
+  this.minRadius = 0.00001; //never let the lathe get thinner than this.
 
 	var R;
 	var S;
@@ -31,9 +32,10 @@ Lathe = function ( materials, radius ) {
 	//Each UV layer is an array of UVs matching the order and number of vertices in faces 
 	var faceVertexUvs = this.geometry.faceVertexUvs
 	
-  //total length = totalLinks * linkDist = 100 * 0.005 = 0.5m ~= 1.5ft long
-	this.totalLinks = 10; //number of ring segments along the length of the cylinder
-	this.linkDist = 0.05; //width of each ring segment
+  //total length = totalLinks * linkDist = 100 * 0.0003 = 0.003m = 30 mm long
+	this.totalLinks = 300; //number of ring segments along the length of the cylinder
+  
+	this.linkDist= 0.000166   ; //width of each ring segment
   this.depth = this.totalLinks * this.linkDist;
 	this.segmentAngle = Math.PI * 2 / _branchSegments; //angle between lines on the perimeter of each ring.
 	this.ring = new Array(this.totalLinks);

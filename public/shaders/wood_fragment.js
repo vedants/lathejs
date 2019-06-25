@@ -155,13 +155,13 @@ float surface( vec3 coord ) {
 
 float surface2( vec3 coord ) {
 
-    float n = 0.0;
+	float n = 0.0;
 
-    n += 0.7    * abs( snoise( coord ) );
-    n += 0.25   * abs( snoise( coord * 2.0 ) );
-    //n += 0.125  * abs( snoise( coord * 4.0 ) );
-    //n += 0.0625 * abs( snoise( coord * 8.0 ) );
-    return n;
+	n += 0.7    * abs( snoise( coord ) );
+	n += 0.25   * abs( snoise( coord * 2.0 ) );
+	//n += 0.125  * abs( snoise( coord * 4.0 ) );
+	//n += 0.0625 * abs( snoise( coord * 8.0 ) );
+	return n;
 
 }
 

@@ -112,6 +112,9 @@ a, a:hover, a:focus {
     left: 140px;
 }
 
+#debugconsole {
+  display: none;
+}
 
 a[data-toggle="collapse"] {
     position: relative;

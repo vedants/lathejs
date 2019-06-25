@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>three.ar.js - LatheJS</title>
+  <title>turnByWireLatheJS</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no,
   minimum-scale=1.0, maximum-scale=1.0">
@@ -44,24 +44,17 @@
       position: absolute;
       top: 0;
       left: 0;
-      z-index: -1;
     }
   </style>
-
+  
 </head>
 <body>
-  <div class="wrapper">
-      <nav id="sidebar">
-      <div class="sidebar-header">
-          <h3>holoLathe</h3>
-      </div>
-
-<!-- <div id="info">
+<div id="info">
   <span class="links">
     <a href="#" id="zoomin">+</a> 
     <a href="#" id="zoomout">-</a> |
     <a href="#" id="wood" >wood</a>  
-    <a href="#" id="metal">steel</a>   
+    <a href="#" id="metal">aluminum</a>   
     <a href="#" id="plastic">plastic</a> | 
     <a href="#" id="undo">undo</a>  
     <a href="#" id="redo">redo</a> |
@@ -70,57 +63,7 @@
     <a href="/" id="reset">reset  </a>
   </span>
   <span class="title">ar_lathe</span><br/>
-</div> -->
-
-      <ul class="list-unstyled components">
-          <p>Menu</p>
-          <li class="active">
-              <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
-          </li>
-          <li>
-              <a href="#" id="zoomin">Zoom In</a>
-          </li>
-          <li>
-              <a href="#" id="zoomout">Zoom Out</a>
-          </li>
-          <li>
-              <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
-              <ul class="collapse list-unstyled" id="pageSubmenu">
-                  <li>
-                      <a href="#">Page 1</a>
-                  </li>
-                  <li>
-                      <a href="#">Page 2</a>
-                  </li>
-                  <li>
-                      <a href="#">Page 3</a>
-                  </li>
-              </ul>
-          </li>
-          <li>
-              <a href="#">Portfolio</a>
-          </li>
-          <li>
-              <a href="#">Contact</a>
-          </li>
-      </ul>
-  </nav>
-
-<div id="content">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-
-            <button type="button" id="sidebarCollapse" class="btn btn-info">
-                <i class="fas fa-align-left"></i>
-                <span>Toggle Sidebar</span>
-            </button>
-        </div>
-    </nav>
-  </div>
 </div>
-
-<!-- Load Bootstrap 4  -->
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
   
 <!-- Load THREE.AR.JS Scripts   -->
 <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
@@ -137,10 +80,10 @@
 
   <script data-src="/shaders/stone_vertex.js" data-name="Stone" type="x-shader/x-vertex"></script>
   <script data-src="/shaders/stone_fragment.js" data-name="Stone" type="x-shader/x-fragment"></script>
+
   
 <!--  Load Lathe Scripts -->
-  <!-- <script src = "/js/jquery-1.7.1.min.js"></script> -->
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+  <script src = "/js/jquery-1.7.1.min.js"></script>
   <script src = "/js/signals.js"></script>
   <script src = "/js/Cylinder.js"></script>
   <script src = "/js/Detector.js"></script>
@@ -150,17 +93,6 @@
   <script src = "/js/Library.js"></script>
   
 <!-- this file has all the interesting things in it -->
-  <script src ="/fab.js"> </script>
-
-<!-- Helper files for Bootstrap -->
-
-<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
-
-
+  <script src ="/main.js"> </script>
 </body>
 </html>

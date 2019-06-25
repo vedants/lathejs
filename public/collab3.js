@@ -4,30 +4,23 @@ var vrFrameData;
 var vrControls;
 var arView;
 
-var freezeLocalization;
 var canvas;
 var camera;
 var scene;
 var renderer;
-var listener;
+var listener; 
 var sound;  
-var woodSound; 
-var metalSound; 
-var plasticSound; 
-var extendedSound;
-var strokes_group;
-var guides_group;
-var axesHelper;
+var strokes_group; 
+var move_or_draw_mode = "move"; 
 
 var cube;
 var cylinder;
 var tool; 
-var lathe;
+var lathe; 
 var ref_lathe; 
 var _ROTATE_SPEED = 0;  
-var _TRANSLATE_FACTOR = .005;//0.5 cm 
-var time_since_last_cut = 0; 
-var time_threshold = 0.55; //seconds 
+var _TRANSLATE_FACTOR = .01;//1 cm 
+  
 var MaterialLibrary = {};
 
 var cuttingList = [];
@@ -37,10 +30,11 @@ var chipsPool = new ObjectPool();
 var dustPool = new ObjectPool();
 var chipsGeometry;
 var metalGeometry;
-var activeMaterialType = "wood"; //default material
+var activeMaterialType = "red";
 var base_url = "http://turnbywire.glitch.me"; //lathejs.glitch.me
-var ws = new WebSocket('ws://turnbywire.glitch.me'); //websocket server for drawings 
-var wsMaterial = new WebSocket('ws://turnbywire.glitch.me/voice'); //websocket server for voice commands and messages from the tbW
+var ws = new WebSocket('ws://turnbywire.glitch.me'); //websocket server
+var wsMaterial = new WebSocket('ws://turnbywire.glitch.me/voice'); //websocket server
+
 
 var segmentFactors = []; //stores how much all the segments in the lathe have been "cut" by. 
 var offset = {};
@@ -63,7 +57,7 @@ THREE.ARUtils.getARDisplay().then(function (display) {
 
 function init() { 
   
-  
+
   // Setup the three.js rendering environment
   renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -77,10 +71,10 @@ function init() {
   
   // Turn on the debugging panel
   var arDebug = new THREE.ARDebug(vrDisplay);
-  //document.body.appendChild(arDebug.getElement());
+  document.body.appendChild(arDebug.getElement());
   //Turn on the debugging axes 
-  axesHelper = new THREE.AxesHelper( 2 );
-  
+  var axesHelper = new THREE.AxesHelper( 5 );
+  //scene.add( axesHelper );
 
   // Creating the ARView, which is the object that handles
   // the rendering of the camera stream behind the three.js
@@ -99,8 +93,6 @@ function init() {
     vrDisplay.depthNear,
     vrDisplay.depthFar
   );
-  
-  freezeLocalization = false; //by default, track. 
 
   // VRControls is a utility from three.js that applies the device's
   // orientation/position to the perspective camera, keeping our
@@ -116,29 +108,14 @@ function init() {
   source.start();
   
   sound = new THREE.PositionalAudio( listener );
-  
-  woodSound = new THREE.PositionalAudio (listener); 
-  plasticSound = new THREE.PositionalAudio (listener); 
-  metalSound = new THREE.PositionalAudio (listener);
-  extendedSound = new THREE.PositionalAudio(listener);
-  
   sound.context.resume();
-  
-  woodSound.context.resume();
-  plasticSound.context.resume();
-  metalSound.context.resume();
-  extendedSound.context.resume();
-  
-  
   listener.context.resume();
 
   strokes_group = new THREE.Group();
-  guides_group = new THREE.Group();
-  
   scene.add(strokes_group);
-  scene.add(guides_group);
   setUpWebSocket();
   setUpMaterialWebSocket();
+
 
   //initialize button callbacks 
   document.getElementById("zoomin").onclick = onZoomIn;
@@ -147,17 +124,14 @@ function init() {
   document.getElementById("metal").onclick = onMetal;
   document.getElementById("plastic").onclick = onPlastic;
   document.getElementById("marble").onclick = onMarble;
-  document.getElementById("wireframe").onclick = onWireframe;
-  document.getElementById("normals").onclick = onNormals;
-  document.getElementById("start").onclick = onStartLathe;
-  document.getElementById("stop").onclick = onStopLathe;
+  //document.getElementById("start").onclick = onStartLathe;
+  //document.getElementById("stop").onclick = onStopLathe;
+  document.getElementById("undo_draw").onclick = clearLastStroke;
+  
+  document.getElementById("move").onclick = onToggleMove;
+  document.getElementById("draw").onclick = onToggleDraw;
+  
   document.getElementById("reset").onclick = resetLathe;
-  
-  document.getElementById("undo").onclick = onUndo;
-  // document.getElementById("redo").onclick = onRedo;
-  document.getElementById("freeze").onclick = onToggleLocalization;
-  
-  document.getElementById("axes").onclick = onToggleAxes;
 
   document.getElementById("debug").onclick = onToggleDebugConsole;
 
@@ -170,30 +144,9 @@ function init() {
 
   //initialize shaders
   LIBRARY.Shaders.loadedSignal.add( onShadersLoaded );
-  //initSounds(); 
   initShaderLoading();
 }
-
-function initSounds() {
-  //webKitAudio only works on chrome :'(
-  SoundLibrary.machineFx = new SoundFX();
-  SoundLibrary.wood = new SoundFX();
-  SoundLibrary.metal = new SoundFX();
-  //SoundLibrary.stone = new SoundFX();
-
-  if( SoundFX.isAvailable ) {
-
-      SoundLibrary.machineFx.load("sounds/lathe_loop.wav")
-      SoundLibrary.machineFx.source.playbackRate.value = 0;
-
-      SoundLibrary.wood.load("sounds/lathe_wood3.wav")
-      SoundLibrary.wood.source.playbackRate.value = 1;
-
-      SoundLibrary.metal.load("sounds/lathe_metal.wav")
-      SoundLibrary.metal.source.playbackRate.value = 1;
-  }
-}
-
+  
 function onShadersLoaded() {
   chipsPool.createObject = createChips
   cuttingPool.createObject = createCutting
@@ -219,7 +172,6 @@ function createChips() {
 }
 
 function createDust() {
-  //TODO: use perlin noise generator to create dust cloud effect for cutting marble
 }
 
 function createCutting() {
@@ -235,12 +187,12 @@ function createCutting() {
 var spawnDelay = 0;
 
 function spawnParticle(spawnPosition) {
-  //only spawn cuttings with a 35% chance 
-  if (Math.random() > 0.35) return;
+  //only spawn cuttings with a 20% chance 
+  if (Math.random() > 0.2) return;
   if (activeMaterialType == "wood") spawnChips(spawnPosition);
   if (activeMaterialType == "metal") spawnCuttings(spawnPosition, 0x555555);
   if (activeMaterialType == "plastic") spawnCuttings(spawnPosition, 0xcccccc);
-  //if (activeMaterialType == "marble") spawnDust()
+  //if (activeMaterialType == "marble") do nothing; 
 }
 
 function spawnChips(spawnPosition) {
@@ -280,17 +232,14 @@ function updateChips() {
 }
 
 function spawnDust(spawnPosition) {
-  //TODO
 }
-
 function updateDust(){
-  //TODO
 }
 
 function spawnCuttings(spawnPosition, color=0xff0000) {
 
   spawnDelay++;
-  if( spawnDelay < 0 ) return; //maybe change the 0 here to ~10?
+  if( spawnDelay < 0 ) return; //maybe change the 0 here to 15? 
 
   var cuttingMesh = cuttingPool.getObject();
   cuttingMesh.material.color = new THREE.Color(color);
@@ -323,8 +272,7 @@ function updateCuttings() {
       cutting.velocity.y -= 0.0002;
       cutting.position.add(cutting.velocity);
     }
-    // when cuttings fall 1 meter below the lathe, destroy them and return to the pool
-    if( cutting.position.y < -1 ) { 
+    if( cutting.position.y < -1 ) { // 1 meter below the lathe
       scene.remove(cutting);
       cuttingPool.returnObject(cutting.poolId);
       cuttingList.splice(i,1);
@@ -372,7 +320,7 @@ function initObjects() {
   dustTexture = new THREE.TextureLoader().load( "textures/dust.png");
 
   var tex = new THREE.TextureLoader().load("https://cdn.glitch.com/b8e3f72e-245f-4971-98f0-3ac4cf1d8098%2Fscratches1.png?1553059491848", {}, 
-           function(){});
+                                         function(){});
     
       tex.repeat = (0.5,100);
   
@@ -418,13 +366,14 @@ function initObjects() {
           vertexShader:   LIBRARY.Shaders.Metal.vertex,
           fragmentShader: LIBRARY.Shaders.Metal.fragment,
           lights: true,
+          
       }
     
-      MaterialLibrary.metal = new THREE.ShaderMaterial(params);
-      MaterialLibrary.metal.side = THREE.DoubleSide
-      MaterialLibrary.metal.uniforms.tex.value = tex;
+  MaterialLibrary.metal = new THREE.ShaderMaterial(params);
+  MaterialLibrary.metal.side = THREE.DoubleSide
+  MaterialLibrary.metal.uniforms.tex.value = tex;
   
-      var plasticUniforms = {
+  var plasticUniforms = {
         tex: { type: "t", value: null}
       };
 
@@ -455,23 +404,15 @@ function initObjects() {
 
   MaterialLibrary.marble = new THREE.ShaderMaterial(params);
   MaterialLibrary.marble.side = THREE.DoubleSide;
-  
-  MaterialLibrary.normals = new THREE.MeshBasicMaterial();
-  MaterialLibrary.normals.side = THREE.DoubleSide;
-  MaterialLibrary.wireframe = new THREE.MeshBasicMaterial();
-  MaterialLibrary.wireframe.wireframe = true; 
-  MaterialLibrary.wireframe.side = THREE.DoubleSide;
-  
-  
 
   //set up the lathe!!!
   lathe = new Lathe();  
   lathe.build(); //(see lathe.js)
 
-  lathe.material = MaterialLibrary["wood"];
+  //lathe.material = MaterialLibrary["metal"];
   
-  // lathe.material = new THREE.MeshNormalMaterial ();
-  // lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
+  lathe.material = new THREE.MeshNormalMaterial ();
+  lathe.material = new THREE.MeshLambertMaterial( { color : 0xbb0000} );
   lathe.material.side = THREE.DoubleSide;
   lathe.receiveShadow = true;
   lathe.castShadow = false;
@@ -482,27 +423,12 @@ function initObjects() {
   lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
   lathe.position.z = -0.3 - lathe.radius; //position the lathe a little bit in front of the screen
   lathe.rotation.y = 90 * TO_RADIANS; 
-  axesHelper.position.x = lathe.position.x 
-  axesHelper.position.z = lathe.position.z;
   
   scene.add(lathe);
   lathe.add(sound);
+  //strokes_group.parent = lathe;
   
-  lathe.add(woodSound); 
-  lathe.add(plasticSound);
-  lathe.add(metalSound);
-  lathe.add(extendedSound);
-  strokes_group.parent = lathe;
-  guides_group.parent = lathe;
-  scene.add( axesHelper );
-  attach(axesHelper, lathe, scene);
-  
-  //add grid, but make it invisible
-  addGrids();
-  onGridToggle();
-  
-  
-  //set up the cutting tool (no longer in use)
+  //set up the cutting tool!!! 
   var rectgeom = new THREE.BoxGeometry( 0.01, 0.01, 0.06 );
   var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
   
@@ -553,36 +479,30 @@ function setRing (changedSegment, pressure) {
 *  https://www.pubnub.com/blog/2014-12-01-http-long-polling/
 */ 
 var poll_for_cut = function () {
-    // $.ajax({
-    //    url: base_url + "/is_cut_poll",
-    //    success: function(data) {
-    //        console.log("got data");
-    //        check_and_cut(data);
-    //        poll_for_cut();
-    //    },
-    //    error: function() {
-    //        console.log("longpoll error");
-    //        //wait 
-    //        setTimeout(function(){
-    //         poll_for_cut();
-    //         }, 2000);
-    //    },
-    //    timeout: 600000 // every 10 minutes, reset the connection. 
-    // });
+    $.ajax({
+       url: base_url + "/is_cut_poll",
+       success: function(data) {
+           console.log("got data");
+           check_and_cut(data);
+           //check_and_cut(data['segmentFactors']);
+           poll_for_cut();
+       },
+       error: function() {
+           console.log("longpoll error");
+           poll_for_cut();
+       },
+       timeout: 600000 // every 10 minutes, reset the connection. 
+    });
 };
 
 /* Checks where the newSegmentFactors are different from the current segmentFactors, and updates those entries. 
 *  Also calls setRing, to cut the lathe accordingly. 
 */
-
-
 function check_and_cut(newSegmentFactors) {
+  sound.setVolume(1);
   for (var i = 0; i < newSegmentFactors.length - 1; i++) {
     if (newSegmentFactors[i] != segmentFactors[i]) {
-      time_since_last_cut = 0; 
-      if (extendedSound.isPlaying) extendedSound.setVolume(1 - newSegmentFactors[i]);
       if (newSegmentFactors[i] > lathe.minRadius && newSegmentFactors[i] > segmentFactors[i]) {  //dont create cuttings if at minimum radius.
-        console.log(i);
         var spawnPosition = lathe.ring[i][_branchSegments / 2].clone();
         spawnPosition = spawnPosition.applyMatrix4(lathe.matrixWorld);
         spawnParticle(spawnPosition);
@@ -591,10 +511,12 @@ function check_and_cut(newSegmentFactors) {
       
       }
   }
-  lathe.geometry.verticesNeedUpdate = true;
+  lathe.geometry.verticesNeedUpdate = true;   
+  sound.setVolume(0.7);
 }
 
 function resetLathe() {
+  //sound.setVolume(1);
   for (var i = 0; i < segmentFactors.length - 1; i++) {
       setRing(i, 1);
   }
@@ -606,8 +528,6 @@ function resetLathe() {
  * The render loop, called once per frame. Handles updating
  * our scene and rendering.
  */
-
-var clock = new THREE.Clock();
 
 function update() {
   
@@ -627,10 +547,7 @@ function update() {
   vrDisplay.getFrameData(vrFrameData);
 
   // Update our perspective camera's positioning
-  if (!freezeLocalization) {
-    vrControls.update();
-  }
-  
+  vrControls.update();
 
   // Render our three.js virtual scene
   renderer.clearDepth();
@@ -638,34 +555,26 @@ function update() {
   
   //rotate the lathe block. 
   lathe.rotation.z += _ROTATE_SPEED; 
-  
-  //update lathe rotation volume 
-  time_since_last_cut += clock.getDelta();
-  if (time_since_last_cut > time_threshold) {
-    //not currently cutting
-    sound.setVolume(0.3);
-    woodSound.setVolume(0.0); //TODO: change to zero after testing
-    plasticSound.setVolume(0.0);
-    metalSound.setVolume(0.0);
-    extendedSound.setVolume(0.0);
-  } else {
-    //currently cutting
-    sound.setVolume(0.3);
-    woodSound.setVolume(0.9);
-    plasticSound.setVolume(0.9);
-    metalSound.setVolume(0.9);
-    
-    //TODO: dynamically adapt extendedSound somewhere
-  }
-  
-  // if (! $.isEmptyObject(offset)){
-  //   updateLathePosition(); 
-  // }
-  
+
   //update cuttings 
   updateCuttings();
   updateChips();
   updateDust();
+  
+  
+  //update things for drawing 
+  if (move_or_draw_mode == "draw") {  
+    // Update Brush Physics
+    updatePhysics();
+    // Check for shake to undo functionality
+    checkForShake();
+    //if in the middle of a stroke, update the current graffiti stroke.
+    if (drawing) {
+      processDraw();
+    }
+   //Comment this line to hide brush reticle
+   processDrawBrush();
+  }
   
   // Kick off the requestAnimationFrame to call this function
   // when a new VRDisplay frame is rendered
@@ -690,32 +599,43 @@ function onWindowResize () {
  */
 function onClickStart () {
   
-  lathe.parent = camera;
-  lathe.position.x = .25 * lathe.totalLinks * lathe.linkDist - 0.01//center it on the chuck
-  lathe.position.y = .05; //
-  lathe.position.z = - 0.1778; //position the lathe a little bit in front of the screen
-  lathe.rotation.x = 0; 
-  lathe.rotation.y = 90 * TO_RADIANS; 
-  lathe.rotation.z = 0;
+  if (move_or_draw_mode == "move") {
+    lathe.parent = camera;
+    lathe.position.x = - 0.5 * lathe.totalLinks * lathe.linkDist //center it horizontally 
+    lathe.position.y = 0; 
+    lathe.position.z = -0.3 - lathe.radius; //position the lathe a little bit in front of the screen
+    lathe.rotation.x = 0; 
+    lathe.rotation.y = 90 * TO_RADIANS; 
+    lathe.rotation.z = 0;
+    //attach(lathe, camera, scene);
+    attach(strokes_group, lathe, scene);
+  }
+
+  else if (move_or_draw_mode == "draw") {
+    //the actual creation of the strokes happens in the update function, 
+    //here we're just setting the flag
+    drawing = true; 
+  }
+  
 
 }
 function onClickEnd () {
-  lathe.position.copy(lathe.getWorldPosition());
-  lathe.quaternion.copy(lathe.getWorldQuaternion());
-  lathe.parent = scene;
-}
-
-function updateLathePosition() {
-  // var pose = vrFrameData.pose;
-  // var camera_pos = new THREE.Vector3(pose.position[0],pose.position[1],pose.position[2]);
-  // var camera_rot = new THREE.Quaternion(pose.orientation[0], pose.orientation[1], pose.orientation[2], pose.orientation[3]);
-  // var new_pos = new THREE.Vector3(); 
-  // var new_rot = new THREE.Quaternion();
-  // new_pos.addVectors(camera_pos, offset.pos); 
-  // //angle between the two quaternions
-  // new_rot = offset.rot.inverse().multiply(camera_rot)
-  // lathe.position.copy(new_pos);
-  // lathe.quaternion.copy(lathe.quaternion.multiply(new_rot));
+  if (move_or_draw_mode == "move") {
+    // Snap the lathe to world coordinates wen the user finishes the touch. 
+    // lathe.position.copy(lathe.getWorldPosition());
+    // lathe.quaternion.copy(lathe.getWorldQuaternion());
+    // lathe.parent = scene;
+    detach(lathe, camera, scene);
+    detach(strokes_group, lathe, scene);
+  }
+  else if (move_or_draw_mode == "draw") {
+    // Stop the current draw stroke when the user finishes the touch.
+    drawing = false; 
+    stroke.length = 0;
+    strokeIndex += 1;
+    //send all the completed strokes to the server.  
+    sendStrokesOverWebSocket(); 
+  }
 }
 
 function onZoomIn () {
@@ -736,123 +656,22 @@ function onWood() {
   activeMaterialType = "wood";
   lathe.material = MaterialLibrary.wood;
   //lathe.material.color.setHex(0x6f4400);
-  
-  //update cutting forces 
-  $.get( "http://turnbywire.glitch.me/wood_force", function( data ) {
-  });
-  woodSound.context.resume();
-  plasticSound.context.resume(); 
-  metalSound.context.resume();
-  listener.context.resume();
-  extendedSound.context.resume();
-  
-  audioLoader.load( 'https://cdn.glitch.com/724cb6ba-bdad-4d77-93e3-ea70c80d2570%2Flathe_metal.wav?1557087268814', function( buffer ) {
-    woodSound.setBuffer( buffer );
-    woodSound.setLoop( true );
-    woodSound.setVolume(0.0);
-    if (metalSound.isPlaying) metalSound.stop();
-    if (plasticSound.isPlaying) plasticSound.stop();
-    if (extendedSound.isPlaying) extendedSound.stop();
-    woodSound.play();
-    
-  });
 }
-  
-function onNormals() {
-  activeMaterialType = "normals";
-  lathe.material = new THREE.MeshNormalMaterial();
-  
-  //update cutting forces 
-  $.get( "http://turnbywire.glitch.me/zero_force", function( data ) {
-  });  
-  
-  audioLoader.load( 'https://cdn.glitch.com/724cb6ba-bdad-4d77-93e3-ea70c80d2570%2Flathe_metal.wav?1557087268814', function( buffer ) {
-    extendedSound.setBuffer( buffer );
-    extendedSound.setLoop( true );
-    extendedSound.setVolume(0.0);
-    if (woodSound.isPlaying) woodSound.stop();
-    if (metalSound.isPlaying) metalSound.stop();
-    if (plasticSound.isPlaying) plasticSound.stop();
-    extendedSound.play();
-    
-  });
-  
-  
-  //if (extendedSound.isPlaying) extendedSound.stop();
-  
-}
-  
-function onWireframe() {
-  activeMaterialType = "wireframe";
-  //lathe.material = MaterialLibrary.wireframe;
-  onGridToggle();
-}
-                   
 function onMetal() {
   activeMaterialType = "metal";
   lathe.material = MaterialLibrary.metal;
   //lathe.material.color.setHex(0xbbbbbb);
-  
-  //update cutting forces 
-  $.get( "http://turnbywire.glitch.me/metal_force", function( data ) {
-  });
-  
-  // load a sound and set it as the Audio object's buffer
-  var audioLoader = new THREE.AudioLoader(); 
-  woodSound.context.resume();
-  plasticSound.context.resume(); 
-  metalSound.context.resume();
-  listener.context.resume();
-  extendedSound.context.resume();
-  
-  audioLoader.load( 'https://cdn.glitch.com/724cb6ba-bdad-4d77-93e3-ea70c80d2570%2Flathe_metal.wav?1557087268814', function( buffer ) {
-    metalSound.setBuffer( buffer );
-    metalSound.setLoop( true );
-    metalSound.setVolume(0.0); //only make it audible when you're cutting
-    if (woodSound.isPlaying) woodSound.stop();
-    if (plasticSound.isPlaying) plasticSound.stop();
-    if (extendedSound.isPlaying) extendedSound.stop();
-    metalSound.play();
-    
-  });
 }
 function onPlastic() {
   activeMaterialType = "plastic";
   lathe.material = MaterialLibrary.plastic;
   //lathe.material.color.setHex(0x004488);
-  
-  //update cutting forces 
-  $.get( "http://turnbywire.glitch.me/plastic_force", function( data ) {
-  });
-  // load a sound and set it as the Audio object's buffer
-  var audioLoader = new THREE.AudioLoader(); 
-  woodSound.context.resume();
-  plasticSound.context.resume();
-  metalSound.context.resume();
-  listener.context.resume();
-  extendedSound.context.resume();
-  
-  audioLoader.load( 'http://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Flathe_loop.wav?1550701859159', function( buffer ) {
-    plasticSound.setBuffer( buffer );
-    plasticSound.setLoop( true );
-    plasticSound.setVolume(0.0); //only make it audible when you're cutting
-    if (woodSound.isPlaying) woodSound.stop();
-    if (metalSound.isPlaying) metalSound.stop();
-    if (extendedSound.isPlaying) extendedSound.stop();
-    plasticSound.play();
-  });
 }
 
 function onMarble() {
   lathe.material = MaterialLibrary.marble;
   activeMaterialType= "marble";
-  
-  //update cutting forces 
-  $.get( "http://turnbywire.glitch.me/marble_force", function( data ) {
-  });
-  
-  var audioLoader = new THREE.AudioLoader(); 
-  listener.context.resume();
+  //lathe.material.color.setHex(0x004488);
 }
 
 function onStartLathe() {
@@ -872,28 +691,16 @@ function onStartLathe() {
 
 function onStopLathe() {
   _ROTATE_SPEED = 0;
-  if (sound && sound.isPlaying) {
-    sound.stop();
-  }
-  
+  sound.stop();
 }
 
-function onUndo() {
-  $.get( "http://turnbywire.glitch.me/undo", function( data ) {
-    console.log("undo");
-  });
-
+function onToggleDraw(){
+  move_or_draw_mode = "draw";
+}
+function onToggleMove() {
+  move_or_draw_mode = "move";
 }
 
-function onRedo() {
-  $.get( "http://turnbywire.glitch.me/redo", function( data ) {
-  console.log( "redo was performed" ); 
-});
-}
-
-function onToggleAxes() {
-  axesHelper.visible = !axesHelper.visible; 
-}
 function onToggleDebugConsole() {
   var x = document.getElementById("debugconsole");
   if (x.style.display == "none") {
@@ -903,29 +710,34 @@ function onToggleDebugConsole() {
   }
 }
 
-function onToggleLocalization() {
-   freezeLocalization = !freezeLocalization;
-}
-
 function onPosXPlus() {
+  
   lathe.position.x += _TRANSLATE_FACTOR;
+  strokes_group.position.x += _TRANSLATE_FACTOR;
 }
 function onPosXMinus() {
+  
   lathe.position.x -= _TRANSLATE_FACTOR;
+  strokes_group.position.x -= _TRANSLATE_FACTOR;
 }
 function onPosYPlus() {
+  
   lathe.position.y += _TRANSLATE_FACTOR;
+  strokes_group.position.y += _TRANSLATE_FACTOR;
+  
 }
 function onPosYMinus() {
   lathe.position.y -= _TRANSLATE_FACTOR;
+  strokes_group.position.y -= _TRANSLATE_FACTOR;
 }
 function onPosZPlus() {
   lathe.position.z += _TRANSLATE_FACTOR;
+  strokes_group.position.z += _TRANSLATE_FACTOR;
 }
 function onPosZMinus() {
   lathe.position.z -= _TRANSLATE_FACTOR;
+  strokes_group.position.z -= _TRANSLATE_FACTOR;
 }
-
 
 //******RECEIVE DRAWINGS ******************//
 
@@ -943,30 +755,26 @@ function setUpWebSocket() {
   };
   // event emmited when receiving message 
   ws.onmessage = function (evt) {
-    console.log("msg: " + evt.data);
+    return;
 
-    //clear strokes group
-    const num_strokes = strokes_group.children.length;
-    for (var i = num_strokes - 1; i >= 0; i--) {
-      strokes_group.remove(strokes_group.children[i]);
-    }
-    //add all the new strokes 
-    var objloader = new THREE.ObjectLoader();
-    var strokes_arr = JSON.parse(evt.data);
-    for (var i = 0; i < strokes_arr.length; i++) {
-      var stroke = objloader.parse(strokes_arr[i]); 
-      stroke.drawMode = THREE.TriangleStripDrawMode;
-      scene.add(stroke);
-      attach(stroke, strokes_group, scene);
-      //strokes_group.add(stroke);
-    }
+    // //clear strokes group
+    // for (var i = strokes_group.children.length - 1; i >= 0; i--) {
+    //   strokes_group.remove(strokes_group.children[i]);
+    // }
+    // //add all the new strokes 
+    // var objloader = new THREE.ObjectLoader();
+    // var strokes_arr = JSON.parse(evt.data);
+    // for (var i = 0; i < strokes_arr.length; i++) {
+    //   var stroke = objloader.parse(strokes_arr[i]); 
+    //   stroke.drawMode = THREE.TriangleStripDrawMode;
+    //   scene.add(stroke); 
+    //   attach(stroke, strokes_group, scene);
+    //strokes_group.add(stroke);
+    //}
   };
   
   ws.onclose = function(evt) { 
-    console.log("websocket closed: " +  evt); 
-    console.log("restarting websocket: " +  evt); 
-    setUpWebSocket();
-    
+    console.log("websocket closed: " +  evt)
   };
   ws.onerror = function(evt) { 
     console.log("websocket error: "+ evt);
@@ -974,16 +782,12 @@ function setUpWebSocket() {
 }
 
 function setUpMaterialWebSocket() {
-  // event emmited when connected
   wsMaterial.onopen = function () {
     console.log('websocket is listening for messages about material updates ...')
   };
-  // event emmited when receiving message 
-  //reload
   wsMaterial.onmessage = function (evt) {
     console.log("change material to:" + evt.data);
     const newMat = evt.data; 
-  
     
     if (newMat == "wood") {
        onWood();
@@ -997,53 +801,19 @@ function setUpMaterialWebSocket() {
     else if (newMat == "marble") {
        onMarble();
     }
-    else if (newMat == "normals") {
-       onNormals();
-    }
-    else if (newMat == "wireframe") {
-       onWireframe();
-    }
     else if (newMat == "reset") {
        resetLathe();
     }
-    //newMat is a JSON 
-    var parsedMsg = JSON.parse(newMat); 
-    //check if parsedMsg is to add or remove a guide
-    
-    if (parsedMsg.type && parsedMsg.type == "path") {
-      check_and_cut(parsedMsg.data);
-    }
-    if (parsedMsg.pos && parsedMsg.ax && parsedMsg.type) {
-      
-      if (parsedMsg.type == "add") {
-        var g = addGuide(parsedMsg.ax, parseFloat(parsedMsg.pos)); 
-        //g.parent = scene;
-        console.log(g.getWorldPosition()); //the mere act of printing these positions makes it work
-        detach(g, lathe, scene);
-        console.log(g.position); //what is this sorcery? 
-        //it's 3 am and idgaf anymore just don't remove these two console log statements.... 
-        
-    
-     } else {
-       removeGuide(parsedMsg.ax, parseFloat(parsedMsg.pos));
-     }
-    }
-    return false;
   };
   
   wsMaterial.onclose = function(evt) { 
       console.log("websocket for materials closed: " +  evt)
-      console.log("restarting webserver..."); 
-      wsMaterial = new WebSocket('ws://turnbywire.glitch.me/voice'); 
-      setUpMaterialWebSocket();
-    
   };
   wsMaterial.onerror = function(evt) { 
     console.log("materials websocket error: "+ evt);
-    wsMaterial = new WebSocket('ws://turnbywire.glitch.me/voice'); 
-    setUpMaterialWebSocket();
   };
 }
+
 
 function attach (child, parent, scene) {
     child.applyMatrix( new THREE.Matrix4().getInverse( parent.matrixWorld ) );
@@ -1056,98 +826,3 @@ function detach (child, parent, scene) {
   parent.remove(child); 
   scene.add(child);
 }
-
-//var x;
-
-function drawLine(start, finish) {
-  var material = new THREE.LineBasicMaterial( { color: 0x0000ff } );
-  var geometry = new THREE.Geometry();
-  geometry.vertices.push(start);
-  geometry.vertices.push(finish);
-  var line = new THREE.Line( geometry, material );
-  return line;
-}
-
-const guide_length = 0.3; // ~1 t
-function addGuide(axis, position) {
-  // onStopLathe();
-  // lathe.rotation.z = 0;
-  // lathe.matrixWorldNeedsUpdate = true
-  
-  position = position * 0.001; //convert from mm to meters.   
-  console.log('adding guide...');
-  var start, finish; 
-  if (axis == "r") {
-    console.log("R");
-    start = new THREE.Vector3(0, 0, 0); 
-    finish = new THREE.Vector3(0, 0, guide_length);
-  } else if (axis == "z") {
-      console.log("Z");
-      start = new THREE.Vector3(0, 0, 0);
-      finish = new THREE.Vector3(0, guide_length,0); 
-  }
-  var x = drawLine(start, finish);
-  
-  if (axis == "r") {
-    lathe.add(x); 
-    x.position.x -= position;
-  } 
-  else if (axis == "z") {
-    var geometry = new THREE.CircleGeometry( 2 * lathe.radius, 32 );
-    var material = new THREE.MeshBasicMaterial( { color: 0x004444 } );
-    material.side = THREE.DoubleSide;
-    material.transparent = true;
-    material.opacity = 0.4;
-    var c = new THREE.Mesh( geometry, material );
-    
-    
-
-    lathe.add(c);
-    c.position.z += position;
-  }
-  
-  //onStartLathe();
-  
-  return x;
-  
-}
-
-function removeGuide(axis, position) {
-  //search all guides in guides_group, and remove the one that matches the function params
-  console.log('removing guide...');
-  return; 
-}
-
-
-var grids = []; 
-function addGrid(pos_x, num_segments) {
-  const rad = 1.05 * lathe.radius;
-  const length = lathe.depth/1000/num_segments;
-  var branchSegs = 12;
-  var geometry = new THREE.CylinderGeometry( rad, rad, length, branchSegs );
-  var material = new THREE.MeshBasicMaterial( {color: 0x00bb00} );
-  var cylinder = new THREE.Mesh( geometry, material );
-  var grid = cylinder;
-  grid.material.wireframe = true;
-  
-  lathe.add( grid );
-  grid.rotation.x = Math.PI / 2;
-  grid.position.z += pos_x;
-  grids.push(grid);
-}
-
-function addGrids() {
-  const numSegments = 10; //divide the lathe into 10 parts 
-  for (var i = 0; i < lathe.depth; i += lathe.depth / numSegments) {
-    addGrid(i, numSegments);
-  }
-}
-
-function onGridToggle() {
-  for (var i = 0; i < grids.length; i++) {
-    var grid = grids[i] 
-    grid.visible = !grid.visible;
-  }
-  
-}
-

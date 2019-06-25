@@ -4,8 +4,8 @@ varying vec3 vViewPosition;
 varying vec3 vNormal;
 varying vec2 vUv;
 
-uniform sampler2D normalMap;  
-
+//#define USE_SHADOWMAP 1
+#define MAX_SHADOWS 1
 
 #ifdef USE_SHADOWMAP
 
@@ -21,21 +21,22 @@ void main() {
 
     vViewPosition = -mvPosition.xyz;
 
-	vec3 transformedNormal = normalMatrix * normal;
-	vNormal = transformedNormal;
-	mNormal = normal;
+    vec3 transformedNormal = normalMatrix * normal;
+    vNormal = transformedNormal;
+    mNormal = normal;
 
-  vUv = uv;
-
+    vUv = uv;
 
     #ifdef USE_SHADOWMAP
 
-        for( int i = 0; i < MAX_SHADOWS; i ++ ) {
-            vShadowCoord[ i ] = shadowMatrix[ i ] * objectMatrix * vec4( position, 1.0 );
-        }
+    for( int i = 0; i < MAX_SHADOWS; i ++ ) {
+
+        vShadowCoord[ i ] = shadowMatrix[ i ] * objectMatrix * vec4( position, 1.0 );
+
+    }
 
     #endif
-    
+
     mPosition = position.xyz;
 
     gl_Position = projectionMatrix * mvPosition;

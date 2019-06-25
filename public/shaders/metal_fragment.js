@@ -1,5 +1,3 @@
-#define MAX_DIR_LIGHTS 3
-
 vec4 permute( vec4 x ) {
 
 	return mod( ( ( x * 34.0 ) + 1.0 ) * x, 289.0 );
@@ -13,9 +11,11 @@ vec4 taylorInvSqrt( vec4 r ) {
 
 uniform vec3 ambientLightColor;
 
+#define MAX_DIR_LIGHTS 3
+
 #if MAX_DIR_LIGHTS > 0
 
-    uniform vec3 directionalLightColor[ u ];
+    uniform vec3 directionalLightColor[ MAX_DIR_LIGHTS ];
     uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];
 
 #endif
@@ -53,6 +53,10 @@ uniform vec3 DiffuseColour1;
 uniform vec3 DiffuseColour2;
 uniform vec3 GrainCentre;
 uniform float GrainMult;
+
+uniform sampler2D tex;
+
+varying vec2 vUv;
 
 varying vec3 mPosition;
 
@@ -148,6 +152,17 @@ float surface( vec3 coord ) {
 
 void main()
 {
+  
+    vec3 directionalLightDirection[3];
+    vec3 directionalLightColor[3];  
+  
+    directionalLightDirection[0] = vec3(2, 2, 2);
+    directionalLightDirection[1] = vec3(0, 2, 0);
+    directionalLightDirection[2] = vec3(0, -2, 1);
+  
+    directionalLightColor[0] = vec3(1, 1, 1);
+    directionalLightColor[1] = vec3(1, 1, 1);
+    directionalLightColor[2] = vec3(1, 1, 1);
 
     vec3 normal = normalize( vNormal );
     vec3 viewPosition = normalize( vViewPosition );
@@ -194,14 +209,51 @@ void main()
         totalSpecular += dirSpecular;
     #endif
 
-    vec3 scaledPos = vec3( 0.0,0.0,mPosition.z*.17) + surface(mPosition*0.01);
+    // original position multipliers = 1.7, 0.01
+    
+    vec3 scaledPos = vec3( 0.0,0.0,mPosition.z*170.0) + surface(mPosition*10.0);
 
     vec3 DiffuseColour = mix(totalDiffuse*DiffuseColour1,totalDiffuse*DiffuseColour2,surface(scaledPos));
+  
+    vec3 scaledPos2 = vec3( 0.0,0.0,mPosition.y*300.0) + surface(vec3(0.0,mPosition.y*100.0,0.0)*10.0);
+  
+    // float d3 = length( vec3(mPosition.x*0.3,mPosition.y*0.3,0.0) + newSurface);
+    // float g3 = clamp(cos(d3*GrainMult),0.0,1.0);
+  
+    //vec3 DiffuseColour3 = mix(DiffuseColour1,DiffuseColour2,g3);
+  
+    vec3 surfaceColor = mix(vec3(1.0,1.0,1.0), totalDiffuse*DiffuseColour1,surface(scaledPos2));
 
-    DiffuseColour = mix(DiffuseColour, totalDiffuse*DiffuseColour2 , smoothstep(.91,0.98,distance( mPosition, vec3(0.0,0.0,mPosition.z))/200.0));
+    //DiffuseColour = mix(DiffuseColour, totalDiffuse*DiffuseColour2 , smoothstep(.91,0.98,distance( mPosition, vec3(0.0,0.0,mPosition.z))/200.0));
 
-    gl_FragColor = vec4( DiffuseColour * ( totalDiffuse + ambientLightColor * ambient ) + totalSpecular*0.8,1.0);
+    //ring width times number of rings
+    //z val goes from -.25 to .25
+    //100 segments
+    int ringNum = 0;
+    //int numSegments = 100;
+    float latheStart = 0.0;
+    float segmentLength = 0.005;
 
+    for (int i = 0; i < 100; i++) {
+      float lower = latheStart + float(i)*segmentLength;
+      float upper = latheStart + float(i + 1)*segmentLength;
+      if (lower <= mPosition.z && mPosition.z < upper) {
+        ringNum = i;
+      }
+    }
+    
+    vec2 scaledUV = vec2(vUv.x, vUv.y * 0.01 + float(ringNum)*0.01);
+    
+    vec3 spec = texture2D(tex, scaledUV * 1.01).xyz;
+  
+    DiffuseColour = mix(DiffuseColour, surfaceColor, smoothstep(.91,1.0,distance( mPosition, vec3(0.0,0.0,mPosition.z))*10.2));
+  
+    vec3 scratchHighlights = mix(vec3(0.0,0.0,0.0), totalSpecular * (1.0 - spec), smoothstep(.91,1.0,distance( mPosition, vec3(0.0,0.0,mPosition.z))*10.2));
+
+    gl_FragColor = vec4( -0.05 * (1.0 - spec) + DiffuseColour * ( 0.6 * totalDiffuse + ambientLightColor * ambient ) + totalSpecular + scratchHighlights * 3.0,1.0);
+    //gl_FragColor = vec4((vUv * 0.01) + float(ringNum)*0.01,0.0,0.0,1.0);
+    //gl_FragColor = vec4(totalSpecular * (1.0 - spec) * 5.0,1.0);
+    //gl_FragColor = vec4(surfaceColor, 1.0);
     vec3 shadowColor = vec3( 1.0 );
 
     #ifdef USE_SHADOWMAP
@@ -280,7 +332,6 @@ void main()
                     #endif
 
                 }
-
             }
         }
 

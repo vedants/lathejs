@@ -1,16 +1,14 @@
-
-
-
 var SoundFX = function(){
 
     try {
-        this.context = new window.webkitAudioContext();
+        this.context = new AudioContext();
         SoundFX.isAvailable = true;
 
     } catch( error ) {
         SoundFX.isAvailable = false;
         console.warn( "THREE.AudioObject: webkitAudioContext not found" );
         return this;
+
     }
 
 
@@ -52,4 +50,3 @@ SoundFX.prototype.load = function(url){
 }
 
 var SoundLibrary = {}
-

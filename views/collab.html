@@ -1,102 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <title>three.ar.js - LatheJS</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no,
-  minimum-scale=1.0, maximum-scale=1.0">
-  <style>
-    body {
-      font-family: monospace;
-      margin: 0;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      height: 100vh;
-      -webkit-user-select: none;
-      user-select: none;
-    }
-    #info {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      transform: translate(-50%, 0);
-      margin: 1em;
-      z-index: 10;
-      display: block;
-      line-height: 2em;
-      text-align: center;
-    }
-    #info * {
-      color: #fff;
-    }
-    .title {
-      background-color: rgba(40, 40, 40, 0.4);
-      padding: 0.4em 0.6em;
-      border-radius: 0.1em;
-    }
-    .links {
-      background-color: rgba(40, 40, 40, 0.6);
-      padding: 0.4em 0.6em;
-      border-radius: 0.2em;
-    }
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  </style>
-  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> 
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>holoLathe</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 </head>
+
 <body>
-<div id="info">
-  <span class="links">
-    <a href="#" id="zoomin">+</a> 
-    <a href="#" id="zoomout">-</a> |
-    <a href="#" id="wood" >wood</a>  
-    <a href="#" id="metal">steel</a>   
-    <a href="#" id="plastic">plastic</a> | 
-    <a href="#" id="undo">undo</a>  
-    <a href="#" id="redo">redo</a> |
-    <a href="#" id="draw">draw</a>
-    <a href="#" id="move">move</a> |
-    <a href="/" id="reset">reset  </a>
-  </span>
-  <span class="title">ar_lathe[collab]</span><br/>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>turnByWiAR</h3>
+              <h3>remote mode</h3>
+            </div>
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Materials</a>
+                    <ul class="collapse list-unstyled" id="homeSubmenu">
+                        <li>
+                            <a href="#" id="wood">Wood</a>
+                        </li>
+                        <li>
+                            <a href="#" id="plastic">Plastic</a>
+                        </li>
+                        <li>
+                            <a href="#" id="metal">Aluminium</a>
+                        </li>
+                        <li>
+                            <a href="#" id="marble">Marble</a>
+                        </li>
+                      
+                    </ul>
+                </li>
+                <li>
+                    <i class="fas fa-search-plus"></i><a href="#" id="zoomin" style="display:inline;">Zoom in</a>
+                    <i class="fas fa-search-minus right-icon"></i><a href="#" id="zoomout" class="right-item" style="display:inline;">Zoom out</a>
+                </li>
+                <!-- <li>
+                    <label for="zoomRange">Zoom</label>
+                    <input type="range" class="custom-range" id="zoomRange">
+                </li> -->
+                <li>
+                    <span class="links">
+                      <i class="fas fa-undo"></i><a href="#" id="undo_draw" style="display:inline;">Undo Drawing</a>
+<!--                  <i class="fas fa-undo"></i><a href="#" id="undo" style="display:inline;">Undo Cut</a> 
+                      <i class="fas fa-redo right-icon"></i> <a href="#" id="redo" class="right-item" style="display:inline;">Redo</a>  -->
+                    </span>
+                </li>
+                <li>
+<!--                     <i class="fas fa-play"></i><a href="#" id="start" style="display:inline;">Start</a>
+                    <i class="fas fa-stop right-icon"></i><a href="#" id="stop" class= "right-item" style="display:inline;">Stop</a> -->
+                </li>
+                <li>
+                    <i class="fas fa-hand-paper"></i><a href="#" id="move" style="display:inline;">Move</a>
+                    <i class="fas fa-paint-brush right-icon"></i><a href="#" id="draw" class= "right-item" style="display:inline;">Draw</a>
+                </li>
+                <li>
+                    <i class="fas fa-retweet"></i><a href="#" id="reset" style="display:inline;">Reset</a>
+                </li>
+                <li>
+                    <i class="fas fa-terminal"></i><a href="#" id="debug" style="display:inline;"> Toggle Pos Controls</a>
+                </li>
+                <div id="debugconsole">
+                    <li>
+                            <i class="fas fa-arrows-alt"></i><a href="#" id="posx+" style="display:inline;">x+</a> 
+                            <i class="fas fa-arrows-alt right-icon"></i> <a href="#" id="posx-" class="right-item" style="display:inline;">x-</a> 
+                    </li>
+                    <li>
+                            <i class="fas fa-arrows-alt"></i><a href="#" id="posy+" style="display:inline;">y+</a> 
+                            <i class="fas fa-arrows-alt right-icon"></i> <a href="#" id="posy-" class="right-item" style="display:inline;">y-</a> 
+                    </li>
+                    <li>
+                            <i class="fas fa-arrows-alt"></i><a href="#" id="posz+" style="display:inline;">z+</a> 
+                            <i class="fas fa-arrows-alt right-icon"></i> <a href="#" id="posz-" class="right-item" style="display:inline;">z-</a> 
+                    </li>
+                </div>
+
+
+            </ul>
+        </nav>
+
+        <div id="content">
+            <!-- Menu collapse button  -->
+            <nav class="navbar navbar-expand-lg navbar-light" style="z-index:5;">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn">
+                        <i class="fas fa-align-left"></i>
+                        <span></span>
+                    </button>
+                </div>
+            </nav>
+            <!--  the canvas gets inserted into the DOM here -->
+        </div>
+    </div>
 </div>
-  
-<!-- Load THREE.AR.JS Scripts   -->
-<script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
-<script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
-<script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
-  
-<!-- Load Lathe Shaders   -->  
-  <script data-src="/shaders/wood_vertex.js" data-name="Wood" type="x-shader/x-vertex"></script>
-  <script data-src="/shaders/wood_fragment.js" data-name="Wood" type="x-shader/x-fragment"></script>
 
-  <script data-src="/shaders/metal_vertex.js" data-name="Metal" type="x-shader/x-vertex"></script>
-  <script data-src="/shaders/metal_fragment.js" data-name="Metal" type="x-shader/x-fragment"></script>
+    <!-- jQuery CDN - complete version (=with AJAX!) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
-  <script data-src="/shaders/stone_vertex.js" data-name="Stone" type="x-shader/x-vertex"></script>
-  <script data-src="/shaders/stone_fragment.js" data-name="Stone" type="x-shader/x-fragment"></script>
-<!-- Load Drawing Shaders   -->  
-  <script id="fragmentShader" type="shader">
-    precision mediump float;
-    precision mediump int;
-    varying vec3 vPosition;
-    varying vec3 vNormal;
-    varying vec2 vUv;
-    varying vec3 vVelocity;
-    void main() {
-      vec2 uv = vUv;
-      uv *= 2.0;
-      uv -= 1.0;
-      float aa = 1.0 - abs( uv.y );
-      aa = smoothstep( 0.0, 0.05, aa );
-      gl_FragColor = vec4( vNormal, aa );
-    }
+    <!-- Load THREE.AR.JS Scripts   -->
+    <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.js?1550097373433"></script>
+    <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2FVRControls.js?1550097368320"></script>
+    <script src="https://cdn.glitch.com/eb70b5dd-9bee-4aff-9a93-08df8d562e27%2Fthree.ar.js?1550097284604"></script>
+      
+      
+    <!-- Load Lathe Shaders   -->  
+      <script data-src="/shaders/wood_vertex.js" data-name="Wood" type="x-shader/x-vertex"></script>
+      <script data-src="/shaders/wood_fragment.js" data-name="Wood" type="x-shader/x-fragment"></script>
+
+      <script data-src="/shaders/metal_vertex.js" data-name="Metal" type="x-shader/x-vertex"></script>
+      <script data-src="/shaders/metal_fragment.js" data-name="Metal" type="x-shader/x-fragment"></script>
+
+      <script data-src="/shaders/stone_vertex.js" data-name="Stone" type="x-shader/x-vertex"></script>
+      <script data-src="/shaders/stone_fragment.js" data-name="Stone" type="x-shader/x-fragment"></script>
+  
+  <script data-src="/shaders/plastic_vertex.js?cache=2" data-name="Plastic" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/plastic_fragment.js?cache=2" data-name="Plastic" type="x-shader/x-fragment"></script>
+  
+  <script data-src="/shaders/marble_vertex.js?cache=2" data-name="Marble" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/marble_fragment.js?cache=2" data-name="Marble" type="x-shader/x-fragment"></script>
+  
+  <!--  Load Ink Shaders  -->
+  <script id="inkFragmentShader" type="shader">
+precision mediump float;
+precision mediump int;
+varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec2 vUv;
+varying vec3 vVelocity;
+void main()	{
+  vec2 uv = vUv;
+  uv *= 2.0;
+  uv -= 1.0;
+  float aa = 1.0 - abs( uv.y );
+  aa = smoothstep( 0.0, 0.05, aa );
+  gl_FragColor = vec4( vNormal, aa );
+}
 </script>
-<script id="vertexShader" type="shader">
+<script id="inkVertexShader" type="shader">
   uniform mat4 modelViewMatrix;
   uniform mat4 projectionMatrix;
   uniform mat3 normalMatrix;
@@ -118,8 +177,8 @@
   }
 </script>
   
-<!--  Load Lathe Scripts -->
-  <script src = "/js/jquery-1.7.1.min.js"></script>
+      
+  <!--  Load Lathe Scripts -->
   <script src = "/js/signals.js"></script>
   <script src = "/js/Cylinder.js"></script>
   <script src = "/js/Detector.js"></script>
@@ -127,8 +186,23 @@
   <script src = "/js/sounds.js"></script>
   <script src = "/js/lathe.js"></script>
   <script src = "/js/Library.js"></script>
-  
-<!-- this file has all the interesting things in it -->
-  <script src ="/collab.js"> </script>
+
+  <!-- this file has all the (really!) interesting things in it -->
+  <script src ="/draw.js"> </script>
+  <script src ="/collab3.js"> </script>
+
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#sidebarCollapse').on('click', function () {
+          if ( $('#sidebar').css('display') == 'none' ) {
+                  $('#sidebar').css('display','block');
+                }
+                else {
+                  $('#sidebar').css('display','none');
+                }
+          });
+      });
+  </script>
 </body>
+
 </html>

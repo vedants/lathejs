@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> 
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <title>holoLathe</title>
@@ -23,7 +24,7 @@
         <!-- Sidebar  -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h3>holoLathe</h3>
+                <h3>turnByWiAR</h3>
             </div>
             <ul class="list-unstyled components">
                 <li>
@@ -38,20 +39,27 @@
                         <li>
                             <a href="#" id="metal">Aluminium</a>
                         </li>
+                        <li>
+                            <a href="#" id="marble">Marble</a>
+                        </li>
+                        <li>
+                            <a href="#" id="normals">Normals</a>
+                        </li>
+                        <li>
+                            <a href="#" id="wireframe">Wireframe</a>
+                        </li>
+                      
                     </ul>
                 </li>
                 <li>
                     <i class="fas fa-search-plus"></i><a href="#" id="zoomin" style="display:inline;">Zoom in</a>
                     <i class="fas fa-search-minus right-icon"></i><a href="#" id="zoomout" class="right-item" style="display:inline;">Zoom out</a>
                 </li>
-                <!-- <li>
-                    <label for="zoomRange">Zoom</label>
-                    <input type="range" class="custom-range" id="zoomRange">
-                </li> -->
+
                 <li>
                     <span class="links">
                         <i class="fas fa-undo"></i><a href="#" id="undo" style="display:inline;">Undo</a> 
-                        <i class="fas fa-redo right-icon"></i> <a href="#" id="redo" class="right-item" style="display:inline;">Redo</a> 
+<!--                         <i class="fas fa-redo right-icon"></i> <a href="#" id="redo" class="right-item" style="display:inline;">Redo</a>  -->
                     </span>
                 </li>
                 <li>
@@ -59,25 +67,35 @@
                     <i class="fas fa-stop right-icon"></i><a href="#" id="stop" class= "right-item" style="display:inline;">Stop</a>
                 </li>
                 <li>
-                    <a href="/" id="reset">Reset</a>
+                    <i class="fas fa-retweet"></i><a href="#" id="reset" style="display:inline;">Reset</a>
                 </li>
                 <li>
-                    <a href="#" id="debug">Debug Console</a>
+                    <span class="links">
+                        <i class="fas fa-terminal"></i><a href="#" id="axes" style="display:inline;">Toggle Axes</a> 
+                    </span>
                 </li>
-                <span id="debugconsole">
+                <li>
+                  <span class="links">
+                    <i class="fas fa-terminal"></i><a href="#" id="freeze" style="display:inline;">Toggle Localization</a> 
+                    </span>
+                </li>
+                <li>
+                    <i class="fas fa-terminal"></i><a href="#" id="debug" style="display:inline;"> Toggle Pos Controls</a>
+                </li>
+                <div id="debugconsole">
                     <li>
-                            <i class="fas fa-undo"></i><a href="#" id="posx+" style="display:inline;">x+</a> 
-                            <i class="fas fa-redo right-icon"></i> <a href="#" id="posx-" class="right-item" style="display:inline;">x-</a> 
+                            <i class="fas fa-arrows-alt"></i><a href="#" id="posx+" style="display:inline;">x+</a> 
+                            <i class="fas fa-arrows-alt right-icon"></i> <a href="#" id="posx-" class="right-item" style="display:inline;">x-</a> 
                     </li>
                     <li>
-                            <i class="fas fa-undo"></i><a href="#" id="posy+" style="display:inline;">y+</a> 
-                            <i class="fas fa-redo right-icon"></i> <a href="#" id="posy-" class="right-item" style="display:inline;">y-</a> 
+                            <i class="fas fa-arrows-alt"></i><a href="#" id="posy+" style="display:inline;">y+</a> 
+                            <i class="fas fa-arrows-alt right-icon"></i> <a href="#" id="posy-" class="right-item" style="display:inline;">y-</a> 
                     </li>
                     <li>
-                            <i class="fas fa-undo"></i><a href="#" id="posz+" style="display:inline;">z+</a> 
-                            <i class="fas fa-redo right-icon"></i> <a href="#" id="posx-" class="right-item" style="display:inline;">z-</a> 
+                            <i class="fas fa-arrows-alt"></i><a href="#" id="posz+" style="display:inline;">z+</a> 
+                            <i class="fas fa-arrows-alt right-icon"></i> <a href="#" id="posz-" class="right-item" style="display:inline;">z-</a> 
                     </li>
-                </span>
+                </div>
 
 
             </ul>
@@ -120,31 +138,77 @@
 
       <script data-src="/shaders/stone_vertex.js" data-name="Stone" type="x-shader/x-vertex"></script>
       <script data-src="/shaders/stone_fragment.js" data-name="Stone" type="x-shader/x-fragment"></script>
+  
+  <script data-src="/shaders/plastic_vertex.js?cache=2" data-name="Plastic" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/plastic_fragment.js?cache=2" data-name="Plastic" type="x-shader/x-fragment"></script>
+  
+  <script data-src="/shaders/marble_vertex.js?cache=2" data-name="Marble" type="x-shader/x-vertex"></script>
+  <script data-src="/shaders/marble_fragment.js?cache=2" data-name="Marble" type="x-shader/x-fragment"></script>
+  
+  <!--  Load Ink Shaders  -->
+  <script id="inkFragmentShader" type="shader">
+precision mediump float;
+precision mediump int;
+varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec2 vUv;
+varying vec3 vVelocity;
+void main()	{
+  vec2 uv = vUv;
+  uv *= 2.0;
+  uv -= 1.0;
+  float aa = 1.0 - abs( uv.y );
+  aa = smoothstep( 0.0, 0.05, aa );
+  gl_FragColor = vec4( vNormal, aa );
+}
+</script>
+<script id="inkVertexShader" type="shader">
+  uniform mat4 modelViewMatrix;
+  uniform mat4 projectionMatrix;
+  uniform mat3 normalMatrix;
+  attribute vec3 position;
+  attribute vec3 normal;
+  attribute vec2 uv;
+  attribute vec3 velocity;
+  varying vec3 vPosition;
+  varying vec3 vNormal;
+  varying vec2 vUv;
+  varying vec3 vVelocity;
+  void main()
+  {
+      vPosition = position;
+      vNormal = normal;
+      vUv = uv;
+      vVelocity = velocity;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+</script>
+  
       
-    <!--  Load Lathe Scripts -->
-      <script src = "/js/signals.js"></script>
-      <script src = "/js/Cylinder.js"></script>
-      <script src = "/js/Detector.js"></script>
-      <script src = "/js/ObjectPool.js"></script>
-      <script src = "/js/sounds.js"></script>
-      <script src = "/js/lathe.js"></script>
-      <script src = "/js/Library.js"></script>
-      
-    <!-- this file has all the (really!) interesting things in it -->
-      <script src ="/fab.js"> </script>
+  <!--  Load Lathe Scripts -->
+  <script src = "/js/signals.js"></script>
+  <script src = "/js/Cylinder.js"></script>
+  <script src = "/js/Detector.js"></script>
+  <script src = "/js/ObjectPool.js"></script>
+  <script src = "/js/sounds.js"></script>
+  <script src = "/js/lathe.js"></script>
+  <script src = "/js/Library.js"></script>
 
-      <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-            if ( $('#sidebar').css('display') == 'none' ) {
-                    $('#sidebar').css('display','block');
-                  }
-                  else {
-                    $('#sidebar').css('display','none');
-                  }
-            });
-        });
-    </script>
+  <!-- this file has all the (really!) interesting things in it -->
+  <script src ="/fab.js"> </script>
+
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#sidebarCollapse').on('click', function () {
+          if ( $('#sidebar').css('display') == 'none' ) {
+                  $('#sidebar').css('display','block');
+                }
+                else {
+                  $('#sidebar').css('display','none');
+                }
+          });
+      });
+  </script>
 </body>
 
 </html>

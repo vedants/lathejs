@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
-    "bootstrap-slider": "^10.6.1",
+    "cors": "^2.8.5",
     "express": "^4.16.3",
     "express-longpoll": "^0.0.4",
+    "express-ws": "^4.0.0",
     "fs": "^0.0.1-security",
     "ws": "^6.2.0"
   },

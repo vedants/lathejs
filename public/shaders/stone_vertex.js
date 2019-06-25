@@ -20,9 +20,9 @@ void main() {
 
     vViewPosition = -mvPosition.xyz;
 
-    vec3 transformedNormal = normalMatrix * normal;
-    vNormal = transformedNormal;
-    mNormal = normal;
+	vec3 transformedNormal = normalMatrix * normal;
+	vNormal = transformedNormal;
+	mNormal = normal;
 
     #ifdef USE_SHADOWMAP
 
